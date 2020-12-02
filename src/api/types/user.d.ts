@@ -1,3 +1,5 @@
+import { Form } from "element-ui";
+import { IDeptData } from "./dept"
 
 /**
  * 新增、修改用户数据包
@@ -6,7 +8,7 @@ export interface IUserData {
     id?: number
     roles?: string[]
     jobs?: string[]
-    dept?: object
+    dept?: IDeptData
     username?: string
     nickname?: string
     email?: string
