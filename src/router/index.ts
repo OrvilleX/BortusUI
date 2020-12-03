@@ -6,9 +6,9 @@ Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
   {
-    path: "/",
-    name: "Home",
-    component: Home
+    path: "/login",
+    meta: { title: "登录", noCache: true, hidden: true },
+    component: () => import('@/views/Login.vue')
   },
   {
     path: "/about",
