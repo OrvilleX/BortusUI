@@ -1,5 +1,5 @@
 import request from '@/utils/request';
-import { IJwtUserDtoData } from './types/login';
+import { IJwtUserDtoData } from '../types/login';
 
 /**
  * 登录

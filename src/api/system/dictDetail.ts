@@ -1,5 +1,5 @@
 import request from '@/utils/request';
-import { IDictDetailData, IDictDetailQueryData, IDictDetailDtoData } from '@/api/types/dictDetail';
+import { IDictDetailData, IDictDetailQueryData, IDictDetailDtoData } from '@/types/dictDetail';
 
 interface DictMap {
     [index: string]: IDictDetailDtoData[]

@@ -1,5 +1,5 @@
 import request from '@/utils/request';
-import { IRoleData, IRoleQueryData, IRoleDtoData } from '@/api/types/role';
+import { IRoleData, IRoleQueryData, IRoleDtoData } from '@/types/role';
 
 /**
  * 获取所有角色

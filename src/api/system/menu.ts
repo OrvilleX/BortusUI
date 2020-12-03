@@ -1,6 +1,6 @@
 import request from '@/utils/request'
-import { IMenuData, IMenuQueryData, IMenuDtoData, IMenuVoData } from '@/api/types/menu';
-import { IPageableBody } from '@/api/types/base';
+import { IMenuData, IMenuQueryData, IMenuDtoData, IMenuVoData } from '@/types/menu';
+import { IPageableBody } from '@/types/base';
 
 /**
  * 获取所有菜单数据

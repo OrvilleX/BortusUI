@@ -1,6 +1,6 @@
 import request from '@/utils/request';
 import { encrypt } from '@/utils/rsaEncrypt';
-import { IUserData, IUserPassData } from '@/api/types/user';
+import { IUserData, IUserPassData } from '@/types/user';
 
 /**
  * 新增用户

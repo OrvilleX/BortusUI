@@ -2,7 +2,7 @@ import { VuexModule, Module, Action, Mutation, getModule } from 'vuex-module-dec
 import store from '@/store';
 import { getToken, setToken, removeToken } from '@/utils/auth';
 import { login, getInfo, logout} from '@/api/login';
-import { IJwtUserDtoData } from '@/api/types/login';
+import { IJwtUserDtoData } from '@/types/login';
 
 export interface IUserState {
     token: string
