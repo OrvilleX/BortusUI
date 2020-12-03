@@ -23,3 +23,18 @@ export interface IDeptData {
     pid?: number
     subCount?: number
 }
+
+export interface IDeptDtoData {
+    id: number
+    name: string
+    enabled: boolean
+    deptSort: number
+    children: IDeptDtoData[]
+    pid: number
+    subCount: number
+}
+
+export interface IDeptSmallDtoData {
+    id: number
+    name: string
+}
