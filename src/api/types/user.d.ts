@@ -1,5 +1,7 @@
-import { Form } from "element-ui";
-import { IDeptData } from "./dept"
+import { IDeptData } from "./dept";
+import { IJobData } from './job';
+import { IPageable } from './base';
+import { IRoleSmallDtoData } from './role';
 
 /**
  * 新增、修改用户数据包
@@ -23,7 +25,7 @@ export interface IUserData {
 /**
  * 导出、查询用户数据包
  */
-export interface IUserQueryData {
+export interface IUserQueryData extends IPageable {
     id?: number
     deptIds?: number[]
     blurry?: string
@@ -38,4 +40,24 @@ export interface IUserQueryData {
 export interface IUserPassData {
     oldPass: string
     newPass: string
+}
+
+/**
+ * 列表、详情输出数据包
+ */
+export interface IUserDtoData {
+    id: number
+    roles: IRoleSmallDtoData[]
+    jobs: IJobData[]
+    dept: object
+    deptId: number
+    username: string
+    nickName: string
+    email: string
+    phone: string
+    gender: string
+    avatarName: string
+    avatarPath: string
+    enabled: boolean
+    pwdResetTime: string
 }

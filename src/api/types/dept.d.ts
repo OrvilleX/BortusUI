@@ -1,3 +1,4 @@
+import { IRoleData } from './role';
 
 /**
  * 查询、导出部门数据包
@@ -15,7 +16,7 @@ export interface IDeptQueryData {
  */
 export interface IDeptData {
     id?: number
-    roles?: object[]
+    roles?: IRoleData[]
     deptSort?: number
     name?: string
     enabled?: boolean
