@@ -54,7 +54,7 @@ export const isArray = (arg: any) => {
 /**
  * 是否合法IP地址
  */
-export function validateIP(value: string, callback: (err?: Error) => void) {
+export const validateIP = (value: string, callback: (err?: Error) => void) => {
     if (value === '' || value === undefined || value == null) {
         callback()
     } else {
@@ -67,8 +67,10 @@ export function validateIP(value: string, callback: (err?: Error) => void) {
     }
 }
 
-/* 是否手机号码或者固话*/
-export function validatePhoneTwo(rule, value, callback) {
+/**
+ * 是否手机号码或者固话
+ */
+export const validatePhoneTwo = (value: string, callback: (err?: Error) => void) => {
     const reg = /^((0\d{2,3}-\d{7,8})|(1[34578]\d{9}))$/
     if (value === '' || value === undefined || value == null) {
         callback()
@@ -81,8 +83,10 @@ export function validatePhoneTwo(rule, value, callback) {
     }
 }
 
-/* 是否固话*/
-export function validateTelephone(rule, value, callback) {
+/**
+ * 是否固话
+ */
+export const validateTelephone = (value: string, callback: (err?: Error) => void) => {
     const reg = /0\d{2}-\d{7,8}/
     if (value === '' || value === undefined || value == null) {
         callback()
@@ -95,8 +99,10 @@ export function validateTelephone(rule, value, callback) {
     }
 }
 
-/* 是否手机号码*/
-export function validatePhone(rule, value, callback) {
+/**
+ * 是否手机号码
+ */
+export const validatePhone = (value: string, callback: (err?: Error) => void) => {
     const reg = /^[1][3,4,5,7,8][0-9]{9}$/
     if (value === '' || value === undefined || value == null) {
         callback()
@@ -109,8 +115,10 @@ export function validatePhone(rule, value, callback) {
     }
 }
 
-/* 是否身份证号码*/
-export function validateIdNo(rule, value, callback) {
+/**
+ * 是否身份证号码
+ */
+export const validateIdNo = (value: string, callback: (err?: Error) => void) => {
     const reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/
     if (value === '' || value === undefined || value == null) {
         callback()
@@ -122,4 +130,3 @@ export function validateIdNo(rule, value, callback) {
         }
     }
 }
-
