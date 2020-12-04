@@ -4,7 +4,7 @@
  * @param time 支持各类格式时间
  * @param cFormat 格式化字符串
  */
-export const parseTime = (time: object | string | number, cFormat: string) => {
+export const parseTime = (time: object | string | number, cFormat?: string) => {
     const format = cFormat || "{y}-{m}-{d} {h}:{i}:{s}";
     let date: Date;
     if (typeof time === "undefined" || time === null || time === "null") {
@@ -125,7 +125,7 @@ export const cleanArray = (actual: Array<any>) => {
 /**
  * 将对象拼接为查询字符串
  */
-export const param = (json: any) => {
+export const param = (json: object) => {
     if (!json) return ''
     return cleanArray(
         Object.keys(json).map(key => {
@@ -166,7 +166,7 @@ export const html2Text = (val: string) => {
 /**
  * 合并对象
  */
-export const objectMerge = (target: any, source: any) => {
+export const objectMerge = (target: object, source: object) => {
     if (typeof target !== 'object') {
         target = {}
     }
@@ -212,15 +212,11 @@ export const getTime = (type: string) => {
 }
 
 /**
- * This is just a simple version of deep copy
- * Has a lot of edge cases bug
- * If you want to use a perfect deep copy, use lodash's _.cloneDeep
- * @param {Object} source
- * @returns {Object}
+ * 深度复制
  */
-export function deepClone(source) {
-    if (!source && typeof source !== 'object') {
-        throw new Error('error arguments', 'deepClone')
+export const deepClone = (source: object) => {
+    if (!source && typeof source !== "object") {
+        throw new Error("error arguments");
     }
     const targetObj = source.constructor === Array ? [] : {}
     Object.keys(source).forEach(keys => {
@@ -234,55 +230,50 @@ export function deepClone(source) {
 }
 
 /**
- * @param {Array} arr
- * @returns {Array}
+ * 去除数组中重复的值
  */
-export function uniqueArr(arr) {
+export const uniqueArr = (arr: Array<any>) => {
     return Array.from(new Set(arr))
 }
 
 /**
- * @returns {string}
+ * 创建随机字符串
  */
-export function createUniqueString() {
+export const createUniqueString = () => {
     const timestamp = +new Date() + ''
-    const randomNum = parseInt((1 + Math.random()) * 65536) + ''
+    const randomNum = (1 + Math.random()) * 65536 + ''
     return (+(randomNum + timestamp)).toString(32)
 }
 
 /**
- * Check if an element has a class
- * @param {HTMLElement} elm
- * @param {string} cls
- * @returns {boolean}
+ * 判断元素是否存在对应CSS类
  */
-export function hasClass(ele, cls) {
+export const hasClass = (ele: Element, cls: string) => {
     return !!ele.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)'))
 }
 
 /**
- * Add class to element
- * @param {HTMLElement} elm
- * @param {string} cls
+ * 为元素增加CSS类
  */
-export function addClass(ele, cls) {
+export const addClass = (ele: Element, cls: string) => {
     if (!hasClass(ele, cls)) ele.className += ' ' + cls
 }
 
 /**
- * Remove class from element
- * @param {HTMLElement} elm
- * @param {string} cls
+ * 从元素中移除CSS类
  */
-export function removeClass(ele, cls) {
+export const removeClass = (ele: Element, cls: string) => {
     if (hasClass(ele, cls)) {
         const reg = new RegExp('(\\s|^)' + cls + '(\\s|$)')
         ele.className = ele.className.replace(reg, ' ')
     }
 }
 
-// 替换邮箱字符
-export function regEmail(email) {
+/**
+ * 替换邮箱字符
+ */
+export const regEmail = (email: string) => {
+    let newEmail = null;
     if (String(email).indexOf('@') > 0) {
         const str = email.split('@')
         let _s = ''
@@ -291,21 +282,24 @@ export function regEmail(email) {
                 _s += '*'
             }
         }
-        var new_email = str[0].substr(0, 3) + _s + '@' + str[1]
+        newEmail = str[0].substr(0, 3) + _s + '@' + str[1]
     }
-    return new_email
+    return newEmail
 }
 
-// 替换手机字符
-export function regMobile(mobile) {
+/**
+ * 替换手机字符
+ */
+export const regMobile = (mobile: string) => {
+    let newMobile = null;
     if (mobile.length > 7) {
-        var new_mobile = mobile.substr(0, 3) + '****' + mobile.substr(7)
+        newMobile = mobile.substr(0, 3) + '****' + mobile.substr(7)
     }
-    return new_mobile
+    return newMobile
 }
 
 // 下载文件
-export function downloadFile(obj, name, suffix) {
+export const downloadFile = (obj: BlobPart, name: String, suffix: string) => {
     const url = window.URL.createObjectURL(new Blob([obj]))
     const link = document.createElement('a')
     link.style.display = 'none'

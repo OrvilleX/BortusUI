@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "axios": "^0.21.0",
+    "clipboard": "^2.0.6",
     "core-js": "^3.8.0",
     "echarts": "^4.2.1",
     "echarts-gl": "^1.1.1",
@@ -26,6 +27,7 @@
     "vuex-module-decorators": "^1.0.1"
   },
   "devDependencies": {
+    "@types/clipboard": "^2.0.1",
     "@types/echarts": "^4.9.2",
     "@types/js-cookie": "^2.2.0",
     "@typescript-eslint/eslint-plugin": "^2.34.0",
