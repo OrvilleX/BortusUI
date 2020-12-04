@@ -17,8 +17,7 @@ Date.prototype.daysAgo = function (days, midnight) {
     return midnight ? date.toMidnight() : date
 }
 
-Date.prototype.monthBegin = function (offset) {
-    offset = offset ? offset - 0 : 0
+Date.prototype.monthBegin = function (offset = 0) {
     const days = this.getDate() - 1 - offset
     return this.daysAgo(days, true)
 }

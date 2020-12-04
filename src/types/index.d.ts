@@ -5,8 +5,8 @@ declare module 'jsencrypt';
  */
 interface Date {
     toMidnight: () => Date;
-    daysAgo: (days: number, midnight: boolean) => Date;
-    monthBegin: (offset: number) => Date;
+    daysAgo: (days: number, midnight?: boolean) => Date;
+    monthBegin: (offset: number = 0) => Date;
     quarterBegin: () => Date;
     yearBegin: () => Date;
     strftime: (format: string, local: string) => string;
