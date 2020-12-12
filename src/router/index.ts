@@ -1,30 +1,70 @@
-import Vue from "vue";
-import VueRouter, { RouteConfig } from "vue-router";
-import Home from "../views/Home.vue";
+import router from './routers'
+import { UserModule } from '@/store/modules/user'
+import { PermissionModule } from '@/store/modules/permission'
+import Config from '@/settings'
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
+import { getToken } from '@/utils/auth'
+import { buildMenus } from '@/api/system/menu'
+import { filterAsyncRouter } from '@/store/modules/permission'
+import { Route } from 'vue-router'
 
-Vue.use(VueRouter);
+NProgress.configure({ showSpinner: false })
 
-const routes: Array<RouteConfig> = [
-  {
-    path: "/login",
-    meta: { title: "登录", noCache: true, hidden: true },
-    component: () => import('@/views/Login.vue')
-  },
-  {
-    path: "/about",
-    name: "About",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/About.vue")
+const whiteList = ['/login']
+
+router.beforeEach(async(to: Route, _: Route, next: any) => {
+  if (to.meta.title) {
+    document.title = to.meta.title + ' - ' + Config.title
   }
-];
+  NProgress.start()
 
-const router = new VueRouter({
-  mode: "history",
-  base: process.env.BASE_URL,
-  routes
-});
+  if (getToken()) {
+    if (to.path === '/login') {
+      next({ path: '/' })
+      NProgress.done()
+    } else {
+      if (UserModule.roles.length === 0) {
+        try {
+          await UserModule.GetInfo()
+          loadMenus(next, to)
+        } catch (err) {
+          UserModule.LogOut()
+          location.reload()
+        }
+      } else if (UserModule.loadMenus) {
+        UserModule.UpdateLoadMenus()
+        loadMenus(next, to)
+      } else {
+        next()
+      }
+    }
+  } else {
+    if (whiteList.indexOf(to.path) !== -1) {
+      next()
+    } else {
+      next(`/login?redirect=${to.path}`)
+      NProgress.done()
+    }
+  }
+})
 
-export default router;
+export const loadMenus = (next: any, to: Route) => {
+  buildMenus().then(res => {
+    const asyncRouter = filterAsyncRouter(res.data)
+    asyncRouter.push({
+      path: '*',
+      redirect: '/404',
+      meta: {
+        hidden: true
+      }
+    })
+    PermissionModule.GenerateRoutes(asyncRouter)
+    router.addRoutes(asyncRouter)
+    next({ ...to, replace: true})
+  })
+}
+
+router.afterEach((to: Route) => {
+  NProgress.done()
+})

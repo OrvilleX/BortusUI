@@ -32,3 +32,5 @@ export const handleClipboard = (text: string, event: MouseEvent) => {
   });
   (clipboard as any).onClick(event)
 }
+
+export default handleClipboard

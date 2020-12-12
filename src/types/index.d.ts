@@ -1,4 +1,6 @@
 declare module 'jsencrypt';
+declare module 'vue-count-to';
+declare module '*.png';
 
 /**
  * 扩展原生Date对象
