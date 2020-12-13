@@ -69,10 +69,13 @@
 
 <script lang="ts">
 import CountTo from "vue-count-to";
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 
-@Component({ components: { CountTo } })
-export default class PanelGroup extends Vue {
+@Component({
+  name: "PanelGroup",
+  components: { CountTo },
+})
+export default class extends Vue {
   handleSetLineChartData(type: string) {
     this.$emit("handleSetLineChartData", type);
   }

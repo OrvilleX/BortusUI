@@ -2,3 +2,6 @@
 
 * layout 完成  
 * store 完成  
+* views/components 完成  
+* views/dashboard 完成  
+* views/features 完成

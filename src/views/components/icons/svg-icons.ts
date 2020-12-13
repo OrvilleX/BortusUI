@@ -1,13 +1,11 @@
-const req = require.context('../../../assets/icons/svg', false, /\.svg$/)
-
+const req = require.context('../../icons/svg', false, /\.svg$/)
 const re = /\.\/(.*)\.svg/
+const requireAll = (requireContext: any) => requireContext.keys()
 
-const svgIcons = req.keys().map(i => {
-    let matchs = i.match(re)
-    if (matchs)
-    {
-        return matchs[1]
-    }
+const icons = requireAll(req).map((str: string) => {
+  const match = str.match(re)
+  if (match !== null) return match[1]
+  return null
 })
 
-export default svgIcons
+export default icons

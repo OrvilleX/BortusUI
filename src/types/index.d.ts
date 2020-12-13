@@ -2,6 +2,10 @@ declare module 'jsencrypt';
 declare module 'vue-count-to';
 declare module '*.png';
 
+declare module '*.gif' {
+    export const gif: any
+}
+
 /**
  * 扩展原生Date对象
  */

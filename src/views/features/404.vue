@@ -17,15 +17,14 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
 
-export default {
-  name: 'Page404',
-  computed: {
-    message() {
-      return '网管说这个页面你不能进......'
-    }
-  }
+@Component({
+  name: 'Page404'
+})
+export default class extends Vue {
+  private message = '网管说这个页面你不能进......'
 }
 </script>
 
