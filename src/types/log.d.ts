@@ -14,9 +14,9 @@ export interface ILogErrorDTOData {
 }
 
 export interface ILogQueryData extends IPageable {
-    blurry: string
-    logType: string
-    createTime: string[]
+    blurry?: string
+    logType?: string
+    createTime?: string
 }
 
 export interface ILogSmallDTOData {

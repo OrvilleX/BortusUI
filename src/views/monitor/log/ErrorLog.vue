@@ -1,23 +1,10 @@
 <template>
   <div class="app-container">
     <div class="head-container">
-      <Search />
-      <crudOperation>
-        <el-button
-          slot="left"
-          class="filter-item"
-          type="danger"
-          icon="el-icon-delete"
-          size="mini"
-          :loading="crud.delAllLoading"
-          @click="confirmDelAll()"
-        >
-          清空
-        </el-button>
-      </crudOperation>
+      <Search :query="query" />
     </div>
     <!--表格渲染-->
-    <el-table ref="table" v-loading="crud.loading" :data="crud.data" style="width: 100%;" @selection-change="crud.selectionChangeHandler">
+    <el-table v-loading="loading" :data="data" style="width: 100%">
       <el-table-column type="expand">
         <template slot-scope="props">
           <el-form label-position="left" inline class="demo-table-expand">
@@ -32,7 +19,11 @@
       </el-table-column>
       <el-table-column prop="username" label="用户名" />
       <el-table-column prop="requestIp" label="IP" />
-      <el-table-column :show-overflow-tooltip="true" prop="address" label="IP来源" />
+      <el-table-column
+        :show-overflow-tooltip="true"
+        prop="address"
+        label="IP来源"
+      />
       <el-table-column prop="description" label="描述" />
       <el-table-column prop="browser" label="浏览器" />
       <el-table-column prop="createTime" label="创建日期">
@@ -42,70 +33,78 @@
       </el-table-column>
       <el-table-column label="异常详情" width="100px">
         <template slot-scope="scope">
-          <el-button size="mini" type="text" @click="info(scope.row.id)">查看详情</el-button>
+          <el-button size="mini" type="text" @click="info(scope.row.id)"
+            >查看详情</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
-    <el-dialog :visible.sync="dialog" title="异常详情" append-to-body top="30px" width="85%">
+    <el-dialog
+      :visible.sync="dialog"
+      title="异常详情"
+      append-to-body
+      top="30px"
+      width="85%"
+    >
       <pre v-highlightjs="errorInfo"><code class="java" /></pre>
     </el-dialog>
-    <pagination />
+    <el-pagination
+      :total="total"
+      :current-page="page + 1"
+      style="margin-top: 8px"
+      layout="total, prev, pager, next, sizes"
+      @size-change="sizeChange"
+      @current-change="pageChange"
+    />
   </div>
 </template>
 
-<script>
-import { getErrDetail, delAllError } from '@/api/monitor/log'
-import Search from './search'
-import CRUD, { presenter } from '@crud/crud'
-import crudOperation from '@crud/CRUD.operation'
-import pagination from '@crud/Pagination'
+<script lang="ts">
+import { Vue, Component, Prop } from "vue-property-decorator";
+import InitData from "@/mixins/initData";
+import { getErrDetail, delAllError } from "@/api/monitor/log";
+import { parseTime } from "@/utils/index";
+import Search, { ILogSearch } from "./Search.vue";
+import { mixins } from "vue-class-component";
+import { ILogQueryData, ILogErrorDTOData } from "@/types/log";
 
-export default {
-  name: 'ErrorLog',
-  components: { Search, crudOperation, pagination },
-  cruds() {
-    return CRUD({ title: '异常日志', url: 'api/logs/error' })
+@Component({
+  name: "ErrorLog",
+  components: {
+    Search,
   },
-  mixins: [presenter()],
-  data() {
-    return {
-      errorInfo: '', dialog: false
-    }
-  },
+})
+export default class extends mixins<
+  InitData<ILogQueryData, ILogErrorDTOData, ILogSearch>
+>(InitData) {
+  private errorInfo = "";
+  private dialog = false;
+
   created() {
-    this.crud.optShow = {
-      add: false,
-      edit: false,
-      del: false,
-      download: true
+    this.$nextTick(() => {
+      this.init()
+    })
+  }
+
+  private parseTime = parseTime;
+
+  private async info(id: number) {
+    this.dialog = true;
+    let res = await getErrDetail(id);
+    this.errorInfo = res.data.exception;
+  }
+
+  beforeInit() {
+    this.url = "api/logs/error"
+    const sort = "id,desc"
+    this.params = {
+      page: this.page,
+      size: this.size,
+      sort: sort,
+      blurry: this.query.blurry,
+      createTime: this.query.createTime
     }
-  },
-  methods: {
-    info(id) {
-      this.dialog = true
-      getErrDetail(id).then(res => {
-        this.errorInfo = res.exception
-      })
-    },
-    confirmDelAll() {
-      this.$confirm(`确认清空所有异常日志吗?`, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.crud.delAllLoading = true
-        delAllError().then(res => {
-          this.crud.delAllLoading = false
-          this.crud.dleChangePage(1)
-          this.crud.delSuccessNotify()
-          this.crud.toQuery()
-        }).catch(err => {
-          this.crud.delAllLoading = false
-          console.log(err.response.data.message)
-        })
-      }).catch(() => {
-      })
-    }
+    return true
   }
 }
 </script>

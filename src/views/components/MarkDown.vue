@@ -15,15 +15,20 @@
 
 <script lang="ts">
 import { Vue, Component, Prop, Ref } from "vue-property-decorator";
-import { Getter } from "vuex-class";
+import { ApiModule } from "@/store/modules/api";
 import { upload } from "@/utils/upload";
 
 @Component
 export default class Markdown extends Vue {
   height = document.documentElement.clientHeight - 200 + "px";
 
-  @Getter imagesUploadApi!: string;
-  @Getter baseApi!: string;
+  get imagesUploadApi() {
+    return ApiModule.imagesUploadApi
+  }
+
+  get baseApi() {
+    return ApiModule.baseApi
+  }
 
   mounted() {
     const that = this;
