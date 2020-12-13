@@ -8,8 +8,8 @@ export default class InitData<T, K, Q> extends Vue {
     private loading = true
     private data: K[] = []    
     private time = 170
-    private isAdd = false
-
+    
+    public isAdd = false
     public url = ''
     public params!: T
     public query!: Q

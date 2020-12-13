@@ -1,9 +1,10 @@
-import { IRoleData } from './role';
+import { IRoleData } from './role'
+import { IPageable } from './base'
 
 /**
  * 查询、导出部门数据包
  */
-export interface IDeptQueryData {
+export interface IDeptQueryData extends IPageable {
     name?: string
     enabled?: boolean
     pid?: number
@@ -22,6 +23,7 @@ export interface IDeptData {
     enabled?: boolean
     pid?: number
     subCount?: number
+    createTime?: string
 }
 
 export interface IDeptDtoData {
@@ -32,6 +34,7 @@ export interface IDeptDtoData {
     children: IDeptDtoData[]
     pid: number
     subCount: number
+    createTime: string
 }
 
 export interface IDeptSmallDtoData {

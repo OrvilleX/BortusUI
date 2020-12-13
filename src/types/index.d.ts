@@ -1,7 +1,7 @@
 declare module 'jsencrypt';
 declare module 'vue-count-to';
 declare module '*.png';
-
+declare module '@riophae/vue-treeselect';
 declare module '*.gif' {
     export const gif: any
 }

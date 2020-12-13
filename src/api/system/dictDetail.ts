@@ -1,7 +1,7 @@
 import request from '@/utils/request';
 import { IDictDetailData, IDictDetailQueryData, IDictDetailDtoData } from '@/types/dictDetail';
 
-interface DictMap {
+export interface IDictMap {
     [index: string]: IDictDetailDtoData[]
 }
 
@@ -21,7 +21,7 @@ export const getDictMap = (dictName: string) => {
     const params = {
       dictName
     }
-    return request.get<DictMap>("api/dictDetail/map", {params});
+    return request.get<IDictMap>("api/dictDetail/map", {params});
 }
 
 /**
