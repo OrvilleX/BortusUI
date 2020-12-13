@@ -5,5 +5,5 @@
 * views/components 完成  
 * views/dashboard 完成  
 * views/features 完成  
-* views/monitor/log 完成  
+* views/monitor 完成  
 * 
