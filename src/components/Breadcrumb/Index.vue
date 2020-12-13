@@ -14,20 +14,13 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Emit, Watch } from "vue-property-decorator";
-import pathToRegexp from "path-to-regexp";
-import { RawLocation, RedirectOption, Route } from "vue-router";
+import { Vue, Component, Watch } from "vue-property-decorator";
+import { compile } from "path-to-regexp";
+import { RouteRecord, Route } from "vue-router";
 
-interface RouteInfo {
-  name?: string;
-  path: string;
-  meta: any;
-  redirect?: RedirectOption;
-}
-
-@Component
-export default class Breadcrumb extends Vue {
-  levelList: RouteInfo[] = [];
+@Component({ name: "Breadcrumb" })
+export default class extends Vue {
+  levelList: RouteRecord[] = [];
 
   public created() {
     this.getBreadcrumb();
@@ -41,25 +34,22 @@ export default class Breadcrumb extends Vue {
     this.getBreadcrumb();
   }
 
-  @Emit()
-  getBreadcrumb() {
+  private getBreadcrumb() {
     let matched = this.$route.matched.filter(
       (item) => item.meta && item.meta.title
-    ) as RouteInfo[];
+    );
     const first = matched[0];
-
     if (!this.isDashboard(first)) {
-      matched = [{ path: "/dashboard", meta: { title: "首页" } }].concat(
-        matched
-      );
+      matched = [
+        { path: "/dashboard", meta: { title: "首页" } } as RouteRecord,
+      ].concat(matched);
     }
     this.levelList = matched.filter(
       (item) => item.meta && item.meta.title && item.meta.breadcrumb !== false
     );
   }
 
-  @Emit()
-  isDashboard(route: RouteInfo) {
+  private isDashboard(route: RouteRecord) {
     const name = route && route.name;
     if (!name) {
       return false;
@@ -67,18 +57,16 @@ export default class Breadcrumb extends Vue {
     return name.trim().toLocaleLowerCase() === "Dashboard".toLocaleLowerCase();
   }
 
-  @Emit()
-  pathCompile(path: string) {
+  private pathCompile(path: string) {
     const { params } = this.$route;
-    var toPath = pathToRegexp.compile(path);
+    var toPath = compile(path);
     return toPath(params);
   }
 
-  @Emit()
-  handleLink(item: RouteInfo) {
+  private handleLink(item: any) {
     const { redirect, path } = item;
     if (redirect) {
-      this.$router.push(redirect as RawLocation);
+      this.$router.push(redirect);
       return;
     }
     this.$router.push(this.pathCompile(path));

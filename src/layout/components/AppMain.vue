@@ -8,21 +8,25 @@
     <div v-if="$store.state.settings.showFooter" id="el-main-footer">
       <span v-html="$store.state.settings.footerTxt" />
       <span> ⋅ </span>
-      <a href="https://beian.miit.gov.cn/#/Integrated/index" target="_blank">{{ $store.state.settings.caseNumber }}</a>
+      <a href="https://beian.miit.gov.cn/#/Integrated/index" target="_blank">{{
+        $store.state.settings.caseNumber
+      }}</a>
     </div>
   </section>
 </template>
 
-<script>
-export default {
-  name: 'AppMain',
-  computed: {
-    cachedViews() {
-      return this.$store.state.tagsView.cachedViews
-    },
-    key() {
-      return this.$route.path
-    }
+<script lang="ts">
+import { Component, Vue } from "vue-property-decorator";
+import { TagsViewModule } from "@/store/modules/tagsView";
+
+@Component({ name: "AppMain" })
+export default class extends Vue {
+  get cachedViews() {
+    return TagsViewModule.cachedViews;
+  }
+
+  get key() {
+    return this.$route.path;
   }
 }
 </script>
@@ -36,7 +40,7 @@ export default {
   overflow: hidden;
 }
 
-.fixed-header+.app-main {
+.fixed-header + .app-main {
   padding-top: 50px;
 }
 
@@ -46,7 +50,7 @@ export default {
     min-height: calc(100vh - 84px);
   }
 
-  .fixed-header+.app-main {
+  .fixed-header + .app-main {
     padding-top: 84px;
   }
 }

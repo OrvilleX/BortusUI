@@ -2,12 +2,17 @@ import { VuexModule, Module, Action, Mutation, getModule } from 'vuex-module-dec
 import store from '@/store';
 import Cookies from 'js-cookie'
 
+export enum DeviceType {
+    Mobile,
+    Desktop
+}
+
 export interface IAppState {
     sidebar: {
         opened: boolean
         withoutAnimation: boolean
     }
-    device: string
+    device: DeviceType
     size: string
 }
 
@@ -17,7 +22,7 @@ export default class App extends VuexModule implements IAppState {
         opened: Cookies.get("sidebarStatus") ? !!Cookies.get("sidebarStatus") : true,
         withoutAnimation: false
     }
-    public device = "desktop"
+    public device = DeviceType.Desktop
     public size = Cookies.get('size') || 'small'
 
     @Mutation
@@ -39,7 +44,7 @@ export default class App extends VuexModule implements IAppState {
     }
 
     @Mutation
-    private TOGGLE_DEVICE(device: string) {
+    private TOGGLE_DEVICE(device: DeviceType) {
         this.device = device;
     }
 
@@ -60,7 +65,7 @@ export default class App extends VuexModule implements IAppState {
     }
 
     @Action
-    public toggleDevice(device: string) {
+    public toggleDevice(device: DeviceType) {
         this.TOGGLE_DEVICE(device);
     }
 

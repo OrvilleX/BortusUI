@@ -1,9 +1,13 @@
 <template>
   <div :class="classObj" class="app-wrapper">
-    <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg" @click="handleClickOutside" />
+    <div
+      v-if="device === 'mobile' && sidebar.opened"
+      class="drawer-bg"
+      @click="handleClickOutside"
+    />
     <sidebar class="sidebar-container" />
-    <div :class="{hasTagsView:needTagsView}" class="main-container">
-      <div :class="{'fixed-header':fixedHeader}">
+    <div :class="{ hasTagsView: needTagsView }" class="main-container">
+      <div :class="{ 'fixed-header': fixedHeader }">
         <navbar />
         <tags-view v-if="needTagsView" />
       </div>
@@ -12,20 +16,29 @@
         <settings />
       </right-panel>
     </div>
-    <!--  防止刷新后主题丢失  -->
     <Theme v-show="false" ref="theme" />
   </div>
 </template>
 
-<script>
-import RightPanel from '@/components/RightPanel'
-import { AppMain, Navbar, Settings, Sidebar, TagsView } from './components'
-import ResizeMixin from './mixin/ResizeHandler'
-import { mapState } from 'vuex'
-import Theme from '@/components/ThemePicker'
-import Cookies from 'js-cookie'
-export default {
-  name: 'Layout',
+<script lang="ts">
+import { Component } from "vue-property-decorator";
+import { mixins } from "vue-class-component";
+import { DeviceType, AppModule } from "@/store/modules/app";
+import { SettingsModule } from "@/store/modules/settings";
+import RightPanel from "@/components/RightPanel/Index.vue";
+import {
+  AppMain,
+  Navbar,
+  Settings,
+  Sidebar,
+  TagsView,
+} from "./components/Index";
+import ResizeMixin from "./mixin/ResizeHandler";
+import Theme from "@/components/ThemePicker/Index.vue";
+import Cookies from "js-cookie";
+
+@Component({
+  name: "Layout",
   components: {
     AppMain,
     Navbar,
@@ -33,84 +46,89 @@ export default {
     Settings,
     Sidebar,
     TagsView,
-    Theme
+    Theme,
   },
-  mixins: [ResizeMixin],
-  computed: {
-    ...mapState({
-      sidebar: state => state.app.sidebar,
-      device: state => state.app.device,
-      showSettings: state => state.settings.showSettings,
-      needTagsView: state => state.settings.tagsView,
-      fixedHeader: state => state.settings.fixedHeader
-    }),
-    classObj() {
-      return {
-        hideSidebar: !this.sidebar.opened,
-        openSidebar: this.sidebar.opened,
-        withoutAnimation: this.sidebar.withoutAnimation,
-        mobile: this.device === 'mobile'
-      }
-    }
-  },
+})
+export default class extends mixins(ResizeMixin) {
+  get showSettings() {
+    return SettingsModule.showSettings;
+  }
+
+  get needTagsView() {
+    return SettingsModule.tagsView;
+  }
+
+  get fixedHeader() {
+    return SettingsModule.fixedHeader;
+  }
+
+  get classObj() {
+    return {
+      hideSidebar: !this.sidebar.opened,
+      openSidebar: this.sidebar.opened,
+      withoutAnimation: this.sidebar.withoutAnimation,
+      mobile: this.device === DeviceType.Mobile,
+    };
+  }
+
   mounted() {
-    if (Cookies.get('theme')) {
-      this.$refs.theme.theme = Cookies.get('theme')
-      this.$store.dispatch('settings/changeSetting', {
-        key: 'theme',
-        value: Cookies.get('theme')
-      })
+    let theme = Cookies.get("theme");
+    if (theme) {
+      (this.$refs.theme as Theme).theme = theme;
+      SettingsModule.ChangeSetting({
+        key: "theme",
+        value: theme,
+      });
     }
-  },
-  methods: {
-    handleClickOutside() {
-      this.$store.dispatch('app/closeSideBar', { withoutAnimation: false })
-    }
+  }
+
+  private handleClickOutside() {
+    AppModule.closeSideBar(false);
   }
 }
 </script>
 
 <style lang="scss" scoped>
-  @import "~@/assets/styles/mixin.scss";
-  @import "~@/assets/styles/variables.scss";
+@import "~@/assets/styles/mixin.scss";
+@import "~@/assets/styles/variables.scss";
 
-  .app-wrapper {
-    @include clearfix;
-    position: relative;
-    height: 100%;
-    width: 100%;
+.app-wrapper {
+  @include clearfix;
+  position: relative;
+  height: 100%;
+  width: 100%;
 
-    &.mobile.openSidebar {
-      position: fixed;
-      top: 0;
-    }
-  }
-
-  .drawer-bg {
-    background: #000;
-    opacity: 0.3;
-    width: 100%;
-    top: 0;
-    height: 100%;
-    position: absolute;
-    z-index: 999;
-  }
-
-  .fixed-header {
+  &.mobile.openSidebar {
     position: fixed;
     top: 0;
-    right: 0;
-    z-index: 9;
-    width: calc(100% - #{$sideBarWidth});
-    transition: width 0.28s;
-    padding: 0;
   }
+}
 
-  .hideSidebar .fixed-header {
-    width: calc(100% - 54px)
-  }
+.drawer-bg {
+  background: #000;
+  opacity: 0.3;
+  width: 100%;
+  top: 0;
+  height: 100%;
+  position: absolute;
+  z-index: 999;
+}
 
-  .mobile .fixed-header {
-    width: 100%;
-  }
+.fixed-header {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 9;
+  width: calc(100% - #{$sideBarWidth});
+  transition: width 0.28s;
+  padding: 0;
+}
+
+.hideSidebar .fixed-header {
+  width: calc(100% - 54px);
+}
+
+.mobile .fixed-header {
+  width: 100%;
+}
 </style>

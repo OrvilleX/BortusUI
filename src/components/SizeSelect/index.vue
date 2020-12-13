@@ -4,54 +4,55 @@
       <svg-icon class-name="size-icon" icon-class="size" />
     </div>
     <el-dropdown-menu slot="dropdown">
-      <el-dropdown-item v-for="item of sizeOptions" :key="item.value" :disabled="size===item.value" :command="item.value">
-        {{
-          item.label }}
+      <el-dropdown-item
+        v-for="item of sizeOptions"
+        :key="item.value"
+        :disabled="size === item.value"
+        :command="item.value">
+        {{ item.label }}
       </el-dropdown-item>
     </el-dropdown-menu>
   </el-dropdown>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      sizeOptions: [
-        { label: 'Default', value: 'default' },
-        { label: 'Medium', value: 'medium' },
-        { label: 'Small', value: 'small' },
-        { label: 'Mini', value: 'mini' }
-      ]
-    }
-  },
-  computed: {
-    size() {
-      return this.$store.getters.size
-    }
-  },
-  methods: {
-    handleSetSize(size) {
-      this.$ELEMENT.size = size
-      this.$store.dispatch('app/setSize', size)
-      this.refreshView()
-      this.$message({
-        message: '布局设置成功',
-        type: 'success'
-      })
-    },
-    refreshView() {
-      // In order to make the cached page re-rendered
-      this.$store.dispatch('tagsView/delAllCachedViews', this.$route)
+<script lang="ts">
+import { Component, Vue } from "vue-property-decorator";
+import { AppModule } from "@/store/modules/app";
+import { TagsViewModule } from "@/store/modules/tagsView";
 
-      const { fullPath } = this.$route
+@Component({
+  name: "SizeSelect",
+})
+export default class extends Vue {
+  private sizeOptions = [
+    { label: "Default", value: "default" },
+    { label: "Medium", value: "medium" },
+    { label: "Small", value: "small" },
+    { label: "Mini", value: "mini" },
+  ];
 
-      this.$nextTick(() => {
-        this.$router.replace({
-          path: '/redirect' + fullPath
-        })
-      })
-    }
+  get size() {
+    return AppModule.size;
   }
 
+  private handleSetSize(size: string) {
+    (this as any).$ELEMENT.size = size;
+    AppModule.setSize(size);
+    this.refreshView();
+    this.$message({
+      message: "布局设置成功",
+      type: "success",
+    });
+  }
+
+  refreshView() {
+    TagsViewModule.delAllCachedViews();
+    const { fullPath } = this.$route;
+    this.$nextTick(() => {
+      this.$router.replace({
+        path: "/redirect" + fullPath,
+      });
+    });
+  }
 }
 </script>
