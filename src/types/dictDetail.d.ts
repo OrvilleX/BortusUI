@@ -1,5 +1,6 @@
 import { IPageable } from './base';
 import { IDictSmallDtoData } from './dict';
+import { IDictData } from './dict'
 
 /**
  * 查询字典详情
@@ -13,11 +14,11 @@ export interface IDictDetailQueryData extends IPageable {
  * 新增、编辑字典详情
  */
 export interface IDictDetailData {
-    id: number
-    dict: object
-    label: string
-    value: string
-    dictSort: number
+    id?: number
+    dict?: IDictData
+    label?: string
+    value?: string
+    dictSort?: number
 }
 
 /**

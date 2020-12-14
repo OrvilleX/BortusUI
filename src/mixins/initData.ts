@@ -5,10 +5,10 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
     name: 'InitData'
 })
 export default class InitData<T, K, Q> extends Vue {
-    private loading = true
-    private data: K[] = []    
     private time = 170
-    
+
+    public data: K[] = []
+    public loading = true
     public isAdd = false
     public url = ''
     public params!: T
@@ -50,7 +50,7 @@ export default class InitData<T, K, Q> extends Vue {
         this.init()
     }
 
-    dleChangePage(size: number) {
+    dleChangePage(size?: number) {
         if (size === undefined) {
             size = 1
         }

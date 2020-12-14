@@ -143,7 +143,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from "vue-property-decorator";
+import { Vue, Component, Prop } from 'vue-property-decorator'
 import { checkPermission } from "@/utils/permission";
 import initData from "@/mixins/initData";
 import initDict from "@/mixins/initDict";

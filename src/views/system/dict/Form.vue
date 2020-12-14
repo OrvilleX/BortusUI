@@ -4,7 +4,7 @@
     :close-on-click-modal="false"
     :before-close="cancel"
     :visible.sync="dialog"
-    :title="isAdd ? '新增部门' : '编辑部门'"
+    :title="isAdd ? '新增字典' : '编辑字典'"
     width="500px"
   >
     <el-form
@@ -14,38 +14,11 @@
       size="small"
       label-width="80px"
     >
-      <el-form-item label="部门名称" prop="name">
+      <el-form-item label="字典名称" prop="name">
         <el-input v-model="form.name" style="width: 370px" />
       </el-form-item>
-      <el-form-item label="部门排序" prop="deptSort">
-          <el-input-number
-            v-model.number="form.deptSort"
-            :min="0"
-            :max="999"
-            controls-position="right"
-            style="width: 370px"
-          />
-      <el-form-item v-if="form.pid !== 0" label="状态" prop="enabled">
-        <el-radio
-          v-for="item in dicts"
-          :key="item.id"
-          v-model="form.enabled"
-          :label="item.value"
-          >{{ item.label }}</el-radio
-        >
-      </el-form-item>
-      <el-form-item
-        v-if="form.pid !== '0'"
-        style="margin-bottom: 0px"
-        label="上级部门"
-        prop="pid"
-      >
-        <treeselect
-          v-model="form.pid"
-          :options="depts"
-          style="width: 370px"
-          placeholder="选择上级类目"
-        />
+      <el-form-item label="描述">
+        <el-input v-model="form.description" style="width: 370px" />
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -58,30 +31,21 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
-import { add, edit, getDepts } from '@/api/system/dept'
-import { ElForm } from 'element-ui/types/form'
-import Treeselect from '@riophae/vue-treeselect'
-import '@riophae/vue-treeselect/dist/vue-treeselect.css'
-import { IDictDetailDtoData } from '@/types/dictDetail'
-import { IDeptDtoData, IDeptData } from '@/types/dept'
-
+import { Vue, Component, Prop } from "vue-property-decorator";
+import { ElForm } from "element-ui/types/form";
+import { add, edit } from "@/api/system/dict";
+import { IDictData } from "@/types/dict";
 
 @Component({
   name: "Form",
-  components: {
-    Treeselect,
-  },
 })
 export default class extends Vue {
   @Prop({ required: true }) isAdd!: boolean;
-  @Prop({ required: true }) dicts!: IDictDetailDtoData[];
 
   loading = false;
   dialog = false;
-  depts: IDeptDtoData[] = [];
-  form: IDeptData = {};
-  rules = {
+  form: IDictData = {};
+  private rules = {
     name: [{ required: true, message: "请输入名称", trigger: "blur" }],
   };
 
@@ -92,17 +56,10 @@ export default class extends Vue {
   private doSubmit() {
     (this.$refs["form"] as ElForm).validate((valid) => {
       if (valid) {
-        if (this.form.pid !== undefined) {
-          this.loading = true;
-          if (this.isAdd) {
-            this.doAdd();
-          } else this.doEdit();
-        } else {
-          this.$message({
-            message: "上级部门不能为空",
-            type: "warning",
-          });
-        }
+        this.loading = true;
+        if (this.isAdd) {
+          this.doAdd();
+        } else this.doEdit();
       }
     });
   }
@@ -149,14 +106,8 @@ export default class extends Vue {
     this.form = {
       id: NaN,
       name: "",
-      pid: 1,
-      enabled: true,
+      description: "",
     };
-  }
-
-   async getDepts() {
-    let res = await getDepts({ enabled: true });
-    this.depts = res.data.content;
   }
 }
 </script>

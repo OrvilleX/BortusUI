@@ -7,4 +7,6 @@
 * views/features 完成  
 * views/monitor 完成  
 * system/dept 完成  
+* system/dict 完成  
+* system/dictDetail 完成  
 * 
