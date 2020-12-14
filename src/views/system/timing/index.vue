@@ -2,110 +2,94 @@
   <div class="app-container">
     <!--工具栏-->
     <div class="head-container">
-      <div v-if="crud.props.searchToggle">
-        <!-- 搜索 -->
-        <el-input v-model="query.jobName" clearable size="small" placeholder="输入任务名称搜索" style="width: 200px;" class="filter-item" @keyup.enter.native="toQuery" />
-        <date-range-picker v-model="query.createTime" class="date-item" />
-        <rrOperation />
-      </div>
-      <crudOperation :permission="permission">
-        <!-- 任务日志 -->
+      <!-- 搜索 -->
+      <el-input v-model="query.value" clearable placeholder="输入任务名称搜索" style="width: 200px;" class="filter-item" @keyup.enter.native="toQuery"/>
+      <el-button class="filter-item" size="mini" type="success" icon="el-icon-search" @click="toQuery">搜索</el-button>
+      <!-- 新增 -->
+      <div v-permission="['ADMIN','JOB_ALL','JOB_CREATE']" style="display: inline-block;margin: 0px 2px;">
         <el-button
-          slot="right"
           class="filter-item"
           size="mini"
-          type="info"
+          type="primary"
+          icon="el-icon-plus"
+          @click="dialog = true;isAdd = true">新增</el-button>
+      </div>
+      <!-- 任务日志 -->
+      <div v-permission="['ADMIN','JOB_ALL','JOB_SELECT']" style="display: inline-block;">
+        <el-button
+          class="filter-item"
+          size="mini"
+          type="warning"
           icon="el-icon-tickets"
-          @click="doLog"
-        >日志</el-button>
-      </crudOperation>
-      <Log ref="log" />
+          @click="doLog">执行日志</el-button>
+        <Log ref="log"/>
+      </div>
     </div>
     <!--Form表单-->
-    <el-dialog :close-on-click-modal="false" :before-close="crud.cancelCU" :visible.sync="crud.status.cu > 0" :title="crud.status.title" append-to-body width="730px">
-      <el-form ref="form" :inline="true" :model="form" :rules="rules" size="small" label-width="100px">
+    <el-dialog :visible.sync="dialog" :close-on-click-modal="false" :before-close="cancel" :title="isAdd ? '新增任务' : '编辑任务'" append-to-body width="600px">
+      <el-form ref="form" :model="form" :rules="rules" size="small" label-width="100px">
         <el-form-item label="任务名称" prop="jobName">
-          <el-input v-model="form.jobName" style="width: 220px;" />
-        </el-form-item>
-        <el-form-item label="任务描述" prop="description">
-          <el-input v-model="form.description" style="width: 220px;" />
+          <el-input v-model="form.jobName" style="width: 460px;"/>
         </el-form-item>
         <el-form-item label="Bean名称" prop="beanName">
-          <el-input v-model="form.beanName" style="width: 220px;" />
+          <el-input v-model="form.beanName" style="width: 460px;"/>
         </el-form-item>
         <el-form-item label="执行方法" prop="methodName">
-          <el-input v-model="form.methodName" style="width: 220px;" />
-        </el-form-item>
-        <el-form-item label="Cron表达式" prop="cronExpression">
-          <el-input v-model="form.cronExpression" style="width: 220px;" />
-        </el-form-item>
-        <el-form-item label="子任务ID">
-          <el-input v-model="form.subTask" placeholder="多个用逗号隔开，按顺序执行" style="width: 220px;" />
-        </el-form-item>
-        <el-form-item label="任务负责人" prop="personInCharge">
-          <el-input v-model="form.personInCharge" style="width: 220px;" />
-        </el-form-item>
-        <el-form-item label="告警邮箱" prop="email">
-          <el-input v-model="form.email" placeholder="多个邮箱用逗号隔开" style="width: 220px;" />
-        </el-form-item>
-        <el-form-item label="失败后暂停">
-          <el-radio-group v-model="form.pauseAfterFailure" style="width: 220px">
-            <el-radio :label="true">是</el-radio>
-            <el-radio :label="false">否</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="任务状态">
-          <el-radio-group v-model="form.isPause" style="width: 220px">
-            <el-radio :label="false">启用</el-radio>
-            <el-radio :label="true">暂停</el-radio>
-          </el-radio-group>
+          <el-input v-model="form.methodName" style="width: 460px;"/>
         </el-form-item>
         <el-form-item label="参数内容">
-          <el-input v-model="form.params" style="width: 556px;" rows="4" type="textarea" />
+          <el-input v-model="form.params" style="width: 460px;"/>
+        </el-form-item>
+        <el-form-item label="Cron表达式" prop="cronExpression">
+          <el-input v-model="form.cronExpression" style="width: 460px;"/>
+        </el-form-item>
+        <el-form-item label="任务状态">
+          <el-radio v-model="form.isPause" label="false">启用</el-radio>
+          <el-radio v-model="form.isPause" label="true" >暂停</el-radio>
+        </el-form-item>
+        <el-form-item label="任务描述">
+          <el-input v-model="form.remark" style="width: 460px;" rows="2" type="textarea"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="text" @click="crud.cancelCU">取消</el-button>
-        <el-button :loading="crud.status.cu === 2" type="primary" @click="crud.submitCU">确认</el-button>
+        <el-button type="text" @click="cancel">取消</el-button>
+        <el-button :loading="loading" type="primary" @click="doSubmit">确认</el-button>
       </div>
     </el-dialog>
     <!--表格渲染-->
-    <el-table ref="table" v-loading="crud.loading" :data="crud.data" style="width: 100%;" @selection-change="crud.selectionChangeHandler">
-      <el-table-column :selectable="checkboxT" type="selection" width="55" />
-      <el-table-column :show-overflow-tooltip="true" prop="id" label="任务ID" />
-      <el-table-column :show-overflow-tooltip="true" prop="jobName" label="任务名称" />
-      <el-table-column :show-overflow-tooltip="true" prop="beanName" label="Bean名称" />
-      <el-table-column :show-overflow-tooltip="true" prop="methodName" label="执行方法" />
-      <el-table-column :show-overflow-tooltip="true" prop="params" label="参数" />
-      <el-table-column :show-overflow-tooltip="true" prop="cronExpression" label="cron表达式" />
+    <el-table v-loading="loading" :data="data" size="small" style="width: 100%;">
+      <el-table-column :show-overflow-tooltip="true" prop="jobName" width="100px" label="任务名称"/>
+      <el-table-column :show-overflow-tooltip="true" prop="beanName" label="Bean名称"/>
+      <el-table-column :show-overflow-tooltip="true" prop="methodName" width="90px" label="执行方法"/>
+      <el-table-column :show-overflow-tooltip="true" prop="params" width="80px" label="参数"/>
+      <el-table-column :show-overflow-tooltip="true" prop="cronExpression" width="100px" label="cron表达式"/>
       <el-table-column :show-overflow-tooltip="true" prop="isPause" width="90px" label="状态">
         <template slot-scope="scope">
           <el-tag :type="scope.row.isPause ? 'warning' : 'success'">{{ scope.row.isPause ? '已暂停' : '运行中' }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column :show-overflow-tooltip="true" prop="description" width="150px" label="描述" />
-      <el-table-column :show-overflow-tooltip="true" prop="createTime" width="136px" label="创建日期">
+      <el-table-column :show-overflow-tooltip="true" prop="remark" label="描述"/>
+      <el-table-column :show-overflow-tooltip="true" prop="updateTime" label="更新日期">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createTime) }}</span>
+          <span>{{ parseTime(scope.row.updateTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column v-permission="['admin','timing:edit','timing:del']" label="操作" width="170px" align="center" fixed="right">
+      <el-table-column v-if="checkPermission(['ADMIN','JOB_ALL','JOB_EDIT','JOB_DELETE'])" label="操作" width="180px" align="center" fixed="right">
         <template slot-scope="scope">
-          <el-button v-permission="['admin','timing:edit']" size="mini" style="margin-right: 3px;" type="text" @click="crud.toEdit(scope.row)">编辑</el-button>
-          <el-button v-permission="['admin','timing:edit']" style="margin-left: -2px" type="text" size="mini" @click="execute(scope.row.id)">执行</el-button>
-          <el-button v-permission="['admin','timing:edit']" style="margin-left: 3px" type="text" size="mini" @click="updateStatus(scope.row.id,scope.row.isPause ? '恢复' : '暂停')">
+          <el-button v-permission="['ADMIN','JOB_ALL','JOB_EDIT']" size="mini" style="margin-right: 3px;" type="text" @click="edit(scope.row)">编辑</el-button>
+          <el-button v-permission="['ADMIN','JOB_ALL','JOB_EDIT']" style="margin-left: -2px" type="text" size="mini" @click="execute(scope.row.id)">执行</el-button>
+          <el-button v-permission="['ADMIN','JOB_ALL','JOB_EDIT']" style="margin-left: 3px" type="text" size="mini" @click="updateStatus(scope.row.id,scope.row.isPause ? '恢复' : '暂停')">
             {{ scope.row.isPause ? '恢复' : '暂停' }}
           </el-button>
           <el-popover
+            v-permission="['ADMIN','JOB_ALL','JOB_DELETE']"
             :ref="scope.row.id"
-            v-permission="['admin','timing:del']"
             placement="top"
-            width="200"
-          >
+            width="200">
             <p>确定停止并删除该任务吗？</p>
             <div style="text-align: right; margin: 0">
               <el-button size="mini" type="text" @click="$refs[scope.row.id].doClose()">取消</el-button>
-              <el-button :loading="delLoading" type="primary" size="mini" @click="delMethod(scope.row.id)">确定</el-button>
+              <el-button :loading="delLoading" type="primary" size="mini" @click="subDelete(scope.row.id)">确定</el-button>
             </div>
             <el-button slot="reference" type="text" size="mini">删除</el-button>
           </el-popover>
@@ -113,41 +97,34 @@
       </el-table-column>
     </el-table>
     <!--分页组件-->
-    <pagination />
+    <el-pagination
+      :total="total"
+      :current-page="page + 1"
+      style="margin-top: 8px;"
+      layout="total, prev, pager, next, sizes"
+      @size-change="sizeChange"
+      @current-change="pageChange"/>
   </div>
 </template>
 
 <script>
-import crudJob from '@/api/system/timing'
+import checkPermission from '@/utils/permission'
+import initData from '@/mixins/initData'
+import { del, updateIsPause, execution, add, edit } from '@/api/timing'
+import { parseTime } from '@/utils/index'
 import Log from './log'
-import CRUD, { presenter, header, form, crud } from '@crud/crud'
-import rrOperation from '@crud/RR.operation'
-import crudOperation from '@crud/CRUD.operation'
-import pagination from '@crud/Pagination'
-import DateRangePicker from '@/components/DateRangePicker'
-
-const defaultForm = { id: null, jobName: null, subTask: null, beanName: null, methodName: null, params: null, cronExpression: null, pauseAfterFailure: true, isPause: false, personInCharge: null, email: null, description: null }
 export default {
   name: 'Timing',
-  components: { Log, pagination, crudOperation, rrOperation, DateRangePicker },
-  cruds() {
-    return CRUD({ title: '定时任务', url: 'api/jobs', crudMethod: { ...crudJob }})
-  },
-  mixins: [presenter(), header(), form(defaultForm), crud()],
+  components: { Log },
+  mixins: [initData],
   data() {
     return {
-      delLoading: false,
-      permission: {
-        add: ['admin', 'timing:add'],
-        edit: ['admin', 'timing:edit'],
-        del: ['admin', 'timing:del']
-      },
+      delLoading: false, isAdd: false,
+      loading: false, dialog: false,
+      form: { jobName: '', beanName: '', methodName: '', params: '', cronExpression: '', isPause: 'false', remark: '' }, permissionIds: [],
       rules: {
         jobName: [
           { required: true, message: '请输入任务名称', trigger: 'blur' }
-        ],
-        description: [
-          { required: true, message: '请输入任务描述', trigger: 'blur' }
         ],
         beanName: [
           { required: true, message: '请输入Bean名称', trigger: 'blur' }
@@ -157,57 +134,130 @@ export default {
         ],
         cronExpression: [
           { required: true, message: '请输入Cron表达式', trigger: 'blur' }
-        ],
-        personInCharge: [
-          { required: true, message: '请输入负责人名称', trigger: 'blur' }
         ]
       }
     }
   },
+  created() {
+    this.$nextTick(() => {
+      this.init()
+    })
+  },
   methods: {
-    // 执行
+    parseTime,
+    checkPermission,
+    beforeInit() {
+      this.url = 'api/jobs'
+      const sort = 'id,desc'
+      const query = this.query
+      const value = query.value
+      this.params = { page: this.page, size: this.size, sort: sort }
+      if (value) { this.params['jobName'] = value }
+      return true
+    },
     execute(id) {
-      crudJob.execution(id).then(res => {
-        this.crud.notify('执行成功', CRUD.NOTIFICATION_TYPE.SUCCESS)
+      execution(id).then(res => {
+        this.$notify({
+          title: '执行成功',
+          type: 'success',
+          duration: 2500
+        })
       }).catch(err => {
         console.log(err.response.data.message)
       })
     },
-    // 改变状态
     updateStatus(id, status) {
-      if (status === '恢复') {
-        this.updateParams(id)
-      }
-      crudJob.updateIsPause(id).then(res => {
-        this.crud.toQuery()
-        this.crud.notify(status + '成功', CRUD.NOTIFICATION_TYPE.SUCCESS)
+      updateIsPause(id).then(res => {
+        this.init()
+        this.$notify({
+          title: status + '成功',
+          type: 'success',
+          duration: 2500
+        })
       }).catch(err => {
         console.log(err.response.data.message)
       })
     },
-    updateParams(id) {
-      console.log(id)
-    },
-    delMethod(id) {
+    subDelete(id) {
       this.delLoading = true
-      crudJob.del([id]).then(() => {
+      del(id).then(res => {
         this.delLoading = false
         this.$refs[id].doClose()
-        this.crud.dleChangePage(1)
-        this.crud.delSuccessNotify()
-        this.crud.toQuery()
-      }).catch(() => {
+        this.dleChangePage()
+        this.init()
+        this.$notify({
+          title: '删除成功',
+          type: 'success',
+          duration: 2500
+        })
+      }).catch(err => {
         this.delLoading = false
         this.$refs[id].doClose()
+        console.log(err.response.data.message)
       })
     },
-    // 显示日志
+    toQuery() {
+      this.page = 0
+      this.init()
+    },
     doLog() {
       this.$refs.log.dialog = true
       this.$refs.log.doInit()
     },
-    checkboxT(row, rowIndex) {
-      return row.id !== 1
+    cancel() {
+      this.resetForm()
+    },
+    doSubmit() {
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
+          this.loading = true
+          if (this.isAdd) {
+            this.doAdd()
+          } else this.doEdit()
+        } else {
+          return false
+        }
+      })
+    },
+    doAdd() {
+      add(this.form).then(res => {
+        this.resetForm()
+        this.$notify({
+          title: '添加成功',
+          type: 'success',
+          duration: 2500
+        })
+        this.loading = false
+        this.init()
+      }).catch(err => {
+        this.loading = false
+        console.log(err.response.data.message)
+      })
+    },
+    doEdit() {
+      edit(this.form).then(res => {
+        this.resetForm()
+        this.$notify({
+          title: '修改成功',
+          type: 'success',
+          duration: 2500
+        })
+        this.loading = false
+        this.init()
+      }).catch(err => {
+        this.loading = false
+        console.log(err.response.data.message)
+      })
+    },
+    resetForm() {
+      this.dialog = false
+      this.$refs['form'].resetFields()
+      this.form = { jobName: '', beanName: '', methodName: '', params: '', cronExpression: '', isPause: 'false', remark: '' }
+    },
+    edit(data) {
+      this.isAdd = false
+      this.form = { id: data.id, jobName: data.jobName, beanName: data.beanName, methodName: data.methodName, params: data.params, cronExpression: data.cronExpression, isPause: data.isPause.toString(), remark: data.remark }
+      this.dialog = true
     }
   }
 }
