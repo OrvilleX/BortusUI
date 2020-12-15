@@ -2,6 +2,7 @@ import { initData, download } from '@/api/data'
 import { parseTime, downloadFile } from '@/utils/index'
 import { AxiosResponse } from 'axios'
 import { ElForm } from 'element-ui/types/form'
+import { ElTable } from 'element-ui/types/table'
 import Vue from 'vue'
 import { Base, CRUD_TYPE, IDataStatus } from './base'
 
@@ -21,6 +22,7 @@ export default class CRUD<F, Q, D> extends Base<F> {
   url = ""
   sort = ['id,desc']
   time = 50
+  defaultQuery = {}
 
   props = {}
 
@@ -34,11 +36,7 @@ export default class CRUD<F, Q, D> extends Base<F> {
   defaultForm() {
   }
 
-  /**
-   * 获取查询对象
-   */
   private getQueryParams() {
-    // 清除参数无值的情况
     Object.keys(this.query).length !== 0 && Object.keys(this.query).forEach(item => {
       if (this.query[item] === null || this.query[item] === '') this.query[item] = undefined
     })
@@ -54,7 +52,7 @@ export default class CRUD<F, Q, D> extends Base<F> {
     }
   }
 
-  protected async refresh() {
+  async refresh() {
     if (!this.beforeRefresh()) {
       return
     }
@@ -63,8 +61,8 @@ export default class CRUD<F, Q, D> extends Base<F> {
       let res = await initData<Q, D>(this.url, this.getQueryParams())
       const table = this.getTable()
       if (table && table.lazy) {
-        table.store.states.treeData = {}
-        table.store.states.lazyTreeNodeMap = {}
+        (table as any).store.states.treeData = {};
+        (table as any).store.states.lazyTreeNodeMap = {};
       }
       this.page.total = res.data.totalElements
       this.data = res.data.content
@@ -259,421 +257,121 @@ export default class CRUD<F, Q, D> extends Base<F> {
     }
   }
 
+  private selectionChangeHandler(val: any[]) {
+    this.selections = val
+  }
 
-}
+  protected resetQuery(toQuery = true) {
+    const defaultQuery = JSON.parse(JSON.stringify(this.defaultQuery))
+    const query = this.query
+    Object.keys(query).forEach(key => {
+      query[key] = defaultQuery[key]
+    })
+    this.params = {}
+    if (toQuery) {
+      this.toQuery()
+    }
+  }
 
-/**
- * 通用CRUD组件
- */
-function CRUDs(options) {
+  private resetForm(data?: any) {
+    const form = data || (typeof this.defaultForm === 'object' ? JSON.parse(JSON.stringify(this.defaultForm)) : this.defaultForm.apply(this.findVM('form')))
+    const crudFrom = this.form
+    for (const key in form) {
+      if (crudFrom.hasOwnProperty(key)) {
+        crudFrom[key] = form[key]
+      } else {
+        Vue.set(crudFrom, key, form[key])
+      }
+    }
+  }
 
-  const methods = {
-    // 选择改变
-    selectionChangeHandler(val) {
-      crud.selections = val
-    },
-    /**
-     * 重置查询参数
-     * @param {Boolean} toQuery 重置后进行查询操作
-     */
-    resetQuery(toQuery = true) {
-      const defaultQuery = JSON.parse(JSON.stringify(crud.defaultQuery))
-      const query = crud.query
-      Object.keys(query).forEach(key => {
-        query[key] = defaultQuery[key]
+  resetDataStatus() {
+    const dataStatus: IDataStatus[] = []
+    let resetStatus = (datas: any) => {
+      datas.forEach((e: any) => {
+        dataStatus[this.getDataId(e)] = {
+          delete: 0,
+          edit: 0
+        }
+        if (e.children) {
+          resetStatus(e.children)
+        }
       })
-      // 重置参数
-      this.params = {}
-      if (toQuery) {
-        crud.toQuery()
-      }
-    },
-    /**
-     * 重置表单
-     * @param {Array} data 数据
-     */
-    resetForm(data) {
-      const form = data || (typeof crud.defaultForm === 'object' ? JSON.parse(JSON.stringify(crud.defaultForm)) : crud.defaultForm.apply(crud.findVM('form')))
-      const crudFrom = crud.form
-      for (const key in form) {
-        if (crudFrom.hasOwnProperty(key)) {
-          crudFrom[key] = form[key]
-        } else {
-          Vue.set(crudFrom, key, form[key])
-        }
-      }
-    },
-    /**
-     * 重置数据状态
-     */
-    resetDataStatus() {
-      const dataStatus = {}
-      function resetStatus(datas) {
-        datas.forEach(e => {
-          dataStatus[crud.getDataId(e)] = {
-            delete: 0,
-            edit: 0
-          }
-          if (e.children) {
-            resetStatus(e.children)
-          }
-        })
-      }
-      resetStatus(crud.data)
-      crud.dataStatus = dataStatus
-    },
-    /**
-     * 获取数据状态
-     * @param {Number | String} id 数据项id
-     */
-    getDataStatus(id) {
-      return crud.dataStatus[id]
-    },
-    /**
-     * 用于树形表格多选, 选中所有
-     * @param selection
-     */
-    selectAllChange(selection) {
-      // 如果选中的数目与请求到的数目相同就选中子节点，否则就清空选中
-      if (selection && selection.length === crud.data.length) {
-        selection.forEach(val => {
-          crud.selectChange(selection, val)
-        })
-      } else {
-        crud.getTable().clearSelection()
-      }
-    },
-    /**
-     * 用于树形表格多选，单选的封装
-     * @param selection
-     * @param row
-     */
-    selectChange(selection, row) {
-      // 如果selection中存在row代表是选中，否则是取消选中
-      if (selection.find(val => { return crud.getDataId(val) === crud.getDataId(row) })) {
-        if (row.children) {
-          row.children.forEach(val => {
-            crud.getTable().toggleRowSelection(val, true)
-            selection.push(val)
-            if (val.children) {
-              crud.selectChange(selection, val)
-            }
-          })
-        }
-      } else {
-        crud.toggleRowSelection(selection, row)
-      }
-    },
-    /**
-     * 切换选中状态
-     * @param selection
-     * @param data
-     */
-    toggleRowSelection(selection, data) {
-      if (data.children) {
-        data.children.forEach(val => {
-          crud.getTable().toggleRowSelection(val, false)
+    }
+    resetStatus(this.data)
+    this.dataStatus = dataStatus
+  }
+
+  private selectAllChange(selection: any[]) {
+    if (selection && selection.length === this.data.length) {
+      selection.forEach(val => {
+        this.selectChange(selection, val)
+      })
+    } else {
+      this.getTable().clearSelection()
+    }
+  }
+
+  private selectChange(selection: any[], row: any) {
+    if (selection.find(val => { return this.getDataId(val) === this.getDataId(row) })) {
+      if (row.children) {
+        row.children.forEach((val: any) => {
+          this.getTable().toggleRowSelection(val, true)
+          selection.push(val)
           if (val.children) {
-            crud.toggleRowSelection(selection, val)
+            this.selectChange(selection, val)
           }
         })
       }
-    },
-    findVM(type) {
-      return crud.vms.find(vm => vm && vm.type === type).vm
-    },
-    updateProp(name, value) {
-      Vue.set(crud.props, name, value)
-    },
-    getDataId(data) {
-      return data[this.idField]
-    },
-    getTable() {
-      return this.findVM('presenter').$refs.table
-    },
-    attchTable() {
-      const table = this.getTable()
-      this.updateProp('table', table)
-      const that = this
-      table.$on('expand-change', (row, expanded) => {
-        if (!expanded) {
-          return
+    } else {
+      this.toggleRowSelection(selection, row)
+    }
+  }
+
+  private toggleRowSelection(selection: any[], data: any) {
+    if (data.children) {
+      data.children.forEach((val: any) => {
+        this.getTable().toggleRowSelection(val, false)
+        if (val.children) {
+          this.toggleRowSelection(selection, val)
         }
-        const lazyTreeNodeMap = table.store.states.lazyTreeNodeMap
-        row.children = lazyTreeNodeMap[crud.getDataId(row)]
-        if (row.children) {
-          row.children.forEach(ele => {
-            const id = crud.getDataId(ele)
-            if (that.dataStatus[id] === undefined) {
-              that.dataStatus[id] = {
-                delete: 0,
-                edit: 0
-              }
+      })
+    }
+  }
+
+  updateProp(name: string | number, value: any) {
+    Vue.set(this.props, name, value)
+  }
+
+  getDataId(data: any) {
+    return data[this.idField]
+  }
+
+  getTable() {
+    return this.$refs.table as ElTable
+  }
+
+  attchTable() {
+    const table = this.getTable()
+    this.updateProp('table', table)
+    const that = this
+    table.$on('expand-change', (row: any, expanded: any) => {
+      if (!expanded) {
+        return
+      }
+      const lazyTreeNodeMap = (table as any).store.states.lazyTreeNodeMap
+      row.children = lazyTreeNodeMap[this.getDataId(row)]
+      if (row.children) {
+        row.children.forEach((ele: any) => {
+          const id = this.getDataId(ele)
+          if (that.dataStatus[id] === undefined) {
+            that.dataStatus[id] = {
+              delete: 0,
+              edit: 0
             }
-          })
-        }
-      })
-    }
-  }
-  const crud = Object.assign({}, data)
-  // 可观测化
-  Vue.observable(crud)
-  // 附加方法
-  Object.assign(crud, methods)
-  // 记录初始默认的查询参数，后续重置查询时使用
-  Object.assign(crud, {
-    defaultQuery: JSON.parse(JSON.stringify(data.query)),
-    // 预留4位存储：组件 主页、头部、分页、表单，调试查看也方便找
-    vms: Array(4),
-    /**
-     * 注册组件实例
-     * @param {String} type 类型
-     * @param {*} vm 组件实例
-     * @param {Number} index 该参数内部使用
-     */
-    registerVM(type, vm, index = -1) {
-      const vmObj = {
-        type,
-        vm: vm
-      }
-      if (index < 0) {
-        this.vms.push(vmObj)
-        return
-      }
-      if (index < 4) { // 内置预留vm数
-        this.vms[index] = vmObj
-        return
-      }
-      this.vms.length = Math.max(this.vms.length, index)
-      this.vms.splice(index, 1, vmObj)
-    },
-    /**
-     * 取消注册组件实例
-     * @param {*} vm 组件实例
-     */
-    unregisterVM(type, vm) {
-      for (let i = this.vms.length - 1; i >= 0; i--) {
-        if (this.vms[i] === undefined) {
-          continue
-        }
-        if (this.vms[i].type === type && this.vms[i].vm === vm) {
-          if (i < 4) { // 内置预留vm数
-            this.vms[i] = undefined
-          } else {
-            this.vms.splice(i, 1)
           }
-          break
-        }
+        })
       }
-    }
-  })
-  // 冻结处理，需要扩展数据的话，使用crud.updateProp(name, value)，以crud.props.name形式访问，这个是响应式的，可以做数据绑定
-  Object.freeze(crud)
-  return crud
-}
-
-// hook VM
-function callVmHook(crud, hook) {
-  if (crud.debug) {
-    console.log('callVmHook: ' + hook)
+    })
   }
-  const tagHook = crud.tag ? hook + '$' + crud.tag : null
-  let ret = true
-  const nargs = [crud]
-  for (let i = 2; i < arguments.length; ++i) {
-    nargs.push(arguments[i])
-  }
-  // 有些组件扮演了多个角色，调用钩子时，需要去重
-  const vmSet = new Set()
-  crud.vms.forEach(vm => vm && vmSet.add(vm.vm))
-  vmSet.forEach(vm => {
-    if (vm[hook]) {
-      ret = vm[hook].apply(vm, nargs) !== false && ret
-    }
-    if (tagHook && vm[tagHook]) {
-      ret = vm[tagHook].apply(vm, nargs) !== false && ret
-    }
-  })
-  return ret
-}
-
-function mergeOptions(src, opts) {
-  const optsRet = {
-    ...src
-  }
-  for (const key in src) {
-    if (opts.hasOwnProperty(key)) {
-      optsRet[key] = opts[key]
-    }
-  }
-  return optsRet
-}
-
-/**
- * 查找crud
- * @param {*} vm
- * @param {string} tag
- */
-function lookupCrud(vm, tag) {
-  tag = tag || vm.$attrs['crud-tag'] || 'default'
-  // function lookupCrud(vm, tag) {
-  if (vm.$crud) {
-    const ret = vm.$crud[tag]
-    if (ret) {
-      return ret
-    }
-  }
-  return vm.$parent ? lookupCrud(vm.$parent, tag) : undefined
-}
-
-/**
- * crud主页
- */
-function presenter(crud) {
-  if (crud) {
-    console.warn('[CRUD warn]: ' + 'please use $options.cruds() { return CRUD(...) or [CRUD(...), ...] }')
-  }
-  return {
-    data() {
-      // 在data中返回crud，是为了将crud与当前实例关联，组件观测crud相关属性变化
-      return {
-        crud: this.crud
-      }
-    },
-    beforeCreate() {
-      this.$crud = this.$crud || {}
-      let cruds = this.$options.cruds instanceof Function ? this.$options.cruds() : crud
-      if (!(cruds instanceof Array)) {
-        cruds = [cruds]
-      }
-      cruds.forEach(ele => {
-        if (this.$crud[ele.tag]) {
-          console.error('[CRUD error]: ' + 'crud with tag [' + ele.tag + ' is already exist')
-        }
-        this.$crud[ele.tag] = ele
-        ele.registerVM('presenter', this, 0)
-      })
-      this.crud = this.$crud['defalut'] || cruds[0]
-    },
-    methods: {
-      parseTime
-    },
-    created() {
-      for (const k in this.$crud) {
-        if (this.$crud[k].queryOnPresenterCreated) {
-          this.$crud[k].toQuery()
-        }
-      }
-    },
-    destroyed() {
-      for (const k in this.$crud) {
-        this.$crud[k].unregisterVM('presenter', this)
-      }
-    },
-    mounted() {
-      // 如果table未实例化（例如使用了v-if），请稍后在适当时机crud.attchTable刷新table信息
-      if (this.$refs.table !== undefined) {
-        this.crud.attchTable()
-      }
-    }
-  }
-}
-
-/**
- * 头部
- */
-function header() {
-  return {
-    data() {
-      return {
-        crud: this.crud,
-        query: this.crud.query
-      }
-    },
-    beforeCreate() {
-      this.crud = lookupCrud(this)
-      this.crud.registerVM('header', this, 1)
-    },
-    destroyed() {
-      this.crud.unregisterVM('header', this)
-    }
-  }
-}
-
-/**
- * 分页
- */
-function pagination() {
-  return {
-    data() {
-      return {
-        crud: this.crud,
-        page: this.crud.page
-      }
-    },
-    beforeCreate() {
-      this.crud = lookupCrud(this)
-      this.crud.registerVM('pagination', this, 2)
-    },
-    destroyed() {
-      this.crud.unregisterVM('pagination', this)
-    }
-  }
-}
-
-/**
- * 表单
- */
-function form(defaultForm) {
-  return {
-    data() {
-      return {
-        crud: this.crud,
-        form: this.crud.form
-      }
-    },
-    beforeCreate() {
-      this.crud = lookupCrud(this)
-      this.crud.registerVM('form', this, 3)
-    },
-    created() {
-      this.crud.defaultForm = defaultForm
-      this.crud.resetForm()
-    },
-    destroyed() {
-      this.crud.unregisterVM('form', this)
-    }
-  }
-}
-
-/**
- * crud
- */
-function crud(options = {}) {
-  const defaultOptions = {
-    type: undefined
-  }
-  options = mergeOptions(defaultOptions, options)
-  return {
-    data() {
-      return {
-        crud: this.crud
-      }
-    },
-    beforeCreate() {
-      this.crud = lookupCrud(this)
-      this.crud.registerVM(options.type, this)
-    },
-    destroyed() {
-      this.crud.unregisterVM(options.type, this)
-    }
-  }
-}
-
-export {
-  presenter,
-  header,
-  form,
-  pagination,
-  crud
 }

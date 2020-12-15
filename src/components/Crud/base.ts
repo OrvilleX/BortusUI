@@ -164,6 +164,9 @@ export abstract class Base<F> extends Vue {
       this.refresh()
     }
     
+    protected getDataStatus(id: number | string) {
+        return this.dataStatus[id]
+    }
 }
 
 export enum NOTIFICATION_TYPE {
