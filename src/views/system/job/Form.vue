@@ -46,13 +46,13 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from "vue-property-decorator";
-import { add, edit } from "@/api/system/job";
-import Treeselect from "@riophae/vue-treeselect";
-import "@riophae/vue-treeselect/dist/vue-treeselect.css";
-import { IDictDetailDtoData } from "@/types/dictDetail";
-import { IJobData } from "@/types/job";
-import { ElForm } from "element-ui/types/form";
+import { Vue, Component, Prop } from 'vue-property-decorator'
+import { add, edit } from '@/api/system/job'
+import Treeselect from '@riophae/vue-treeselect'
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+import { IDictDetailDtoData } from '@/types/dictDetail'
+import { IJobData } from '@/types/job'
+import { ElForm } from 'element-ui/types/form'
 
 @Component({
   name: "JobForm",

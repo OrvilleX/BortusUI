@@ -58,11 +58,14 @@
   </el-dialog>
 </template>
 
-<script>
-import { add, edit, getMenusTree } from '@/api/menu'
+<script lang="ts">
+import { Vue, Component, Prop } from 'vue-property-decorator'
+import { ElForm } from 'element-ui/types/form'
+import { add, edit, getMenusTree } from '@/api/system/menu'
 import Treeselect from '@riophae/vue-treeselect'
 import IconSelect from '@/components/IconSelect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+
 export default {
   components: { Treeselect, IconSelect },
   props: {
