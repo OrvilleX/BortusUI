@@ -5,7 +5,7 @@ import { IPageableBody } from '@/types/base';
 /**
  * 获取所有菜单数据
  */
-export const getMenusTree = (pid: number) => {
+export const getMenusTree = (pid?: number) => {
     return request.get<IMenuDtoData[]>("api/menus/lazy?pid" + pid);
 }
 

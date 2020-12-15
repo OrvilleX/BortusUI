@@ -35,21 +35,21 @@ export interface IMenuData {
  * 菜单输出数据包
  */
 export interface IMenuDtoData {
-    id: number
-    children: IMenuDtoData[]
-    type: number
-    permission: string
-    title: string
-    menuSort: number
-    path: string
-    component: string
-    pid: number
-    subCount: number
-    iFrame: boolean
-    cache: boolean
-    hidden: boolean
-    componentName: string
-    icon: string
+    id?: number
+    children?: IMenuDtoData[]
+    type?: number
+    permission?: string
+    title?: string
+    menuSort?: number
+    path?: string
+    component?: string
+    pid?: number
+    subCount?: number
+    iFrame?: boolean
+    cache?: boolean
+    hidden?: boolean
+    componentName?: string
+    icon?: string
 }
 
 /**
