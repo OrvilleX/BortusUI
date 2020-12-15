@@ -17,4 +17,5 @@ export interface IJobData {
     name?: string
     jobSort?: number
     enabled?: boolean
+    createTime?: string
 }

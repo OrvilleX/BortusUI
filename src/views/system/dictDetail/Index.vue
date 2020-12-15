@@ -104,13 +104,13 @@
 </template>
 
 <script lang="ts">
-import { checkPermission } from "@/utils/permission";
-import { Vue, Component, Prop } from "vue-property-decorator";
-import initData from "@/mixins/initData";
-import { del } from "@/api/system/dictDetail";
-import eForm from "./Form.vue";
-import { IDictDetailQueryData, IDictDetailDtoData } from "@/types/dictDetail";
-import { mixins } from "vue-class-component";
+import { checkPermission } from '@/utils/permission'
+import { Vue, Component, Prop } from 'vue-property-decorator'
+import initData from '@/mixins/initData'
+import { del } from '@/api/system/dictDetail'
+import eForm from './Form.vue'
+import { IDictDetailQueryData, IDictDetailDtoData } from '@/types/dictDetail'
+import { mixins } from 'vue-class-component'
 
 interface IDictDetailSearch {
   value?: string;

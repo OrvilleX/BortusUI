@@ -9,4 +9,5 @@
 * system/dept 完成  
 * system/dict 完成  
 * system/dictDetail 完成  
+* system/job 完成  
 * 
