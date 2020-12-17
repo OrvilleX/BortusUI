@@ -14,7 +14,9 @@ export interface IUserState {
 @Module({ dynamic: true, store, name: 'user' })
 export default class User extends VuexModule implements IUserState {
     public token = "";
-    public user: IJwtUserDtoData = {username:'', roles:[], dataScopee:[]};
+    public user: IJwtUserDtoData = {
+        id: NaN, nickName: "", username: "", 
+        gender: "", phone: "", roles:[], dataScopee:[]};
     public roles: string[] = [];
     public loadMenus = false;
 

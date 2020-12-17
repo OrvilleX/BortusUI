@@ -24,6 +24,7 @@ export interface IDeptData {
     pid?: number
     subCount?: number
     createTime?: string
+    isTop?: string
 }
 
 export interface IDeptDtoData {
@@ -35,6 +36,7 @@ export interface IDeptDtoData {
     pid: number
     subCount: number
     createTime: string
+    hasChildren: boolean
 }
 
 export interface IDeptSmallDtoData {

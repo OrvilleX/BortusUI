@@ -16,7 +16,7 @@ export const add = (data: IUserData) => {
 /**
  * 删除用户
  */
-export const del = (ids: string[]) => {
+export const del = (ids: number[]) => {
     return request({
         url: "/api/users",
         method: "delete",

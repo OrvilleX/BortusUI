@@ -2,86 +2,232 @@
   <div class="app-container">
     <!--工具栏-->
     <div class="head-container">
-      <!-- 搜索 -->
-      <el-input
-        v-model="query.value"
-        clearable
-        placeholder="输入部门名称搜索"
-        style="width: 200px"
-        class="filter-item"
-        @keyup.enter.native="toQuery"
-      />
-      <el-select
-        v-model="query.enabled"
-        clearable
-        placeholder="状态"
-        class="filter-item"
-        style="width: 90px"
-        @change="toQuery"
-      >
-        <el-option
-          v-for="item in enabledTypeOptions"
-          :key="item.key"
-          :label="item.display_name"
-          :value="item.key"
+      <div v-if="props.searchToggle">
+        <!-- 搜索 -->
+        <el-input
+          v-model="query.name"
+          clearable
+          size="small"
+          placeholder="输入部门名称搜索"
+          style="width: 200px"
+          class="filter-item"
+          @keyup.enter.native="toQuery"
         />
-      </el-select>
-      <el-button
-        class="filter-item"
-        size="mini"
-        type="success"
-        icon="el-icon-search"
-        @click="toQuery"
-        >搜索</el-button
-      >
-      <!-- 新增 -->
-      <div
-        v-permission="['ADMIN', 'DEPT_ALL', 'DEPT_CREATE']"
-        style="display: inline-block; margin: 0px 2px"
-      >
-        <el-button
+        <date-range-picker v-model="query.createTime" class="date-item" />
+        <el-select
+          v-model="query.enabled"
+          clearable
+          size="small"
+          placeholder="状态"
           class="filter-item"
-          size="mini"
-          type="primary"
-          icon="el-icon-plus"
-          @click="add"
-          >新增</el-button
+          style="width: 90px"
+          @change="toQuery"
         >
+          <el-option
+            v-for="item in enabledTypeOptions"
+            :key="item.key"
+            :label="item.display_name"
+            :value="item.key"
+          />
+        </el-select>
+        <span>
+          <el-button
+            class="filter-item"
+            size="mini"
+            type="success"
+            icon="el-icon-search"
+            @click="toQuery"
+            >搜索</el-button
+          >
+          <el-button
+            v-if="optShow.reset"
+            class="filter-item"
+            size="mini"
+            type="warning"
+            icon="el-icon-refresh-left"
+            @click="resetQuery()"
+            >重置</el-button
+          >
+        </span>
       </div>
-      <div style="display: inline-block">
-        <el-button
-          class="filter-item"
-          size="mini"
-          type="warning"
-          icon="el-icon-more"
-          @click="changeExpand"
-          >{{ expand ? "折叠" : "展开" }}</el-button
-        >
-        <eForm ref="form" :is-add="true" :dicts="dicts" />
+      <div class="crud-opts">
+        <span class="crud-opts-left">
+          <!--左侧插槽-->
+          <slot name="left" />
+          <el-button
+            v-if="optShow.add"
+            v-permission="permission.add"
+            class="filter-item"
+            size="mini"
+            type="primary"
+            icon="el-icon-plus"
+            @click="toAdd"
+          >
+            新增
+          </el-button>
+          <el-button
+            v-if="optShow.edit"
+            v-permission="permission.edit"
+            class="filter-item"
+            size="mini"
+            type="success"
+            icon="el-icon-edit"
+            :disabled="selections.length !== 1"
+            @click="toEdit(selections[0])"
+          >
+            修改
+          </el-button>
+          <el-button
+            v-if="optShow.del"
+            slot="reference"
+            v-permission="permission.del"
+            class="filter-item"
+            type="danger"
+            icon="el-icon-delete"
+            size="mini"
+            :loading="delAllLoading"
+            :disabled="selections.length === 0"
+            @click="toDelete(selections)"
+          >
+            删除
+          </el-button>
+          <el-button
+            v-if="optShow.download"
+            :loading="downloadLoading"
+            :disabled="!data.length"
+            class="filter-item"
+            size="mini"
+            type="warning"
+            icon="el-icon-download"
+            @click="doExport"
+            >导出</el-button
+          >
+          <!--右侧-->
+          <slot name="right" />
+        </span>
+        <el-button-group class="crud-opts-right">
+          <el-button
+            size="mini"
+            plain
+            type="info"
+            icon="el-icon-search"
+            @click="toggleSearch()"
+          />
+          <el-button size="mini" icon="el-icon-refresh" @click="refresh()" />
+          <el-popover placement="bottom-end" width="150" trigger="click">
+            <el-button slot="reference" size="mini" icon="el-icon-s-grid">
+              <i class="fa fa-caret-down" aria-hidden="true" />
+            </el-button>
+            <el-checkbox
+              v-model="allColumnsSelected"
+              :indeterminate="allColumnsSelectedIndeterminate"
+              @change="handleCheckAllChange"
+            >
+              全选
+            </el-checkbox>
+            <el-checkbox
+              v-for="item in tableColumns"
+              :key="item.property"
+              v-model="item.visible"
+              @change="handleCheckedTableColumnsChange(item)"
+            >
+              {{ item.label }}
+            </el-checkbox>
+          </el-popover>
+        </el-button-group>
       </div>
     </div>
     <!--表单组件-->
-    <eForm ref="form" :is-add="isAdd" :dicts="dicts" />
+    <el-dialog
+      append-to-body
+      :close-on-click-modal="false"
+      :before-close="cancelCU"
+      :visible="status > 0"
+      :title="dialogTitle"
+      width="500px"
+    >
+      <el-form
+        ref="form"
+        inline
+        :model="form"
+        :rules="rules"
+        size="small"
+        label-width="80px"
+      >
+        <el-form-item label="部门名称" prop="name">
+          <el-input v-model="form.name" style="width: 370px" />
+        </el-form-item>
+        <el-form-item label="部门排序" prop="deptSort">
+          <el-input-number
+            v-model.number="form.deptSort"
+            :min="0"
+            :max="999"
+            controls-position="right"
+            style="width: 370px"
+          />
+        </el-form-item>
+        <el-form-item label="顶级部门">
+          <el-radio-group v-model="form.isTop" style="width: 140px">
+            <el-radio label="1">是</el-radio>
+            <el-radio label="0">否</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="状态" prop="enabled">
+          <el-radio
+            v-for="item in dict.dept_status"
+            :key="item.id"
+            v-model="form.enabled"
+            :label="item.value"
+            >{{ item.label }}</el-radio
+          >
+        </el-form-item>
+        <el-form-item
+          v-if="form.isTop === '0'"
+          style="margin-bottom: 0"
+          label="上级部门"
+          prop="pid"
+        >
+          <treeselect
+            v-model="form.pid"
+            :load-options="loadDepts"
+            :options="depts"
+            style="width: 370px"
+            placeholder="选择上级类目"
+          />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="text" @click="cancelCU">取消</el-button>
+        <el-button :loading="status === 2" type="primary" @click="submitCU"
+          >确认</el-button
+        >
+      </div>
+    </el-dialog>
     <!--表格渲染-->
     <el-table
       ref="table"
       v-loading="loading"
       lazy
+      :load="getDeptDatas"
       :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
       :data="data"
       row-key="id"
+      @select="selectChange"
+      @select-all="selectAllChange"
+      @selection-change="selectionChangeHandler"
     >
+      <el-table-column :selectable="checkboxT" type="selection" width="55" />
       <el-table-column label="名称" prop="name" />
       <el-table-column label="排序" prop="deptSort" />
-      <el-table-column label="状态" align="center">
+      <el-table-column label="状态" align="center" prop="enabled">
         <template slot-scope="scope">
-          <div v-for="item in dicts" :key="item.id">
-            <el-tag
-              v-if="scope.row.enabled.toString() === item.value"
-              :type="scope.row.enabled ? '' : 'info'"
-              >{{ item.label }}</el-tag
-            >
-          </div>
+          <el-switch
+            v-model="scope.row.enabled"
+            :disabled="scope.row.id === 1"
+            active-color="#409EFF"
+            inactive-color="#F56C6C"
+            @change="changeEnabled(scope.row, scope.row.enabled)"
+          />
         </template>
       </el-table-column>
       <el-table-column prop="createTime" label="创建日期">
@@ -90,52 +236,55 @@
         </template>
       </el-table-column>
       <el-table-column
-        v-if="
-          checkPermission(['ADMIN', 'DEPT_ALL', 'DEPT_EDIT', 'DEPT_DELETE'])
-        "
+        v-permission="['admin', 'dept:edit', 'dept:del']"
         label="操作"
         width="130px"
         align="center"
         fixed="right"
       >
         <template slot-scope="scope">
-          <el-button
-            v-permission="['ADMIN', 'DEPT_ALL', 'DEPT_EDIT']"
-            size="mini"
-            type="primary"
-            icon="el-icon-edit"
-            @click="edit(scope.row)"
-          />
-          <el-popover
-            v-permission="['ADMIN', 'DEPT_ALL', 'DEPT_DELETE']"
-            :ref="scope.row.id"
-            placement="top"
-            width="180"
-          >
-            <p>确定删除本条数据吗？</p>
-            <div style="text-align: right; margin: 0">
-              <el-button
-                size="mini"
-                type="text"
-                @click="$refs[scope.row.id].doClose()"
-                >取消</el-button
-              >
-              <el-button
-                :loading="delLoading"
-                type="primary"
-                size="mini"
-                @click="subDelete(scope.row.id)"
-                >确定</el-button
-              >
-            </div>
+          <div>
             <el-button
-              slot="reference"
-              :disabled="scope.row.id === 1"
-              type="danger"
-              icon="el-icon-delete"
+              v-permission="permission.edit"
+              :loading="status === 2"
+              :disabled="disabledEdit"
               size="mini"
+              type="primary"
+              icon="el-icon-edit"
+              @click="toEdit(data)"
             />
-          </el-popover>
+            <el-popover
+              v-model="pop"
+              v-permission="permission.del"
+              placement="top"
+              width="180"
+              trigger="manual"
+              @show="onPopoverShow"
+              @hide="onPopoverHide"
+            >
+              <p>确定删除吗,如果存在下级节点则一并删除，此操作不能撤销！</p>
+              <div style="text-align: right; margin: 0">
+                <el-button size="mini" type="text" @click="doCancel"
+                  >取消</el-button
+                >
+                <el-button
+                  :loading="dataStatus[getDataId(scope.row)].delete === 2"
+                  type="primary"
+                  size="mini"
+                  @click="doDelete(scope.row)"
+                  >确定</el-button
+                >
+              </div>
+              <el-button
+                slot="reference"
+                :disabled="scope.row.id === 1"
+                type="danger"
+                icon="el-icon-delete"
+                size="mini"
+                @click="toDelete"
+              />
+            </el-popover>
+          </div>
         </template>
       </el-table-column>
     </el-table>
@@ -143,104 +292,205 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
-import { checkPermission } from "@/utils/permission";
-import initData from "@/mixins/initData";
-import initDict from "@/mixins/initDict";
-import { del } from "@/api/system/dept";
-import { parseTime } from "@/utils/index";
-import eForm from "./Form.vue";
+import { Vue, Component } from "vue-property-decorator";
+import crudDept from "@/api/system/dept";
+import Treeselect from "@riophae/vue-treeselect";
+import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import { LOAD_CHILDREN_OPTIONS } from "@riophae/vue-treeselect";
+import CRUD from "@/components/Crud";
+import DateRangePicker from "@/components/DateRangePicker/Index.vue";
 import { mixins } from "vue-class-component";
-import { IDeptQueryData, IDeptDtoData } from "@/types/dept";
-
-interface IDeptSearch {
-  value?: string;
-  enabled?: boolean;
-}
+import { IDeptData, IDeptQueryData, IDeptDtoData } from "@/types/dept";
+import { ElTable } from "element-ui/types/table";
+import { NOTIFICATION_TYPE } from "@/components/Crud/base";
 
 @Component({
   name: "Dept",
   components: {
-    eForm,
+    Treeselect,
+    DateRangePicker,
   },
 })
 export default class extends mixins<
-  initData<IDeptQueryData, IDeptDtoData, IDeptSearch>,
-  initDict
->(initData, initDict) {
+  CRUD<IDeptData, IDeptQueryData, IDeptDtoData>
+>(CRUD) {
+  title = "部门";
+  url = "api/dept";
+  crudMethod = { ...crudDept };
+  dicts = ["dept_status"];
+  defaultForm = {
+    id: NaN,
+    name: "",
+    isTop: "1",
+    subCount: 0,
+    pid: NaN,
+    deptSort: 999,
+    enabled: true,
+  };
+
+  private depts: IDeptDtoData[] = [];
+  private rules = {
+    name: [{ required: true, message: "请输入名称", trigger: "blur" }],
+    deptSort: [
+      {
+        required: true,
+        message: "请输入序号",
+        trigger: "blur",
+        type: "number",
+      },
+    ],
+  };
+  private permission = {
+    add: ["admin", "dept:add"],
+    edit: ["admin", "dept:edit"],
+    del: ["admin", "dept:del"],
+  };
   private enabledTypeOptions = [
     { key: "true", display_name: "正常" },
     { key: "false", display_name: "禁用" },
   ];
-  private delLoading = false;
-  private expand = true;
-  parseTime = parseTime;
-  checkPermission = checkPermission;
 
   created() {
-    this.$nextTick(() => {
-      this.init();
-      this.getDict("dept_status");
-    });
+    this.resetForm();
   }
 
-  beforeInit() {
-    this.url = "api/dept";
-    const sort = "id,desc";
-    this.params = {
-      page: this.page,
-      size: this.size,
-      sort: sort,
-      name: this.query.value,
-      enabled: this.query.enabled,
-    };
-    return true;
+  private getDeptDatas(tree: IDeptDtoData, treeNode: any, resolve: Function) {
+    const params = { pid: tree.id };
+    setTimeout(async () => {
+      let res = await crudDept.getDepts(params);
+      resolve(res.data.content);
+    }, 100);
   }
 
-  private async subDelete(id: number) {
-    this.delLoading = true;
-    try {
-      await del([id]);
-      this.delLoading = false;
-      (this.$refs[id] as any).doClose();
-      this.init();
-      this.$notify({
-        title: "删除成功",
-        type: "success",
-        message: "",
-        duration: 2500,
-      });
-    } catch (err) {
-      this.delLoading = false;
-      (this.$refs[id] as any).doClose();
-      console.log(err.response.data.message);
+  afterToCU(form: IDeptData) {
+    if (form.pid !== null) {
+      form.isTop = "0";
+    } else if (form.id !== null) {
+      form.isTop = "1";
+    }
+    form.enabled = form.enabled;
+    if (form.id != null) {
+      this.getSupDepts(form.id);
+    } else {
+      this.getDepts();
     }
   }
 
-  private async add() {
-    this.isAdd = true;
-    const deptForm = this.$refs.form as eForm;
-    await deptForm.getDepts();
-    deptForm.dialog = true;
+  private getSupDepts(id: number) {
+    crudDept.getDeptSuperior([id]).then((res) => {
+      const date = res.data;
+      this.buildDepts(date);
+      this.depts = date;
+    });
   }
 
-  private changeExpand() {
-    this.expand = !this.expand;
-    this.init();
+  private buildDepts(depts: IDeptDtoData[]) {
+    depts.forEach((data) => {
+      if (data.children) {
+        this.buildDepts(data.children);
+      }
+      if (data.hasChildren && !data.children) {
+        data.children = [];
+      }
+    });
   }
 
-  private async edit(data: IDeptDtoData) {
-    this.isAdd = false;
-    const deptForm = this.$refs.form as eForm;
-    await deptForm.getDepts();
-    deptForm.form = {
-      id: data.id,
-      name: data.name,
-      pid: data.pid,
-      createTime: data.createTime,
-      enabled: data.enabled,
-    };
-    deptForm.dialog = true;
+  private getDepts() {
+    crudDept.getDepts({ enabled: true }).then((res) => {
+      this.depts = res.data.content.map((data) => {
+        if (data.hasChildren) {
+          data.children = [];
+        }
+        return data;
+      });
+    });
+  }
+
+  private loadDepts(element: {
+    action: any;
+    parentNode: any;
+    callback: Function;
+  }) {
+    if (element.action === LOAD_CHILDREN_OPTIONS) {
+      crudDept
+        .getDepts({ enabled: true, pid: element.parentNode.id })
+        .then((res) => {
+          element.parentNode.children = res.data.content.map((data) => {
+            if (data.hasChildren) {
+              data.children = [];
+            }
+            return data;
+          });
+          setTimeout(() => {
+            element.callback();
+          }, 100);
+        });
+    }
+  }
+
+  afterValidateCU() {
+    if (this.form.pid !== null && this.form.pid === this.form.id) {
+      this.$message({
+        message: "上级部门不能为空",
+        type: "warning",
+      });
+      return false;
+    }
+    if (this.form.isTop === "1") {
+      this.form.pid = NaN;
+    }
+    return true;
+  }
+
+  private changeEnabled(data: IDeptDtoData, val: boolean) {
+    this.$confirm(
+      '此操作将 "' +
+        this.dict.label.dept_status[val ? "true" : "false"] +
+        '" ' +
+        data.name +
+        "部门, 是否继续？",
+      "提示",
+      {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }
+    )
+      .then(() => {
+        crudDept
+          .edit(data)
+          .then((res) => {
+            this.notify(
+              this.dict.label.dept_status[val ? "true" : "false"] + "成功",
+              NOTIFICATION_TYPE.SUCCESS
+            );
+          })
+          .catch((err) => {
+            data.enabled = !data.enabled;
+            console.log(err.response.data.message);
+          });
+      })
+      .catch(() => {
+        data.enabled = !data.enabled;
+      });
+  }
+
+  private checkboxT(row: IDeptData, rowIndex: number) {
+    return row.id !== 1;
   }
 }
 </script>
+
+<style rel="stylesheet/scss" lang="scss" scoped>
+::v-deep .vue-treeselect__control,
+::v-deep .vue-treeselect__placeholder,
+::v-deep .vue-treeselect__single-value {
+  height: 30px;
+  line-height: 30px;
+}
+</style>
+<style rel="stylesheet/scss" lang="scss" scoped>
+::v-deep .el-input-number .el-input__inner {
+  text-align: left;
+}
+</style>

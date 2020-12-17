@@ -34,7 +34,7 @@ export const add = (data: IDictDetailData) => {
 /**
  * 删除字典明细
  */
-export const del = (id: string) => {
+export const del = (ids: number | number[]) => {
     return request.delete("api/dictDetail" + id);
 }
 

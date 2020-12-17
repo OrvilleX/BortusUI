@@ -2,6 +2,7 @@ declare module 'jsencrypt';
 declare module 'vue-count-to';
 declare module '*.png';
 declare module '@riophae/vue-treeselect';
+declare module 'vue-image-crop-upload';
 declare module '*.gif' {
     export const gif: any
 }
@@ -20,7 +21,6 @@ interface Date {
     getWeeksOfYear: (start: boolean) => number;
     humanize: (local: string) => string;
     toNow: () => Date;
-    
 }
 
 interface DateConstructor {

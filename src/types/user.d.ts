@@ -1,18 +1,18 @@
 import { IDeptData } from "./dept";
 import { IJobData } from './job';
 import { IPageable } from './base';
-import { IRoleSmallDtoData } from './role';
+import { IRoleData, IRoleSmallDtoData } from './role';
 
 /**
  * 新增、修改用户数据包
  */
 export interface IUserData {
     id?: number
-    roles?: string[]
-    jobs?: string[]
+    roles?: IRoleData[]
+    jobs?: IJobData[]
     dept?: IDeptData
-    username?: string
-    nickname?: string
+    userName?: string
+    nickName?: string
     email?: string
     phone?: string
     gender?: string

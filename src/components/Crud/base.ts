@@ -1,5 +1,7 @@
 
-import { Vue } from "vue-property-decorator";
+import { Vue, Watch } from "vue-property-decorator";
+import { get as getDictDetail } from '@/api/system/dictDetail'
+import { ElTable } from "element-ui/types/table";
 
 export interface IDataStatus {
     delete: CRUD_TYPE
@@ -9,11 +11,16 @@ export interface IDataStatus {
 export abstract class Base<F> extends Vue {
     title = ""
     debug = false
+    props: any = {}
     queryOnPresenterCreated = true
     loading = false
     downloadLoading = false
     delAllLoading = false
     dataStatus: Array<IDataStatus> = []
+    dict: { dict: any, label: any } = {
+        dict: {},
+        label: {}
+    }
 
     optShow = {
         add: true,
@@ -120,6 +127,30 @@ export abstract class Base<F> extends Vue {
     afterAddError() { }
     afterEditError() { }
 
+    created() {
+        this.updateProp('searchToggle', true)
+        if ((this.$options as any).dicts instanceof Array) {
+            const ps: Promise<void>[] = [];
+            (this.$options as any).forEach((n: any) => {
+                Vue.set(this.dict.dict, n, {})
+                Vue.set(this.dict.label, n, {})
+                Vue.set(this.dict, n, [])
+                ps.push(getDictDetail(n).then(data => {
+                    this.dict[n].splice(0, 0, ...data.data)
+                    data.data.forEach(d => {
+                        Vue.set(this.dict.dict[n], d.value, d)
+                        Vue.set(this.dict.label[n], d.value, d.label)
+                    })
+                }))
+            })
+            Promise.all(ps).then(() => {
+                this.$nextTick(() => {
+                    this.$emit('dictReady')
+                })
+            });
+        }
+    }
+
     /**
      * 通用提示
      */
@@ -148,7 +179,7 @@ export abstract class Base<F> extends Vue {
         this.notify(this.msg.del, NOTIFICATION_TYPE.SUCCESS)
     }
 
-    protected toQuery() {
+    public toQuery() {
         this.page.page = 1
         this.refresh()
     }
@@ -159,13 +190,17 @@ export abstract class Base<F> extends Vue {
     }
 
     protected sizeChangeHandler(e: number) {
-      this.page.size = e
-      this.page.page = 1
-      this.refresh()
+        this.page.size = e
+        this.page.page = 1
+        this.refresh()
     }
-    
+
     protected getDataStatus(id: number | string) {
         return this.dataStatus[id]
+    }
+
+    protected updateProp(name: string | number, value: any) {
+        Vue.set(this.props, name, value)
     }
 }
 

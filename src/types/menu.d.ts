@@ -35,7 +35,7 @@ export interface IMenuData {
  * 菜单输出数据包
  */
 export interface IMenuDtoData {
-    id?: number
+    id: number
     children?: IMenuDtoData[]
     type?: number
     permission?: string
@@ -50,6 +50,8 @@ export interface IMenuDtoData {
     hidden?: boolean
     componentName?: string
     icon?: string
+    leaf?: boolean
+    label?: string
 }
 
 /**

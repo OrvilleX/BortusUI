@@ -1,7 +1,8 @@
 import { Form } from 'element-ui';
 import { IPageable } from './base';
 import { IUserData } from './user';
-import { IDeptData } from './dept'
+import { IDeptData, IDeptDtoData } from './dept';
+import { IMenuData, IMenuDtoData } from "./menu";
 
 /**
  * 导出、查询角色数据包
@@ -17,7 +18,7 @@ export interface IRoleQueryData extends IPageable {
 export interface IRoleData {
     id?: number
     users?: IUserData[]
-    menus?: object[]
+    menus?: IMenuData[]
     depts?: IDeptData[]
     name?: string
     dataScope?: string
@@ -30,8 +31,8 @@ export interface IRoleData {
  */
 export interface IRoleDtoData {
     id?: number
-    menus?: object[]
-    depts?: object[]
+    menus?: IMenuDtoData[]
+    depts?: IDeptDtoData[]
     name?: string
     dataScope?: string
     level?: number
