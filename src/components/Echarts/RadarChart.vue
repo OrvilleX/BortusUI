@@ -1,120 +1,111 @@
 <template>
-  <div :class="className" :style="{height:height,width:width}" />
+  <div :class="className" :style="{ height: height, width: width }" />
 </template>
 
-<script>
-import echarts from 'echarts'
-require('echarts/theme/macarons') // echarts theme
-import { debounce } from '@/utils'
+<script lang="ts">
+import { Vue, Component, Prop } from "vue-property-decorator";
+import echarts from "echarts";
+require("echarts/theme/macarons"); // echarts theme
+import { ResizeObserver } from "@juggle/resize-observer";
 
-const animationDuration = 3000
+const animationDuration = 3000;
 
-export default {
-  props: {
-    className: {
-      type: String,
-      default: 'chart'
-    },
-    width: {
-      type: String,
-      default: '100%'
-    },
-    height: {
-      type: String,
-      default: '300px'
-    }
-  },
-  data() {
-    return {
-      chart: null
-    }
-  },
+@Component({
+  name: "RadarChart",
+})
+export default class extends Vue {
+  @Prop({ default: "chart" }) className!: string;
+  @Prop({ default: "100%" }) width!: string;
+  @Prop({ default: "300px" }) heigth!: string;
+
+  chart!: echarts.ECharts;
+  resizeHandler!: ResizeObserver;
+
   mounted() {
-    this.initChart()
-    this.__resizeHandler = debounce(() => {
+    this.initChart();
+    this.resizeHandler = new ResizeObserver(() => {
       if (this.chart) {
-        this.chart.resize()
+        this.chart.resize();
       }
-    }, 100)
-    window.addEventListener('resize', this.__resizeHandler)
-  },
+    });
+    this.resizeHandler.observe(document.body);
+  }
+
   beforeDestroy() {
     if (!this.chart) {
-      return
+      return;
     }
-    window.removeEventListener('resize', this.__resizeHandler)
-    this.chart.dispose()
-    this.chart = null
-  },
-  methods: {
-    initChart() {
-      this.chart = echarts.init(this.$el, 'macarons')
+    this.resizeHandler.disconnect();
+    this.chart.dispose();
+  }
 
-      this.chart.setOption({
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: { // 坐标轴指示器，坐标轴触发有效
-            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
-          }
+  initChart() {
+    this.chart = echarts.init(this.$el as HTMLDivElement, "macarons");
+
+    this.chart.setOption({
+      tooltip: {
+        trigger: "axis",
+        axisPointer: {
+          type: "shadow",
         },
-        radar: {
-          radius: '66%',
-          center: ['50%', '42%'],
-          splitNumber: 8,
-          splitArea: {
-            areaStyle: {
-              color: 'rgba(127,95,132,.3)',
-              opacity: 1,
-              shadowBlur: 45,
-              shadowColor: 'rgba(0,0,0,.5)',
-              shadowOffsetX: 0,
-              shadowOffsetY: 15
-            }
+      },
+      radar: {
+        radius: "66%",
+        center: ["50%", "42%"],
+        splitNumber: 8,
+        splitArea: {
+          areaStyle: {
+            color: "rgba(127,95,132,.3)",
+            opacity: 1,
+            shadowBlur: 45,
+            shadowColor: "rgba(0,0,0,.5)",
+            shadowOffsetX: 0,
+            shadowOffsetY: 15,
           },
-          indicator: [
-            { name: 'Sales', max: 10000 },
-            { name: 'Administration', max: 20000 },
-            { name: 'Information Techology', max: 20000 },
-            { name: 'Customer Support', max: 20000 },
-            { name: 'Development', max: 20000 },
-            { name: 'Marketing', max: 20000 }
-          ]
         },
-        legend: {
-          left: 'center',
-          bottom: '10',
-          data: ['Allocated Budget', 'Expected Spending', 'Actual Spending']
-        },
-        series: [{
-          type: 'radar',
+        indicator: [
+          { name: "Sales", max: 10000 },
+          { name: "Administration", max: 20000 },
+          { name: "Information Techology", max: 20000 },
+          { name: "Customer Support", max: 20000 },
+          { name: "Development", max: 20000 },
+          { name: "Marketing", max: 20000 },
+        ],
+      },
+      legend: {
+        left: "center",
+        bottom: "10",
+        data: ["Allocated Budget", "Expected Spending", "Actual Spending"],
+      },
+      series: [
+        {
+          type: "radar",
           symbolSize: 0,
           areaStyle: {
-            normal: {
-              shadowBlur: 13,
-              shadowColor: 'rgba(0,0,0,.2)',
-              shadowOffsetX: 0,
-              shadowOffsetY: 10,
-              opacity: 1
-            }
+            shadowBlur: 13,
+            shadowColor: "rgba(0,0,0,.2)",
+            shadowOffsetX: 0,
+            shadowOffsetY: 10,
+            opacity: 1,
           },
           data: [
             {
               value: [5000, 7000, 12000, 11000, 15000, 14000],
-              name: 'Allocated Budget'
+              name: "Allocated Budget",
             },
             {
               value: [4000, 9000, 15000, 15000, 13000, 11000],
-              name: 'Expected Spending'
+              name: "Expected Spending",
             },
             {
               value: [5500, 11000, 12000, 15000, 12000, 12000],
-              name: 'Actual Spending'
-            }
+              name: "Actual Spending",
+            },
           ],
-          animationDuration: animationDuration
-        }]
-      })
-    }
+          animationDuration: animationDuration,
+        },
+      ],
+    });
   }
 }
 </script>
