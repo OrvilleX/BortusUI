@@ -1,6 +1,7 @@
 declare module 'jsencrypt';
 declare module 'vue-count-to';
 declare module '*.png';
+declare module '*.jpg';
 declare module '@riophae/vue-treeselect';
 declare module 'vue-image-crop-upload';
 declare module '*.gif' {
