@@ -1,5 +1,5 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { AppModule } from '@/store/modules/app'
+import { AppModule, DeviceType } from '@/store/modules/app'
 
 @Component
 export default class extends Vue {
@@ -16,7 +16,7 @@ export default class extends Vue {
     if ($subMenu) {
       const handleMouseleave = $subMenu.handleMouseleave
       $subMenu.handleMouseleave = (e: any) => {
-        if (this.device === 'mobile') {
+        if (this.device === DeviceType.Mobile) {
           return
         }
         handleMouseleave(e)

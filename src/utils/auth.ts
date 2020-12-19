@@ -1,6 +1,7 @@
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
+import Config from "@/settings";
 
-const TokenKey = "";
+const TokenKey = Config.tokenKey;
 
 export const getToken = () => {
     return Cookies.get(TokenKey);

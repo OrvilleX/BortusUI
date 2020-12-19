@@ -1,5 +1,5 @@
 import axios from 'axios';
-import router from '@/router';
+import router from "@/router/routers";
 import { Notification } from 'element-ui';
 import store from '../store';
 import { getToken } from './auth';
@@ -41,7 +41,7 @@ service.interceptors.response.use(
   (error) => {
       let code = 0;
       try {
-          code = error.response.data.status;
+          code = error.response.status;
       } catch (e) {
           if (error.toString().indexOf("Error: timeout") !== -1) {
               Notification.error({
