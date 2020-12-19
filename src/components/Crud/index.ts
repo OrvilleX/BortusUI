@@ -209,7 +209,7 @@ export default class CRUD<T extends object, Q, D> extends Base<T> {
     }
   }
 
-  private async doDelete(data: any) {
+  async doDelete(data: any) {
     let delAll = false
     let dataStatus: IDataStatus = {
       delete: CRUD_TYPE.NORMAL,
