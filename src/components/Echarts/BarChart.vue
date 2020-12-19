@@ -26,7 +26,6 @@ export default class BarChart extends Vue {
         this.chart.resize()
       }
     })
-
     this.resizeHandler.observe(document.body)
   }
 
