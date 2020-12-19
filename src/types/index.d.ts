@@ -4,6 +4,7 @@ declare module '*.png';
 declare module '*.jpg';
 declare module '@riophae/vue-treeselect';
 declare module 'vue-image-crop-upload';
+declare module "vue-highlightjs";
 declare module '*.gif' {
     export const gif: any
 }
