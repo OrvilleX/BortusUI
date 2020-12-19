@@ -349,7 +349,14 @@
           </el-table-column>
         </el-table>
         <!--分页组件-->
-        <pagination />
+        <el-pagination
+          :total="total"
+          :current-page="page + 1"
+          style="margin-top: 8px"
+          layout="total, prev, pager, next, sizes"
+          @size-change="sizeChange"
+          @current-change="pageChange"
+        />
       </el-col>
     </el-row>
   </div>

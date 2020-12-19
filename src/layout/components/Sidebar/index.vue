@@ -26,7 +26,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { Getter } from "vuex-class";
-import Logo from "./Logo.vue";
+import Logo from "./SidebarLogo.vue";
 import SidebarItem from "./SidebarItem.vue";
 import variables from "@/assets/styles/variables.scss";
 import { AppModule } from "@/store/modules/app";

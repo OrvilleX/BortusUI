@@ -1,7 +1,120 @@
 <template>
   <div class="app-container">
     <div class="head-container">
-      <Search :query="query" />
+      <div class="head-container">
+        <el-input
+          v-model="query.blurry"
+          clearable
+          size="small"
+          placeholder="请输入你要搜索的内容"
+          style="width: 200px"
+          class="filter-item"
+          @keyup.enter.native="toQuery"
+        />
+        <date-range-picker v-model="query.createTime" class="date-item" />
+        <el-button
+          class="filter-item"
+          size="mini"
+          type="success"
+          icon="el-icon-search"
+          @click="$parent.toQuery"
+          >搜索</el-button
+        >
+      </div>
+      <div class="crud-opts">
+        <span class="crud-opts-left">
+          <el-button
+            slot="left"
+            class="filter-item"
+            type="danger"
+            icon="el-icon-delete"
+            size="mini"
+            :loading="delAllLoading"
+            @click="confirmDelAll()"
+          >
+            清空
+          </el-button>
+          <el-button
+            v-if="optShow.add"
+            v-permission="permission.add"
+            class="filter-item"
+            size="mini"
+            type="primary"
+            icon="el-icon-plus"
+            @click="toAdd"
+          >
+            新增
+          </el-button>
+          <el-button
+            v-if="optShow.edit"
+            v-permission="permission.edit"
+            class="filter-item"
+            size="mini"
+            type="success"
+            icon="el-icon-edit"
+            :disabled="selections.length !== 1"
+            @click="toEdit(selections[0])"
+          >
+            修改
+          </el-button>
+          <el-button
+            v-if="optShow.del"
+            slot="reference"
+            v-permission="permission.del"
+            class="filter-item"
+            type="danger"
+            icon="el-icon-delete"
+            size="mini"
+            :loading="delAllLoading"
+            :disabled="selections.length === 0"
+            @click="toDelete(selections)"
+          >
+            删除
+          </el-button>
+          <el-button
+            v-if="optShow.download"
+            :loading="downloadLoading"
+            :disabled="!data.length"
+            class="filter-item"
+            size="mini"
+            type="warning"
+            icon="el-icon-download"
+            @click="doExport"
+            >导出</el-button
+          >
+          <slot name="right" />
+        </span>
+        <el-button-group class="crud-opts-right">
+          <el-button
+            size="mini"
+            plain
+            type="info"
+            icon="el-icon-search"
+            @click="toggleSearch()"
+          />
+          <el-button size="mini" icon="el-icon-refresh" @click="refresh()" />
+          <el-popover placement="bottom-end" width="150" trigger="click">
+            <el-button slot="reference" size="mini" icon="el-icon-s-grid">
+              <i class="fa fa-caret-down" aria-hidden="true" />
+            </el-button>
+            <el-checkbox
+              v-model="allColumnsSelected"
+              :indeterminate="allColumnsSelectedIndeterminate"
+              @change="handleCheckAllChange"
+            >
+              全选
+            </el-checkbox>
+            <el-checkbox
+              v-for="item in tableColumns"
+              :key="item.property"
+              v-model="item.visible"
+              @change="handleCheckedTableColumnsChange(item)"
+            >
+              {{ item.label }}
+            </el-checkbox>
+          </el-popover>
+        </el-button-group>
+      </div>
     </div>
     <!--表格渲染-->
     <el-table
@@ -9,6 +122,7 @@
       v-loading="loading"
       :data="data"
       style="width: 100%"
+      @selection-change="selectionChangeHandler"
     >
       <el-table-column type="expand">
         <template slot-scope="props">
@@ -47,52 +161,75 @@
       </el-table-column>
     </el-table>
     <el-pagination
-      :total="total"
-      :current-page="page + 1"
+      :page-size.sync="page.size"
+      :total="page.total"
+      :current-page.sync="page.page"
       style="margin-top: 8px"
       layout="total, prev, pager, next, sizes"
-      @size-change="sizeChange"
-      @current-change="pageChange"
+      @size-change="sizeChangeHandler($event)"
+      @current-change="pageChangeHandler"
     />
   </div>
 </template>
 
 <script lang="ts">
 import { Vue, Component, Prop } from "vue-property-decorator";
-import { mixins } from "vue-class-component";
-import Search, { ILogSearch } from './Search.vue'
-import { ILogQueryData, ILogData } from '@/types/log'
-import InitData from "@/mixins/initData";
+import { delAllInfo } from "@/api/monitor/log";
+import CRUD from "@/components/Crud";
 import { parseTime } from "@/utils";
+import { ILogQueryData, ILogData } from "@/types/log";
+import DateRangePicker from "@/components/DateRangePicker/Index.vue";
+import { mixins } from "vue-class-component";
+
+interface ILogSearch {
+  blurry?: string;
+  createTime?: string;
+}
 
 @Component({
-  name: 'Log',
+  name: "Log",
   components: {
-    Search
-  }
+    DateRangePicker,
+  },
 })
-export default class extends mixins<InitData<ILogQueryData, ILogData, ILogSearch>>(InitData) {
-  parseTime = parseTime
-
+export default class extends mixins<CRUD<ILogSearch, ILogQueryData, ILogData>>(
+  CRUD
+) {
   created() {
-    this.$nextTick(() => {
-      this.init()
-    })
+    this.title = "日志";
+    this.url = "api/logs";
+    this.optShow = {
+      add: false,
+      edit: false,
+      del: false,
+      download: true,
+      reset: false,
+    };
   }
 
-  beforeInit() {
-      this.url = 'api/logs'
-      const sort = 'id,desc'
-      this.params = { 
-        page: this.page, 
-        size: this.size, 
-        sort: sort,
-        blurry: this.query.blurry,
-        createTime: this.query.createTime
-      }
-      return true
+  confirmDelAll() {
+    this.$confirm(`确认清空所有操作日志吗?`, "提示", {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning",
+    })
+      .then(() => {
+        this.delAllLoading = true;
+        delAllInfo()
+          .then((res) => {
+            this.delAllLoading = false;
+            this.dleChangePage(1);
+            this.delSuccessNotify();
+            this.toQuery();
+          })
+          .catch((err) => {
+            this.delAllLoading = false;
+            console.log(err.response.data.message);
+          });
+      })
+      .catch(() => {});
   }
-} 
+}
 </script>
 
 <style>
