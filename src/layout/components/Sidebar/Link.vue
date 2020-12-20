@@ -7,8 +7,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import { isExternal } from "@/utils/validate";
+import { Component, Prop, Vue } from 'vue-property-decorator'
+import { isExternal } from '@/utils/validate'
 
 @Component
 export default class extends Vue {
@@ -17,16 +17,16 @@ export default class extends Vue {
   linkProps(url: string) {
     if (isExternal(url)) {
       return {
-        is: "a",
+        is: 'a',
         href: url,
-        target: "_blank",
-        rel: "noopener",
-      };
+        target: '_blank',
+        rel: 'noopener'
+      }
     }
     return {
-      is: "router-link",
-      to: url,
-    };
+      is: 'router-link',
+      to: url
+    }
   }
 }
 </script>

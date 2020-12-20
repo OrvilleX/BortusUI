@@ -1,14 +1,14 @@
-import store from "@/store";
-import _Vue from "vue";
+import store from '@/store'
+import _Vue from 'vue'
 
 export default {
-  inserted(el: any, binding: any, vnode: any) {
+  inserted(el: any, binding: any) {
     const { value } = binding
     const roles = store.getters && store.getters.roles
     if (value && value instanceof Array && value.length > 0) {
       const permissionRoles = value
 
-      const hasPermission = roles.some((role:any) => {
+      const hasPermission = roles.some((role: any) => {
         return permissionRoles.includes(role)
       })
 
@@ -16,8 +16,9 @@ export default {
         el.parentNode && el.parentNode.removeChild(el)
       }
     } else {
-      throw new Error(`使用方式： v-permission="['admin','editor']"`)
+      throw new Error('使用方式： v-permission="[\'admin\',\'editor\']"')
     }
   },
-  install(Vue: typeof _Vue, options?: any) {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  install(Vue: typeof _Vue) {}
 }

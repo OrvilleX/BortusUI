@@ -16,17 +16,17 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { TagsViewModule } from "@/store/modules/tagsView";
+import { Component, Vue } from 'vue-property-decorator'
+import { TagsViewModule } from '@/store/modules/tagsView'
 
-@Component({ name: "AppMain" })
+@Component({ name: 'AppMain' })
 export default class extends Vue {
   get cachedViews() {
-    return TagsViewModule.cachedViews;
+    return TagsViewModule.cachedViews
   }
 
   get key() {
-    return this.$route.path;
+    return this.$route.path
   }
 }
 </script>

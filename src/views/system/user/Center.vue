@@ -173,57 +173,57 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from "vue-property-decorator";
-import myUpload from "vue-image-crop-upload";
-import updatePass from "./center/UpdatePass.vue";
-import updateEmail from "./center/UpdateEmail.vue";
-import { getToken } from "@/utils/auth";
-import store from "@/store";
-import { UserModule } from "@/store/modules/user";
-import { isvalidPhone } from "@/utils/validate";
-import { parseTime } from "@/utils/index";
-import crud from "@/mixins/crud";
-import { editUser } from "@/api/system/user";
-import Avatar from "@/assets/images/avatar.png";
-import { mixins } from "vue-class-component";
-import { IUserQueryData, IUserData, IUserDtoData } from "@/types/user";
-import { ApiModule } from "@/store/modules/api";
-import { ElForm } from "element-ui/types/form";
+import { Component } from 'vue-property-decorator'
+import myUpload from 'vue-image-crop-upload'
+import updatePass from './center/UpdatePass.vue'
+import updateEmail from './center/UpdateEmail.vue'
+import { getToken } from '@/utils/auth'
+import store from '@/store'
+import { UserModule } from '@/store/modules/user'
+import { isvalidPhone } from '@/utils/validate'
+import { parseTime } from '@/utils/index'
+import crud from '@/mixins/crud'
+import { editUser } from '@/api/system/user'
+import Avatar from '@/assets/images/avatar.png'
+import { mixins } from 'vue-class-component'
+import { UserQueryData, UserData, UserDtoData } from '@/types/user'
+import { ElForm } from 'element-ui/types/form'
 
 @Component({
-  name: "Center",
+  name: 'Center',
   components: {
     updatePass,
     updateEmail,
-    myUpload,
-  },
+    myUpload
+  }
 })
 export default class extends mixins<
-  crud<IUserData, IUserQueryData, IUserDtoData>
+  crud<UserData, UserQueryData, UserDtoData>
 >(crud) {
   show = false;
   Avatar = Avatar;
-  activeName = "first";
+  activeName = 'first';
   saveLoading = false;
   parseTime = parseTime;
   headers = {
-    Authorization: getToken(),
+    Authorization: getToken()
   };
+
   rules = {
     nickName: [
-      { required: true, message: "请输入用户昵称", trigger: "blur" },
-      { min: 2, max: 20, message: "长度在 2 到 20 个字符", trigger: "blur" },
+      { required: true, message: '请输入用户昵称', trigger: 'blur' },
+      { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
     ],
-    phone: [{ required: true, trigger: "blur", validator: this.validPhone }],
+    phone: [{ required: true, trigger: 'blur', validator: this.validPhone }]
   };
 
   private validPhone(rule: string, value: string, callback: Function) {
     if (!value) {
-      callback(new Error("请输入电话号码"));
+      callback(new Error('请输入电话号码'))
     } else if (!isvalidPhone(value)) {
-      callback(new Error("请输入正确的11位手机号码"));
+      callback(new Error('请输入正确的11位手机号码'))
     } else {
-      callback();
+      callback()
     }
   }
 
@@ -232,46 +232,46 @@ export default class extends mixins<
       id: UserModule.user.id,
       nickName: UserModule.user.nickName,
       gender: UserModule.user.gender,
-      phone: UserModule.user.phone,
-    };
-    store.dispatch("GetInfo").then(() => {});
+      phone: UserModule.user.phone
+    }
+    store.dispatch('GetInfo')
   }
 
   toggleShow() {
-    this.show = !this.show;
+    this.show = !this.show
   }
 
-  handleClick(tab: any, event: any) {
-    if (tab.name === "second") {
-      this.init();
+  handleClick(tab: any) {
+    if (tab.name === 'second') {
+      this.init()
     }
   }
 
   beforeInit() {
-    this.url = "api/logs/user";
-    return true;
+    this.url = 'api/logs/user'
+    return true
   }
 
-  cropUploadSuccess(jsonData: string, field: string) {
-    store.dispatch("GetInfo").then(() => {});
+  cropUploadSuccess() {
+    store.dispatch('GetInfo')
   }
 
   doSubmit() {
-    if (this.$refs["form"]) {
-      (this.$refs["form"] as ElForm).validate((valid) => {
+    if (this.$refs.form) {
+      (this.$refs.form as ElForm).validate((valid) => {
         if (valid) {
-          this.saveLoading = true;
+          this.saveLoading = true
           editUser(this.form)
             .then(() => {
-              this.editSuccessNotify();
-              store.dispatch("GetInfo").then(() => {});
-              this.saveLoading = false;
+              this.editSuccessNotify()
+              store.dispatch('GetInfo')
+              this.saveLoading = false
             })
             .catch(() => {
-              this.saveLoading = false;
-            });
+              this.saveLoading = false
+            })
         }
-      });
+      })
     }
   }
 }

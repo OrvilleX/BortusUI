@@ -298,7 +298,7 @@
       lazy
       :load="getMenus"
       :data="data"
-      :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+      :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
       row-key="id"
       @select="selectChange"
       @select-all="selectAllChange"
@@ -407,111 +407,114 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from "vue-property-decorator";
-import crudMenu from "@/api/system/menu";
-import IconSelect from "@/components/IconSelect/Index.vue";
-import Treeselect from "@riophae/vue-treeselect";
-import "@riophae/vue-treeselect/dist/vue-treeselect.css";
-import { LOAD_CHILDREN_OPTIONS } from "@riophae/vue-treeselect";
-import CRUD from "@/components/Crud";
-import DateRangePicker from "@/components/DateRangePicker/Index.vue";
-import { mixins } from "vue-class-component";
-import { IMenuQueryData, IMenuDtoData, IMenuData } from "@/types/menu";
+import { Component } from 'vue-property-decorator'
+import crudMenu from '@/api/system/menu'
+import IconSelect from '@/components/IconSelect/Index.vue'
+import Treeselect, { LOAD_CHILDREN_OPTIONS } from '@riophae/vue-treeselect'
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+
+import CRUD from '@/components/Crud'
+import DateRangePicker from '@/components/DateRangePicker/Index.vue'
+import { mixins } from 'vue-class-component'
+import { MenuQueryData, MenuDtoData, MenuData } from '@/types/menu'
 
 @Component({
-  name: "Menu",
+  name: 'Menu',
   components: {
     Treeselect,
-    DateRangePicker,
-  },
+    IconSelect,
+    DateRangePicker
+  }
 })
 export default class extends mixins<
-  CRUD<IMenuData, IMenuQueryData, IMenuDtoData>
+  CRUD<MenuData, MenuQueryData, MenuDtoData>
 >(CRUD) {
-  private menus: IMenuDtoData[] = [];
+  private menus: MenuDtoData[] = [];
   defaultForm = {
     id: NaN,
-    title: "",
+    title: '',
     menuSort: 999,
-    path: "",
-    component: "",
-    componentName: "",
+    path: '',
+    component: '',
+    componentName: '',
     iFrame: false,
     roles: [],
     pid: 0,
-    icon: "",
+    icon: '',
     cache: false,
     hidden: false,
     type: 0,
-    permission: "",
+    permission: ''
   };
+
   permission = {
-    add: ["admin", "menu:add"],
-    edit: ["admin", "menu:edit"],
-    del: ["admin", "menu:del"],
+    add: ['admin', 'menu:add'],
+    edit: ['admin', 'menu:edit'],
+    del: ['admin', 'menu:del']
   };
+
   rules = {
-    title: [{ required: true, message: "请输入标题", trigger: "blur" }],
-    path: [{ required: true, message: "请输入地址", trigger: "blur" }],
+    title: [{ required: true, message: '请输入标题', trigger: 'blur' }],
+    path: [{ required: true, message: '请输入地址', trigger: 'blur' }]
   };
 
   created() {
-    this.title = "菜单";
-    this.url = "api/menus";
-    this.crudMethod = { ...crudMenu };
+    this.title = '菜单'
+    this.url = 'api/menus'
+    this.crudMethod = { ...crudMenu }
   }
 
-  afterToCU(form: IMenuData) {
-    this.menus = [];
+  afterToCU(form: MenuData) {
+    this.menus = []
     if (form.id != null) {
       if (form.pid === null) {
-        form.pid = 0;
+        form.pid = 0
       }
-      this.getSupDepts(form.id);
+      this.getSupDepts(form.id)
     } else {
-      this.menus.push({ id: 0, label: "顶级类目", children: [] });
+      this.menus.push({ id: 0, label: '顶级类目', children: [] })
     }
   }
 
   private getMenus(tree: any, treeNode: any, resolve: Function) {
-    const params = { pid: tree.id };
+    const params = { pid: tree.id }
     setTimeout(() => {
       crudMenu.getMenus(params).then((res) => {
-        resolve(res.data.content);
-      });
-    }, 100);
+        resolve(res.data.content)
+      })
+    }, 100)
   }
 
   private getSupDepts(id: number) {
     crudMenu.getMenuSuperior([id]).then((res) => {
       const children = res.data.map((obj) => {
         if (!obj.leaf && !obj.children) {
-          obj.children = [];
+          obj.children = []
         }
-        return obj;
-      });
-      this.menus = [{ id: 0, label: "顶级类目", children: children }];
-    });
+        return obj
+      })
+      this.menus = [{ id: 0, label: '顶级类目', children: children }]
+    })
   }
 
-  private loadMenus(e: { action: any; parentNode: any; callback: Function }) {
+  private loadMenus(e: { action: any, parentNode: any, callback: Function }) {
     if (e.action === LOAD_CHILDREN_OPTIONS) {
       crudMenu.getMenusTree(e.parentNode.id).then((res) => {
         e.parentNode.children = res.data.map((obj) => {
           if (!obj.leaf) {
-            obj.children = [];
+            obj.children = []
           }
-          return obj;
-        });
+          return obj
+        })
         setTimeout(() => {
-          e.callback();
-        }, 100);
-      });
+          e.callback()
+        }, 100)
+      })
     }
   }
 
   private selected(name: string) {
-    this.form.icon = name;
+    this.form.icon = name
   }
 }
 </script>

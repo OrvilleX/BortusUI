@@ -52,77 +52,77 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from "vue-property-decorator";
-import store from "@/store";
-import { updatePass } from "@/api/system/user";
-import { ElForm } from "element-ui/types/form";
+import { Vue, Component } from 'vue-property-decorator'
+import store from '@/store'
+import { updatePass } from '@/api/system/user'
+import { ElForm } from 'element-ui/types/form'
 
 @Component({
-  name: "UpdatePass",
+  name: 'UpdatePass'
 })
 export default class extends Vue {
   loading = false;
   dialog = false;
-  title = "修改密码";
-  form = { oldPass: "", newPass: "", confirmPass: "" };
+  title = '修改密码';
+  form = { oldPass: '', newPass: '', confirmPass: '' };
   rules = {
-    oldPass: [{ required: true, message: "请输入旧密码", trigger: "blur" }],
+    oldPass: [{ required: true, message: '请输入旧密码', trigger: 'blur' }],
     newPass: [
-      { required: true, message: "请输入新密码", trigger: "blur" },
-      { min: 6, max: 20, message: "长度在 6 到 20 个字符", trigger: "blur" },
+      { required: true, message: '请输入新密码', trigger: 'blur' },
+      { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' }
     ],
-    confirmPass: [{ required: true, validator: this.confirmPass, trigger: "blur" }],
+    confirmPass: [{ required: true, validator: this.confirmPass, trigger: 'blur' }]
   };
 
   private confirmPass(rule: string, value: string, callback: Function) {
     if (value) {
       if (this.form.newPass !== value) {
-        callback(new Error("两次输入的密码不一致"));
+        callback(new Error('两次输入的密码不一致'))
       } else {
-        callback();
+        callback()
       }
     } else {
-      callback(new Error("请再次输入密码"));
+      callback(new Error('请再次输入密码'))
     }
   }
 
   cancel() {
-    this.resetForm();
+    this.resetForm()
   }
 
   doSubmit() {
-    (this.$refs["form"] as ElForm).validate((valid) => {
+    (this.$refs.form as ElForm).validate((valid) => {
       if (valid) {
-        this.loading = true;
+        this.loading = true
         updatePass(this.form)
-          .then((res) => {
-            this.resetForm();
+          .then(() => {
+            this.resetForm()
             this.$notify({
-              title: "密码修改成功，请重新登录",
-              type: "success",
-              message: "",
-              duration: 1500,
-            });
+              title: '密码修改成功，请重新登录',
+              type: 'success',
+              message: '',
+              duration: 1500
+            })
             setTimeout(() => {
-              store.dispatch("LogOut").then(() => {
-                location.reload();
-              });
-            }, 1500);
+              store.dispatch('LogOut').then(() => {
+                location.reload()
+              })
+            }, 1500)
           })
           .catch((err) => {
-            this.loading = false;
-            console.log(err.response.data.message);
-          });
+            this.loading = false
+            console.log(err.response.data.message)
+          })
       } else {
-        return false;
+        return false
       }
-    });
+    })
   }
 
   resetForm() {
     this.dialog = false;
-    (this.$refs["form"] as ElForm).resetFields();
-    this.form = { oldPass: "", newPass: "", confirmPass: "" };
+    (this.$refs.form as ElForm).resetFields()
+    this.form = { oldPass: '', newPass: '', confirmPass: '' }
   }
 }
 </script>

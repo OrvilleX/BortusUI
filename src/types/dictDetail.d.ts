@@ -1,11 +1,10 @@
-import { IPageable } from './base';
-import { IDictSmallDtoData } from './dict';
-import { IDictData } from './dict'
+import { Pageable } from './base'
+import { DictSmallDtoData, DictData } from './dict'
 
 /**
  * 查询字典详情
  */
-export interface IDictDetailQueryData extends IPageable {
+export interface DictDetailQueryData extends Pageable {
     label?: string
     dictName?: string
 }
@@ -13,9 +12,9 @@ export interface IDictDetailQueryData extends IPageable {
 /**
  * 新增、编辑字典详情
  */
-export interface IDictDetailData {
+export interface DictDetailData {
     id?: number
-    dict?: IDictData
+    dict?: DictData
     label?: string
     value?: string
     dictSort?: number
@@ -24,9 +23,9 @@ export interface IDictDetailData {
 /**
  * 字典明细输出
  */
-export interface IDictDetailDtoData {
+export interface DictDetailDtoData {
     id: number
-    dict: IDictSmallDtoData
+    dict: DictSmallDtoData
     label: string
     value: string
     dictSort: number

@@ -48,125 +48,127 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from "vue-property-decorator";
-import store from "@/store";
-import { validEmail } from "@/utils/validate";
-import { updateEmail } from "@/api/system/user";
-import { resetEmail } from "@/api/system/code";
-import { ElForm } from "element-ui/types/form";
+import { Vue, Component, Prop } from 'vue-property-decorator'
+import store from '@/store'
+import { validEmail } from '@/utils/validate'
+import { updateEmail } from '@/api/system/user'
+import { resetEmail } from '@/api/system/code'
+import { ElForm } from 'element-ui/types/form'
 
 @Component({
-  name: "UpdateEmail",
+  name: 'UpdateEmail'
 })
 export default class extends Vue {
   @Prop({ required: true }) email!: string;
 
   loading = false;
   dialog = false;
-  title = "修改邮箱";
+  title = '修改邮箱';
   codeLoading = false;
-  buttonName = "获取验证码";
+  buttonName = '获取验证码';
   isDisabled = false;
   timer = 0;
   time = 60;
   form = {
-    pass: "",
-    email: "",
-    code: "",
+    pass: '',
+    email: '',
+    code: ''
   };
+
   user = {
-    email: "",
-    password: "",
+    email: '',
+    password: ''
   };
+
   rules = {
-    pass: [{ required: true, message: "当前密码不能为空", trigger: "blur" }],
-    email: [{ required: true, validator: this.validMail, trigger: "blur" }],
-    code: [{ required: true, message: "验证码不能为空", trigger: "blur" }],
+    pass: [{ required: true, message: '当前密码不能为空', trigger: 'blur' }],
+    email: [{ required: true, validator: this.validMail, trigger: 'blur' }],
+    code: [{ required: true, message: '验证码不能为空', trigger: 'blur' }]
   };
 
   private validMail(rule: string, value: string, callback: Function) {
-    if (value === "" || value === null) {
-      callback(new Error("新邮箱不能为空"));
+    if (value === '' || value === null) {
+      callback(new Error('新邮箱不能为空'))
     } else if (value === this.email) {
-      callback(new Error("新邮箱不能与旧邮箱相同"));
+      callback(new Error('新邮箱不能与旧邮箱相同'))
     } else if (validEmail(value)) {
-      callback();
+      callback()
     } else {
-      callback(new Error("邮箱格式错误"));
+      callback(new Error('邮箱格式错误'))
     }
   }
 
   cancel() {
-    this.resetForm();
+    this.resetForm()
   }
 
   sendCode() {
     if (this.form.email && this.form.email !== this.email) {
-      this.codeLoading = true;
-      this.buttonName = "验证码发送中";
+      this.codeLoading = true
+      this.buttonName = '验证码发送中'
       resetEmail(this.form.email)
-        .then((res) => {
+        .then(() => {
           this.$message({
             showClose: true,
-            message: "发送成功，验证码有效期5分钟",
-            type: "success",
-          });
-          this.codeLoading = false;
-          this.isDisabled = true;
-          this.buttonName = this.time-- + "秒后重新发送";
+            message: '发送成功，验证码有效期5分钟',
+            type: 'success'
+          })
+          this.codeLoading = false
+          this.isDisabled = true
+          this.buttonName = this.time-- + '秒后重新发送'
           this.timer = window.setInterval(() => {
-            this.buttonName = this.time + "秒后重新发送";
-            --this.time;
+            this.buttonName = this.time + '秒后重新发送'
+            --this.time
             if (this.time < 0) {
-              this.buttonName = "重新发送";
-              this.time = 60;
-              this.isDisabled = false;
-              window.clearInterval(this.timer);
+              this.buttonName = '重新发送'
+              this.time = 60
+              this.isDisabled = false
+              window.clearInterval(this.timer)
             }
-          }, 1000);
+          }, 1000)
         })
         .catch((err) => {
-          this.resetForm();
-          this.codeLoading = false;
-          console.log(err.response.data.message);
-        });
+          this.resetForm()
+          this.codeLoading = false
+          console.log(err.response.data.message)
+        })
     }
   }
 
   doSubmit() {
-    (this.$refs["form"] as ElForm).validate((valid) => {
+    (this.$refs.form as ElForm).validate((valid) => {
       if (valid) {
-        this.loading = true;
+        this.loading = true
         updateEmail(this.form)
-          .then((res) => {
-            this.loading = false;
-            this.resetForm();
+          .then(() => {
+            this.loading = false
+            this.resetForm()
             this.$notify({
-              title: "邮箱修改成功",
-              type: "success",
-              message: "",
-              duration: 1500,
-            });
-            store.dispatch("GetInfo").then(() => {});
+              title: '邮箱修改成功',
+              type: 'success',
+              message: '',
+              duration: 1500
+            })
+            store.dispatch('GetInfo')
           })
           .catch((err) => {
-            this.loading = false;
-            console.log(err.response.data.message);
-          });
+            this.loading = false
+            console.log(err.response.data.message)
+          })
       } else {
-        return false;
+        return false
       }
-    });
+    })
   }
 
   resetForm() {
     this.dialog = false;
-    (this.$refs["form"] as ElForm).resetFields();
-    window.clearInterval(this.timer);
-    this.time = 60;
-    this.buttonName = "获取验证码";
-    this.isDisabled = false;
-    this.form = { pass: "", email: "", code: "" };
+    (this.$refs.form as ElForm).resetFields()
+    window.clearInterval(this.timer)
+    this.time = 60
+    this.buttonName = '获取验证码'
+    this.isDisabled = false
+    this.form = { pass: '', email: '', code: '' }
   }
 }
 </script>

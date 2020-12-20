@@ -280,66 +280,67 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from "vue-property-decorator";
-import { mixins } from "vue-class-component";
-import crudJob from "@/api/system/job";
-import CRUD from "@/components/Crud";
-import DateRangePicker from "@/components/DateRangePicker/Index.vue";
-import { IJobQueryData, IJobData } from "@/types/job";
-import { NOTIFICATION_TYPE } from "@/components/Crud/base";
+import { Component } from 'vue-property-decorator'
+import { mixins } from 'vue-class-component'
+import crudJob from '@/api/system/job'
+import CRUD from '@/components/Crud'
+import DateRangePicker from '@/components/DateRangePicker/Index.vue'
+import { JobQueryData, JobData } from '@/types/job'
+import { NOTIFICATION_TYPE } from '@/components/Crud/base'
 
 @Component({
-  name: "Job",
+  name: 'Job',
   components: {
-    DateRangePicker,
-  },
+    DateRangePicker
+  }
 })
-export default class extends mixins<CRUD<IJobData, IJobQueryData, IJobData>>(
+export default class extends mixins<CRUD<JobData, JobQueryData, JobData>>(
   CRUD
 ) {
-  private dicts = ["job_status"];
+  private dicts = ['job_status'];
   private permission = {
-    add: ["admin", "job:add"],
-    edit: ["admin", "job:edit"],
-    del: ["admin", "job:del"],
+    add: ['admin', 'job:add'],
+    edit: ['admin', 'job:edit'],
+    del: ['admin', 'job:del']
   };
+
   private rules = {
-    name: [{ required: true, message: "请输入名称", trigger: "blur" }],
+    name: [{ required: true, message: '请输入名称', trigger: 'blur' }],
     jobSort: [
       {
         required: true,
-        message: "请输入序号",
-        trigger: "blur",
-        type: "number",
-      },
-    ],
+        message: '请输入序号',
+        trigger: 'blur',
+        type: 'number'
+      }
+    ]
   };
 
   created() {
-    this.title = "岗位";
-    this.url = "api/job";
-    this.sort = ["jobSort,asc", "id,desc"];
-    this.crudMethod = { ...crudJob };
+    this.title = '岗位'
+    this.url = 'api/job'
+    this.sort = ['jobSort,asc', 'id,desc']
+    this.crudMethod = { ...crudJob }
     this.defaultForm = {
       id: NaN,
-      name: "",
+      name: '',
       jobSort: 999,
-      enabled: true,
-    };
+      enabled: true
+    }
   }
 
-  private changeEnabled(data: IJobData, val: string) {
+  private changeEnabled(data: JobData, val: string) {
     this.$confirm(
       '此操作将 "' +
         this.dict.label.job_status[val] +
         '" ' +
         data.name +
-        "岗位, 是否继续？",
-      "提示",
+        '岗位, 是否继续？',
+      '提示',
       {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
       }
     )
       .then(() => {
@@ -349,18 +350,18 @@ export default class extends mixins<CRUD<IJobData, IJobQueryData, IJobData>>(
           .then(() => {
             // eslint-disable-next-line no-undef
             this.notify(
-              this.dict.label.job_status[val] + "成功",
+              this.dict.label.job_status[val] + '成功',
               NOTIFICATION_TYPE.SUCCESS
-            );
+            )
           })
           .catch((err) => {
-            data.enabled = !data.enabled;
-            console.log(err.data.message);
-          });
+            data.enabled = !data.enabled
+            console.log(err.data.message)
+          })
       })
       .catch(() => {
-        data.enabled = !data.enabled;
-      });
+        data.enabled = !data.enabled
+      })
   }
 }
 </script>

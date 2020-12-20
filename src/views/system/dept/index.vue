@@ -26,7 +26,7 @@
           <el-option
             v-for="item in enabledTypeOptions"
             :key="item.key"
-            :label="item.display_name"
+            :label="item.displayName"
             :value="item.key"
           />
         </el-select>
@@ -209,7 +209,7 @@
       v-loading="loading"
       lazy
       :load="getDeptDatas"
-      :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+      :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
       :data="data"
       row-key="id"
       @select="selectChange"
@@ -292,124 +292,124 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from "vue-property-decorator";
-import crudDept from "@/api/system/dept";
-import Treeselect from "@riophae/vue-treeselect";
-import "@riophae/vue-treeselect/dist/vue-treeselect.css";
-import { LOAD_CHILDREN_OPTIONS } from "@riophae/vue-treeselect";
-import CRUD from "@/components/Crud";
-import DateRangePicker from "@/components/DateRangePicker/Index.vue";
-import { mixins } from "vue-class-component";
-import { IDeptData, IDeptQueryData, IDeptDtoData } from "@/types/dept";
-import { ElTable } from "element-ui/types/table";
-import { NOTIFICATION_TYPE } from "@/components/Crud/base";
+import { Component } from 'vue-property-decorator'
+import crudDept from '@/api/system/dept'
+import Treeselect, { LOAD_CHILDREN_OPTIONS } from '@riophae/vue-treeselect'
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+
+import CRUD from '@/components/Crud'
+import DateRangePicker from '@/components/DateRangePicker/Index.vue'
+import { mixins } from 'vue-class-component'
+import { DeptData, DeptQueryData, DeptDtoData } from '@/types/dept'
+import { NOTIFICATION_TYPE } from '@/components/Crud/base'
 
 @Component({
-  name: "Dept",
+  name: 'Dept',
   components: {
     Treeselect,
-    DateRangePicker,
-  },
+    DateRangePicker
+  }
 })
 export default class extends mixins<
-  CRUD<IDeptData, IDeptQueryData, IDeptDtoData>
+  CRUD<DeptData, DeptQueryData, DeptDtoData>
 >(CRUD) {
-  title = "部门";
-  url = "api/dept";
+  title = '部门';
+  url = 'api/dept';
   crudMethod = { ...crudDept };
-  dicts = ["dept_status"];
+  dicts = ['dept_status'];
   defaultForm = {
     id: NaN,
-    name: "",
-    isTop: "1",
+    name: '',
+    isTop: '1',
     subCount: 0,
     pid: NaN,
     deptSort: 999,
-    enabled: true,
+    enabled: true
   };
 
-  private depts: IDeptDtoData[] = [];
+  private depts: DeptDtoData[] = [];
   private rules = {
-    name: [{ required: true, message: "请输入名称", trigger: "blur" }],
+    name: [{ required: true, message: '请输入名称', trigger: 'blur' }],
     deptSort: [
       {
         required: true,
-        message: "请输入序号",
-        trigger: "blur",
-        type: "number",
-      },
-    ],
+        message: '请输入序号',
+        trigger: 'blur',
+        type: 'number'
+      }
+    ]
   };
+
   private permission = {
-    add: ["admin", "dept:add"],
-    edit: ["admin", "dept:edit"],
-    del: ["admin", "dept:del"],
+    add: ['admin', 'dept:add'],
+    edit: ['admin', 'dept:edit'],
+    del: ['admin', 'dept:del']
   };
+
   private enabledTypeOptions = [
-    { key: "true", display_name: "正常" },
-    { key: "false", display_name: "禁用" },
+    { key: 'true', displayName: '正常' },
+    { key: 'false', displayName: '禁用' }
   ];
 
   created() {
-    this.resetForm();
+    this.resetForm()
   }
 
-  private getDeptDatas(tree: IDeptDtoData, treeNode: any, resolve: Function) {
-    const params = { pid: tree.id };
-    setTimeout(async () => {
-      let res = await crudDept.getDepts(params);
-      resolve(res.data.content);
-    }, 100);
+  private getDeptDatas(tree: DeptDtoData, treeNode: any, resolve: Function) {
+    const params = { pid: tree.id }
+    setTimeout(async() => {
+      const res = await crudDept.getDepts(params)
+      resolve(res.data.content)
+    }, 100)
   }
 
-  afterToCU(form: IDeptData) {
+  afterToCU(form: DeptData) {
     if (form.pid !== null) {
-      form.isTop = "0";
+      form.isTop = '0'
     } else if (form.id !== null) {
-      form.isTop = "1";
+      form.isTop = '1'
     }
-    form.enabled = form.enabled;
     if (form.id != null) {
-      this.getSupDepts(form.id);
+      this.getSupDepts(form.id)
     } else {
-      this.getDepts();
+      this.getDepts()
     }
   }
 
   private getSupDepts(id: number) {
     crudDept.getDeptSuperior([id]).then((res) => {
-      const date = res.data;
-      this.buildDepts(date);
-      this.depts = date;
-    });
+      const date = res.data
+      this.buildDepts(date)
+      this.depts = date
+    })
   }
 
-  private buildDepts(depts: IDeptDtoData[]) {
+  private buildDepts(depts: DeptDtoData[]) {
     depts.forEach((data) => {
       if (data.children) {
-        this.buildDepts(data.children);
+        this.buildDepts(data.children)
       }
       if (data.hasChildren && !data.children) {
-        data.children = [];
+        data.children = []
       }
-    });
+    })
   }
 
   private getDepts() {
     crudDept.getDepts({ enabled: true }).then((res) => {
       this.depts = res.data.content.map((data) => {
         if (data.hasChildren) {
-          data.children = [];
+          data.children = []
         }
-        return data;
-      });
-    });
+        return data
+      })
+    })
   }
 
   private loadDepts(element: {
-    action: any;
-    parentNode: any;
-    callback: Function;
+    action: any
+    parentNode: any
+    callback: Function
   }) {
     if (element.action === LOAD_CHILDREN_OPTIONS) {
       crudDept
@@ -417,66 +417,66 @@ export default class extends mixins<
         .then((res) => {
           element.parentNode.children = res.data.content.map((data) => {
             if (data.hasChildren) {
-              data.children = [];
+              data.children = []
             }
-            return data;
-          });
+            return data
+          })
           setTimeout(() => {
-            element.callback();
-          }, 100);
-        });
+            element.callback()
+          }, 100)
+        })
     }
   }
 
   afterValidateCU() {
     if (this.form.pid !== null && this.form.pid === this.form.id) {
       this.$message({
-        message: "上级部门不能为空",
-        type: "warning",
-      });
-      return false;
+        message: '上级部门不能为空',
+        type: 'warning'
+      })
+      return false
     }
-    if (this.form.isTop === "1") {
-      this.form.pid = NaN;
+    if (this.form.isTop === '1') {
+      this.form.pid = NaN
     }
-    return true;
+    return true
   }
 
-  private changeEnabled(data: IDeptDtoData, val: boolean) {
+  private changeEnabled(data: DeptDtoData, val: boolean) {
     this.$confirm(
       '此操作将 "' +
-        this.dict.label.dept_status[val ? "true" : "false"] +
+        this.dict.label.dept_status[val ? 'true' : 'false'] +
         '" ' +
         data.name +
-        "部门, 是否继续？",
-      "提示",
+        '部门, 是否继续？',
+      '提示',
       {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
       }
     )
       .then(() => {
         crudDept
           .edit(data)
-          .then((res) => {
+          .then(() => {
             this.notify(
-              this.dict.label.dept_status[val ? "true" : "false"] + "成功",
+              this.dict.label.dept_status[val ? 'true' : 'false'] + '成功',
               NOTIFICATION_TYPE.SUCCESS
-            );
+            )
           })
           .catch((err) => {
-            data.enabled = !data.enabled;
-            console.log(err.response.data.message);
-          });
+            data.enabled = !data.enabled
+            console.log(err.response.data.message)
+          })
       })
       .catch(() => {
-        data.enabled = !data.enabled;
-      });
+        data.enabled = !data.enabled
+      })
   }
 
-  private checkboxT(row: IDeptData, rowIndex: number) {
-    return row.id !== 1;
+  private checkboxT(row: DeptData) {
+    return row.id !== 1
   }
 }
 </script>

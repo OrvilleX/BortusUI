@@ -35,61 +35,61 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { SettingsModule } from "@/store/modules/settings";
-import ThemePicker from "@/components/ThemePicker/Index.vue";
+import { Component, Vue } from 'vue-property-decorator'
+import { SettingsModule } from '@/store/modules/settings'
+import ThemePicker from '@/components/ThemePicker/Index.vue'
 
-@Component({ name: "Settings", components: { ThemePicker } })
+@Component({ name: 'Settings', components: { ThemePicker } })
 export default class extends Vue {
   get fixedHeader() {
-    return SettingsModule.fixedHeader;
+    return SettingsModule.fixedHeader
   }
 
   set fixedHeader(value) {
     SettingsModule.ChangeSetting({
-      key: "fixedHeader",
-      value,
-    });
+      key: 'fixedHeader',
+      value
+    })
   }
 
   get tagsView() {
-    return SettingsModule.tagsView;
+    return SettingsModule.tagsView
   }
 
   set tagsView(value) {
     SettingsModule.ChangeSetting({
-      key: "tagsView",
-      value,
-    });
+      key: 'tagsView',
+      value
+    })
   }
 
   get sidebarLogo() {
-    return SettingsModule.sidebarLogo;
+    return SettingsModule.sidebarLogo
   }
 
   set sidebarLogo(value) {
     SettingsModule.ChangeSetting({
-      key: "sidebarLogo",
-      value,
-    });
+      key: 'sidebarLogo',
+      value
+    })
   }
 
   get uniqueOpened() {
-    return SettingsModule.uniqueOpened;
+    return SettingsModule.uniqueOpened
   }
 
   set uniqueOpened(value) {
     SettingsModule.ChangeSetting({
-      key: "uniqueOpened",
-      value,
-    });
+      key: 'uniqueOpened',
+      value
+    })
   }
 
   private themeChange(value: string) {
     SettingsModule.ChangeSetting({
-      key: "theme",
-      value,
-    });
+      key: 'theme',
+      value
+    })
   }
 }
 </script>

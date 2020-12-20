@@ -10,7 +10,7 @@
       <app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path)">
         <el-menu-item
           :index="resolvePath(onlyOneChild.path)"
-          :class="{ 'submenu-title-noDropdown': !isNest }"
+          :class="{'submenu-title-noDropdown': !isNest}"
         >
           <item
             :icon="onlyOneChild.meta.icon || (item.meta && item.meta.icon)"
@@ -46,63 +46,63 @@
 </template>
 
 <script lang="ts">
-import path from "path";
-import { Component, Prop, Vue } from "vue-property-decorator";
-import { isExternal } from "@/utils/validate";
-import Item from "./Item.vue";
-import AppLink from "./Link.vue";
-import FixiOSBug from "./fixiOSBug";
-import { mixins } from "vue-class-component";
-import { RouteConfig } from "vue-router";
+import path from 'path'
+import { Component, Prop } from 'vue-property-decorator'
+import { isExternal } from '@/utils/validate'
+import Item from './Item.vue'
+import AppLink from './Link.vue'
+import FixiOSBug from './fixiOSBug'
+import { mixins } from 'vue-class-component'
+import { RouteConfig } from 'vue-router'
 
 @Component({
-  name: "SidebarItem",
+  name: 'SidebarItem',
   components: {
     Item,
-    AppLink,
-  },
+    AppLink
+  }
 })
 export default class extends mixins(FixiOSBug) {
   @Prop({ required: true }) item!: RouteConfig;
   @Prop({ default: false }) isNest!: boolean;
-  @Prop({ default: "" }) basePath!: string;
+  @Prop({ default: '' }) basePath!: string;
 
   onlyOneChild?: RouteConfig;
 
   hasOneShowingChild(children: RouteConfig[], parent: RouteConfig) {
     const showingChildren = children.filter((item) => {
       if (item.meta.hidden) {
-        return false;
+        return false
       } else {
-        this.onlyOneChild = item;
-        return true;
+        this.onlyOneChild = item
+        return true
       }
-    });
+    })
 
     if (showingChildren.length === 1) {
-      return true;
+      return true
     }
 
     if (showingChildren.length === 0) {
       this.onlyOneChild = {
         ...parent,
-        path: "",
-      };
-      this.onlyOneChild.meta.noShowingChildren = true;
+        path: ''
+      }
+      this.onlyOneChild.meta.noShowingChildren = true
 
-      return true;
+      return true
     }
-    return false;
+    return false
   }
 
   resolvePath(routePath: string) {
     if (isExternal(routePath)) {
-      return routePath;
+      return routePath
     }
     if (isExternal(this.basePath)) {
-      return this.basePath;
+      return this.basePath
     }
-    return path.resolve(this.basePath, routePath);
+    return path.resolve(this.basePath, routePath)
   }
 }
 </script>

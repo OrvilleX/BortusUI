@@ -348,122 +348,124 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from "vue-property-decorator";
-import crudJob from "@/api/system/timing";
-import Log from "./Log.vue";
-import CRUD from "@/components/Crud";
-import DateRangePicker from "@/components/DateRangePicker/Index.vue";
-import { IJobQueryData, IJobData } from "@/types/job";
-import { mixins } from "vue-class-component";
-import { NOTIFICATION_TYPE } from "@/components/Crud/base";
+import { Component } from 'vue-property-decorator'
+import crudJob from '@/api/system/timing'
+import Log from './Log.vue'
+import CRUD from '@/components/Crud'
+import DateRangePicker from '@/components/DateRangePicker/Index.vue'
+import { JobQueryData, JobData } from '@/types/job'
+import { mixins } from 'vue-class-component'
+import { NOTIFICATION_TYPE } from '@/components/Crud/base'
 
 @Component({
-  name: "Timing",
+  name: 'Timing',
   components: {
     Log,
-    DateRangePicker,
-  },
+    DateRangePicker
+  }
 })
-export default class extends mixins<CRUD<IJobData, IJobQueryData, IJobData>>(
+export default class extends mixins<CRUD<JobData, JobQueryData, JobData>>(
   CRUD
 ) {
   delLoading = false;
   defaultForm = {
     id: NaN,
-    jobName: "",
-    subTask: "",
-    beanName: "",
-    methodName: "",
-    params: "",
-    cronExpression: "",
+    jobName: '',
+    subTask: '',
+    beanName: '',
+    methodName: '',
+    params: '',
+    cronExpression: '',
     pauseAfterFailure: true,
     isPause: false,
-    personInCharge: "",
-    email: "",
-    description: "",
+    personInCharge: '',
+    email: '',
+    description: ''
   };
+
   permission = {
-    add: ["admin", "timing:add"],
-    edit: ["admin", "timing:edit"],
-    del: ["admin", "timing:del"],
+    add: ['admin', 'timing:add'],
+    edit: ['admin', 'timing:edit'],
+    del: ['admin', 'timing:del']
   };
+
   rules = {
-    jobName: [{ required: true, message: "请输入任务名称", trigger: "blur" }],
+    jobName: [{ required: true, message: '请输入任务名称', trigger: 'blur' }],
     description: [
-      { required: true, message: "请输入任务描述", trigger: "blur" },
+      { required: true, message: '请输入任务描述', trigger: 'blur' }
     ],
-    beanName: [{ required: true, message: "请输入Bean名称", trigger: "blur" }],
+    beanName: [{ required: true, message: '请输入Bean名称', trigger: 'blur' }],
     methodName: [
-      { required: true, message: "请输入方法名称", trigger: "blur" },
+      { required: true, message: '请输入方法名称', trigger: 'blur' }
     ],
     cronExpression: [
-      { required: true, message: "请输入Cron表达式", trigger: "blur" },
+      { required: true, message: '请输入Cron表达式', trigger: 'blur' }
     ],
     personInCharge: [
-      { required: true, message: "请输入负责人名称", trigger: "blur" },
-    ],
+      { required: true, message: '请输入负责人名称', trigger: 'blur' }
+    ]
   };
 
   created() {
-    this.title = "定时任务";
-    this.url = "api/jobs";
-    this.crudMethod = { ...crudJob };
+    this.title = '定时任务'
+    this.url = 'api/jobs'
+    this.crudMethod = { ...crudJob }
   }
 
   execute(id: number) {
     crudJob
       .execution(id)
-      .then((res) => {
-        this.notify("执行成功", NOTIFICATION_TYPE.SUCCESS);
+      .then(() => {
+        this.notify('执行成功', NOTIFICATION_TYPE.SUCCESS)
       })
       .catch((err) => {
-        console.log(err.response.data.message);
-      });
+        console.log(err.response.data.message)
+      })
   }
 
   updateStatus(id: number, status: string) {
-    if (status === "恢复") {
-      this.updateParams(id);
+    if (status === '恢复') {
+      this.updateParams(id)
     }
     crudJob
       .updateIsPause(id)
-      .then((res) => {
-        this.toQuery();
-        this.notify(status + "成功", NOTIFICATION_TYPE.SUCCESS);
+      .then(() => {
+        this.toQuery()
+        this.notify(status + '成功', NOTIFICATION_TYPE.SUCCESS)
       })
       .catch((err) => {
-        console.log(err.response.data.message);
-      });
+        console.log(err.response.data.message)
+      })
   }
 
   private updateParams(id: number) {
-    console.log(id);
+    console.log(id)
   }
 
   private delMethod(id: number) {
-    this.delLoading = true;
+    this.delLoading = true
     crudJob
       .del([id])
       .then(() => {
         this.delLoading = false;
-        (this.$refs[id] as any).doClose();
-        this.dleChangePage(1);
-        this.delSuccessNotify();
-        this.toQuery();
+        (this.$refs[id] as any).doClose()
+        this.dleChangePage(1)
+        this.delSuccessNotify()
+        this.toQuery()
       })
       .catch(() => {
         this.delLoading = false;
-        (this.$refs[id] as any).doClose();
-      });
+        (this.$refs[id] as any).doClose()
+      })
   }
 
   private doLog() {
     (this.$refs.log as Log).dialog = true;
-    (this.$refs.log as Log).doInit();
+    (this.$refs.log as Log).doInit()
   }
 
-  private checkboxT(row: IJobData, rowIndex: number) {
-    return row.id !== 1;
+  private checkboxT(row: JobData) {
+    return row.id !== 1
   }
 }
 </script>

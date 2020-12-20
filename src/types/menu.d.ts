@@ -1,10 +1,9 @@
-import { IPageable } from './base';
-import { IRoleData } from './role';
+import { Pageable } from './base'
 
 /**
  * 导出、查询菜单数据包
  */
-export interface IMenuQueryData extends IPageable {
+export interface MenuQueryData extends Pageable {
     blurry?: string
     createTime?: string[]
     pidIsNull?: boolean
@@ -14,7 +13,7 @@ export interface IMenuQueryData extends IPageable {
 /**
  * 新增、编辑菜单数据包
  */
-export interface IMenuData {
+export interface MenuData {
     id?: number
     title?: string
     componentName?: string
@@ -34,9 +33,9 @@ export interface IMenuData {
 /**
  * 菜单输出数据包
  */
-export interface IMenuDtoData {
+export interface MenuDtoData {
     id: number
-    children?: IMenuDtoData[]
+    children?: MenuDtoData[]
     type?: number
     permission?: string
     title?: string
@@ -57,18 +56,18 @@ export interface IMenuDtoData {
 /**
  * 用于组织菜单结构
  */
-export interface IMenuVoData {
+export interface MenuVoData {
     name: string
     path: string
     hidden: boolean
     redirect: string
     component: string
     alwaysShow: boolean
-    meta: IMenuMetaVoData
-    children: IMenuVoData[]
+    meta: MenuMetaVoData
+    children: MenuVoData[]
 }
 
-export interface IMenuMetaVoData {
+export interface MenuMetaVoData {
     title: string
     icon: string
     noCache: boolean

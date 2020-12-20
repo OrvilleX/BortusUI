@@ -6,8 +6,8 @@
       @click="handleClickOutside"
     />
     <sidebar class="sidebar-container" />
-    <div :class="{ hasTagsView: needTagsView }" class="main-container">
-      <div :class="{ 'fixed-header': fixedHeader }">
+    <div :class="{hasTagsView: needTagsView}" class="main-container">
+      <div :class="{'fixed-header': fixedHeader}">
         <navbar />
         <tags-view v-if="needTagsView" />
       </div>
@@ -21,24 +21,24 @@
 </template>
 
 <script lang="ts">
-import { Component } from "vue-property-decorator";
-import { mixins } from "vue-class-component";
-import { DeviceType, AppModule } from "@/store/modules/app";
-import { SettingsModule } from "@/store/modules/settings";
-import RightPanel from "@/components/RightPanel/Index.vue";
+import { Component } from 'vue-property-decorator'
+import { mixins } from 'vue-class-component'
+import { DeviceType, AppModule } from '@/store/modules/app'
+import { SettingsModule } from '@/store/modules/settings'
+import RightPanel from '@/components/RightPanel/Index.vue'
 import {
   AppMain,
   Navbar,
   Settings,
   Sidebar,
-  TagsView,
-} from "./components/Index";
-import ResizeMixin from "./mixin/ResizeHandler";
-import Theme from "@/components/ThemePicker/Index.vue";
-import Cookies from "js-cookie";
+  TagsView
+} from './components/Index'
+import ResizeMixin from './mixin/ResizeHandler'
+import Theme from '@/components/ThemePicker/Index.vue'
+import Cookies from 'js-cookie'
 
 @Component({
-  name: "Layout",
+  name: 'Layout',
   components: {
     AppMain,
     Navbar,
@@ -46,20 +46,20 @@ import Cookies from "js-cookie";
     Settings,
     Sidebar,
     TagsView,
-    Theme,
-  },
+    Theme
+  }
 })
 export default class extends mixins(ResizeMixin) {
   get showSettings() {
-    return SettingsModule.showSettings;
+    return SettingsModule.showSettings
   }
 
   get needTagsView() {
-    return SettingsModule.tagsView;
+    return SettingsModule.tagsView
   }
 
   get fixedHeader() {
-    return SettingsModule.fixedHeader;
+    return SettingsModule.fixedHeader
   }
 
   get classObj() {
@@ -67,23 +67,23 @@ export default class extends mixins(ResizeMixin) {
       hideSidebar: !this.sidebar.opened,
       openSidebar: this.sidebar.opened,
       withoutAnimation: this.sidebar.withoutAnimation,
-      mobile: this.device === DeviceType.Mobile,
-    };
+      mobile: this.device === DeviceType.Mobile
+    }
   }
 
   mounted() {
-    let theme = Cookies.get("theme");
+    const theme = Cookies.get('theme')
     if (theme) {
-      (this.$refs.theme as Theme).theme = theme;
+      (this.$refs.theme as Theme).theme = theme
       SettingsModule.ChangeSetting({
-        key: "theme",
-        value: theme,
-      });
+        key: 'theme',
+        value: theme
+      })
     }
   }
 
   private handleClickOutside() {
-    AppModule.closeSideBar(false);
+    AppModule.closeSideBar(false)
   }
 }
 </script>

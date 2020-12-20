@@ -6,7 +6,7 @@
         ref="tag"
         :key="tag.path"
         :class="isActive(tag) ? 'active' : ''"
-        :to="{ path: tag.path, query: tag.query, fullPath: tag.fullPath }"
+        :to="{path: tag.path, query: tag.query, fullPath: tag.fullPath}"
         tag="span"
         class="tags-view-item"
         @click.middle.native="closeSelectedTag(tag)"
@@ -22,7 +22,7 @@
     </scroll-pane>
     <ul
       v-show="visible"
-      :style="{ left: left + 'px', top: top + 'px' }"
+      :style="{left: left + 'px', top: top + 'px'}"
       class="contextmenu"
     >
       <li @click="refreshSelectedTag(selectedTag)">刷新</li>
@@ -39,130 +39,130 @@
 </template>
 
 <script lang="ts">
-import ScrollPane from "./ScrollPane.vue";
-import path from "path";
-import { Component, Vue, Watch } from "vue-property-decorator";
-import { TagsViewModule, ITagView } from "@/store/modules/tagsView";
-import { PermissionModule } from "@/store/modules/permission";
-import { RouteConfig } from "vue-router";
+import ScrollPane from './ScrollPane.vue'
+import path from 'path'
+import { Component, Vue, Watch } from 'vue-property-decorator'
+import { TagsViewModule, TagView } from '@/store/modules/tagsView'
+import { PermissionModule } from '@/store/modules/permission'
+import { RouteConfig } from 'vue-router'
 
 @Component({
-  name: "TagsView",
+  name: 'TagsView',
   components: {
-    ScrollPane,
-  },
+    ScrollPane
+  }
 })
 export default class extends Vue {
   private visible = false;
   private top = 0;
   private left = 0;
-  private selectedTag: ITagView = {};
-  private affixTags: ITagView[] = [];
+  private selectedTag: TagView = {};
+  private affixTags: TagView[] = [];
 
   get visitedViews() {
-    return TagsViewModule.visitedViews;
+    return TagsViewModule.visitedViews
   }
 
   get routes() {
-    return PermissionModule.routers;
+    return PermissionModule.routers
   }
 
-  @Watch("$route")
+  @Watch('$route')
   private onRouteChange() {
-    this.addTags();
-    this.moveToCurrentTag();
+    this.addTags()
+    this.moveToCurrentTag()
   }
 
-  @Watch("visible")
+  @Watch('visible')
   private onVisibleChange(value: boolean) {
     if (value) {
-      document.body.addEventListener("click", this.closeMenu);
+      document.body.addEventListener('click', this.closeMenu)
     } else {
-      document.body.removeEventListener("click", this.closeMenu);
+      document.body.removeEventListener('click', this.closeMenu)
     }
   }
 
   mounted() {
-    this.initTags();
-    this.addTags();
+    this.initTags()
+    this.addTags()
   }
 
-  private isActive(route: ITagView) {
-    return route.path === this.$route.path;
+  private isActive(route: TagView) {
+    return route.path === this.$route.path
   }
 
-  private filterAffixTags(routes: RouteConfig[], basePath = "/") {
-    let tags: ITagView[] = [];
+  private filterAffixTags(routes: RouteConfig[], basePath = '/') {
+    let tags: TagView[] = []
     routes.forEach((route) => {
       if (route.meta && route.meta.affix) {
-        const tagPath = path.resolve(basePath, route.path);
+        const tagPath = path.resolve(basePath, route.path)
         tags.push({
           fullPath: tagPath,
           path: tagPath,
           name: route.name,
-          meta: { ...route.meta },
-        });
+          meta: { ...route.meta }
+        })
       }
       if (route.children) {
-        const tempTags = this.filterAffixTags(route.children, route.path);
+        const tempTags = this.filterAffixTags(route.children, route.path)
         if (tempTags.length >= 1) {
-          tags = [...tags, ...tempTags];
+          tags = [...tags, ...tempTags]
         }
       }
-    });
-    return tags;
+    })
+    return tags
   }
 
   private initTags() {
-    const affixTags = (this.affixTags = this.filterAffixTags(this.routes));
+    const affixTags = (this.affixTags = this.filterAffixTags(this.routes))
     for (const tag of affixTags) {
       if (tag.name) {
-        TagsViewModule.addVisitedView(tag);
+        TagsViewModule.addVisitedView(tag)
       }
     }
   }
 
   private addTags() {
-    const { name } = this.$route;
+    const { name } = this.$route
     if (name) {
-      TagsViewModule.addView(this.$route);
+      TagsViewModule.addView(this.$route)
     }
-    return false;
+    return false
   }
 
   private moveToCurrentTag() {
-    const tags = this.$refs.tag as any[];
+    const tags = this.$refs.tag as any[]
     this.$nextTick(() => {
       for (const tag of tags) {
         if (tag.to.path === this.$route.path) {
-          (this.$refs.scrollPane as ScrollPane).moveToTarget(tag);
+          (this.$refs.scrollPane as ScrollPane).moveToTarget(tag)
           if (tag.to.fullPath !== this.$route.fullPath) {
-            TagsViewModule.updateVisitedView(this.$route);
+            TagsViewModule.updateVisitedView(this.$route)
           }
-          break;
+          break
         }
       }
-    });
+    })
   }
 
-  private refreshSelectedTag(view: ITagView) {
-    TagsViewModule.delCachedView(view);
-    const { fullPath } = view;
+  private refreshSelectedTag(view: TagView) {
+    TagsViewModule.delCachedView(view)
+    const { fullPath } = view
     this.$nextTick(() => {
       this.$router
         .replace({
-          path: "/redirect" + fullPath,
+          path: '/redirect' + fullPath
         })
         .catch((err) => {
-          console.warn(err);
-        });
-    });
+          console.warn(err)
+        })
+    })
   }
 
-  private closeSelectedTag(view: ITagView) {
-    TagsViewModule.delView(view);
+  private closeSelectedTag(view: TagView) {
+    TagsViewModule.delView(view)
     if (this.isActive(view)) {
-      this.toLastView(TagsViewModule.visitedViews, view);
+      this.toLastView(TagsViewModule.visitedViews, view)
     }
   }
 
@@ -172,54 +172,54 @@ export default class extends Vue {
       this.selectedTag.fullPath !== undefined
     ) {
       this.$router.push(this.selectedTag.fullPath).catch((err) => {
-        console.warn(err);
-      });
+        console.warn(err)
+      })
     }
-    TagsViewModule.delOthersViews(this.selectedTag);
-    this.moveToCurrentTag();
+    TagsViewModule.delOthersViews(this.selectedTag)
+    this.moveToCurrentTag()
   }
 
-  private closeAllTags(view: ITagView) {
-    TagsViewModule.delAllViews();
+  private closeAllTags(view: TagView) {
+    TagsViewModule.delAllViews()
     if (this.affixTags.some((tag) => tag.path === view.path)) {
-      return;
+      return
     }
-    this.toLastView(TagsViewModule.visitedViews, view);
+    this.toLastView(TagsViewModule.visitedViews, view)
   }
 
-  private toLastView(visitedViews: ITagView[], view: ITagView) {
-    const latestView = visitedViews.slice(-1)[0];
+  private toLastView(visitedViews: TagView[], view: TagView) {
+    const latestView = visitedViews.slice(-1)[0]
     if (latestView !== undefined && latestView.fullPath !== undefined) {
-      this.$router.push(latestView.fullPath);
+      this.$router.push(latestView.fullPath)
     } else {
-      if (view.name === "Dashboard") {
-        this.$router.replace({ path: "/redirect" + view.fullPath });
+      if (view.name === 'Dashboard') {
+        this.$router.replace({ path: '/redirect' + view.fullPath })
       } else {
-        this.$router.push("/");
+        this.$router.push('/')
       }
     }
   }
 
-  private openMenu(tag: ITagView, e: MouseEvent) {
-    const menuMinWidth = 105;
-    const offsetLeft = this.$el.getBoundingClientRect().left;
-    const offsetWidth = (this.$el as HTMLElement).offsetWidth;
-    const maxLeft = offsetWidth - menuMinWidth;
-    const left = e.clientX - offsetLeft + 15;
+  private openMenu(tag: TagView, e: MouseEvent) {
+    const menuMinWidth = 105
+    const offsetLeft = this.$el.getBoundingClientRect().left
+    const offsetWidth = (this.$el as HTMLElement).offsetWidth
+    const maxLeft = offsetWidth - menuMinWidth
+    const left = e.clientX - offsetLeft + 15
 
     if (left > maxLeft) {
-      this.left = maxLeft;
+      this.left = maxLeft
     } else {
-      this.left = left;
+      this.left = left
     }
 
-    this.top = e.clientY;
-    this.visible = true;
-    this.selectedTag = tag;
+    this.top = e.clientY
+    this.visible = true
+    this.selectedTag = tag
   }
 
   private closeMenu() {
-    this.visible = false;
+    this.visible = false
   }
 }
 </script>

@@ -28,20 +28,20 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import errGif from "@/assets/401_images/401.gif";
+import { Component, Vue } from 'vue-property-decorator'
+import errGif from '@/assets/401_images/401.gif'
 
 @Component({
-  name: "Page401",
+  name: 'Page401'
 })
 export default class extends Vue {
-  private errGif = errGif + "?" + +new Date();
+  private errGif = errGif + '?' + +new Date();
 
   private back() {
     if (this.$route.query.noGoBack) {
-      this.$router.push({ path: "/dashboard" });
+      this.$router.push({ path: '/dashboard' })
     } else {
-      this.$router.go(-1);
+      this.$router.go(-1)
     }
   }
 }

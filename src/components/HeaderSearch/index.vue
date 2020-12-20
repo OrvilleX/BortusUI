@@ -1,5 +1,5 @@
 <template>
-  <div :class="{'show':show}" class="header-search">
+  <div :class="{'show': show}" class="header-search">
     <svg-icon class-name="search-icon" icon-class="search" @click.stop="click" />
     <el-select
       ref="headerSearchSelect"
@@ -22,7 +22,6 @@ import Fuse from 'fuse.js'
 import path from 'path'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { RouteConfig } from 'vue-router'
-import { AppModule } from '@/store/modules/app'
 import { PermissionModule } from '@/store/modules/permission'
 
 @Component({
@@ -51,105 +50,104 @@ export default class extends Vue {
 
   @Watch('show')
   private onShowChange(value: boolean) {
-      if (value) {
-        document.body.addEventListener('click', this.close)
-      } else {
-        document.body.removeEventListener('click', this.close)
-      }
+    if (value) {
+      document.body.addEventListener('click', this.close)
+    } else {
+      document.body.removeEventListener('click', this.close)
+    }
   }
 
   mounted() {
     this.searchPool = this.generateRoutes(this.routes)
   }
 
-   private click() {
-      this.show = !this.show
-      if (this.show) {
-        this.$refs.headerSearchSelect && (this.$refs.headerSearchSelect as HTMLElement).focus()
-      }
+  private click() {
+    this.show = !this.show
+    if (this.show) {
+      this.$refs.headerSearchSelect && (this.$refs.headerSearchSelect as HTMLElement).focus()
     }
+  }
 
-   private close() {
-      this.$refs.headerSearchSelect && (this.$refs.headerSearchSelect as HTMLElement).blur()
-      this.options = []
+  private close() {
+    this.$refs.headerSearchSelect && (this.$refs.headerSearchSelect as HTMLElement).blur()
+    this.options = []
+    this.show = false
+  }
+
+  private change(val: RouteConfig) {
+    if (this.ishttp(val.path)) {
+      window.open(val.path, '_blank')
+    } else {
+      this.$router.push(val.path)
+    }
+    this.search = ''
+    this.options = []
+    this.$nextTick(() => {
       this.show = false
-    }
+    })
+  }
 
-   private change(val: RouteConfig) {
-      if (this.ishttp(val.path)) {
-        window.open(val.path, '_blank')
-      } else {
-        this.$router.push(val.path)
-      }
-      this.search = ''
-      this.options = []
-      this.$nextTick(() => {
-        this.show = false
-      })
-    }
+  private initFuse(list: RouteConfig[]) {
+    this.fuse = new Fuse(list, {
+      shouldSort: true,
+      threshold: 0.4,
+      location: 0,
+      distance: 100,
+      minMatchCharLength: 1,
+      keys: [{
+        name: 'title',
+        weight: 0.7
+      }, {
+        name: 'path',
+        weight: 0.3
+      }]
+    })
+  }
 
-   private initFuse(list: RouteConfig[]) {
-      this.fuse = new Fuse(list, {
-        shouldSort: true,
-        threshold: 0.4,
-        location: 0,
-        distance: 100,
-        minMatchCharLength: 1,
-        keys: [{
-          name: 'title',
-          weight: 0.7
-        }, {
-          name: 'path',
-          weight: 0.3
-        }]
-      })
-    }
+  private generateRoutes(routes: RouteConfig[], basePath = '/', prefixTitle = []) {
+    let res: RouteConfig[] = []
 
-    private generateRoutes(routes: RouteConfig[], basePath = '/', prefixTitle = []) {
-      let res: RouteConfig[] = []
+    for (const router of routes) {
+      if (router.meta && router.meta.hidden) { continue }
 
-      for (const router of routes) {
-        if (router.meta && router.meta.hidden) { continue }
-
-        const data: RouteConfig = {
-          path: !this.ishttp(router.path) ? path.resolve(basePath, router.path) : router.path,
-          meta: {
-            title: [...prefixTitle]
-          }
-        }
-
-        if (router.meta && router.meta.title) {
-          data.meta.title = [...data.meta.title, router.meta.title]
-
-          if (router.redirect !== 'noRedirect') {
-            res.push(data)
-          }
-        }
-
-        if (router.children) {
-          const tempRoutes = this.generateRoutes(router.children, data.path, data.meta.title)
-          if (tempRoutes.length >= 1) {
-            res = [...res, ...tempRoutes]
-          }
+      const data: RouteConfig = {
+        path: !this.ishttp(router.path) ? path.resolve(basePath, router.path) : router.path,
+        meta: {
+          title: [...prefixTitle]
         }
       }
-      return res
-    }
 
-    private querySearch(query: string) {
-      if (query !== '') {
-        if (this.fuse)
-        {
+      if (router.meta && router.meta.title) {
+        data.meta.title = [...data.meta.title, router.meta.title]
+
+        if (router.redirect !== 'noRedirect') {
+          res.push(data)
+        }
+      }
+
+      if (router.children) {
+        const tempRoutes = this.generateRoutes(router.children, data.path, data.meta.title)
+        if (tempRoutes.length >= 1) {
+          res = [...res, ...tempRoutes]
+        }
+      }
+    }
+    return res
+  }
+
+  private querySearch(query: string) {
+    if (query !== '') {
+      if (this.fuse) {
         this.options = this.fuse.search(query).map(result => result.item)
-        }
-      } else {
-        this.options = []
       }
+    } else {
+      this.options = []
     }
+  }
 
-    ishttp(url: string) {
-      return url.indexOf('http://') !== -1 || url.indexOf('https://') !== -1
-    }
+  ishttp(url: string) {
+    return url.indexOf('http://') !== -1 || url.indexOf('https://') !== -1
+  }
 }
 </script>
 

@@ -21,12 +21,12 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Ref } from 'vue-property-decorator'
+import { Vue, Component } from 'vue-property-decorator'
 import { ApiModule } from '@/store/modules/api'
 import { upload } from '@/utils/upload'
 import E from 'wangeditor'
 
-@Component({ name: "Editor" })
+@Component({ name: 'Editor' })
 export default class Editor extends Vue {
   editorContent = `
         <ul>
@@ -35,22 +35,23 @@ export default class Editor extends Vue {
         `;
 
   mounted() {
-    var editor = new E(this.$refs.editor as HTMLElement);
-    editor.config.zIndex = 10;
+    const editor = new E(this.$refs.editor as HTMLElement)
+    editor.config.zIndex = 10
     editor.config.customUploadImg = (files: File[], insert: Function) => {
-      files.forEach((image) => {
-        upload(ApiModule.imagesUploadApi, image).then((res) => {
-          const data = res.data;
-          const url = ApiModule.baseApi + "/file/" + data.type + "/" + data.realName;
-          insert(url);
+      files.forEach(image => {
+        upload(ApiModule.imagesUploadApi, image).then(res => {
+          const data = res.data
+          const url =
+            ApiModule.baseApi + '/file/' + data.type + '/' + data.realName
+          insert(url)
         })
       })
     }
     editor.config.onchange = (html: string) => {
-      this.editorContent = html;
-    };
-    editor.create();
-    editor.txt.html(this.editorContent);
+      this.editorContent = html
+    }
+    editor.create()
+    editor.txt.html(this.editorContent)
   }
 }
 </script>

@@ -1,4 +1,4 @@
-interface ISettings {
+interface Settings {
     /**
      * 网站标题
      */
@@ -60,19 +60,19 @@ interface ISettings {
     caseNumber: string
 }
 
-const settings: ISettings = {
-    title: "Bortus数据平台",
-    tagsView: true,
-    fixedHeader: true,
-    tokenCookieExpires: 1,
-    passCookieExpires: 1,
-    uniqueOpened: true,
-    tokenKey: "ORVILLEX-TOEKN",
-    timeout: 1200000,
-    sidebarLogo: true,
-    showFooter: true,
-    footerTxt: "© 2020 OrvilleX <a href='http://www.orvillex.com' target='_blank'>奥维尔智能物联</a>",
-    caseNumber: "苏ICP备2020064536号"
+const settings: Settings = {
+  title: 'Bortus数据平台',
+  tagsView: true,
+  fixedHeader: true,
+  tokenCookieExpires: 1,
+  passCookieExpires: 1,
+  uniqueOpened: true,
+  tokenKey: 'ORVILLEX-TOEKN',
+  timeout: 1200000,
+  sidebarLogo: true,
+  showFooter: true,
+  footerTxt: "© 2020 OrvilleX <a href='http://www.orvillex.com' target='_blank'>奥维尔智能物联</a>",
+  caseNumber: '苏ICP备2020064536号'
 }
 
-export default settings;
+export default settings

@@ -4,7 +4,7 @@ import variables from '@/assets/styles/element-variables.scss'
 import defaultSettings from '@/settings'
 const { tagsView, fixedHeader, sidebarLogo, uniqueOpened, showFooter, footerTxt, caseNumber } = defaultSettings
 
-export interface ISettingsState {
+export interface SettingsState {
   theme: string
   showSettings: boolean
   tagsView: boolean
@@ -17,7 +17,7 @@ export interface ISettingsState {
 }
 
 @Module({ dynamic: true, store, name: 'settings' })
-class Settings extends VuexModule implements ISettingsState {
+class Settings extends VuexModule implements SettingsState {
   theme = variables.theme
   showSettings = false
   tagsView = tagsView

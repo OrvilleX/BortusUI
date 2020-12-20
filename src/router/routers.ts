@@ -1,27 +1,27 @@
-import Vue from "vue";
-import VueRouter, { RouteConfig } from "vue-router";
+import Vue from 'vue'
+import VueRouter, { RouteConfig } from 'vue-router'
 import Layout from '../layout/Index.vue'
 
-Vue.use(VueRouter);
+Vue.use(VueRouter)
 
 export const constantRoutes: Array<RouteConfig> = [
   {
-    path: "/login",
-    meta: { title: "登录", noCache: true, hidden: true },
+    path: '/login',
+    meta: { title: '登录', noCache: true, hidden: true },
     component: () => import('@/views/Login.vue')
   },
   {
-    path: "/404",
+    path: '/404',
     meta: { hidden: true },
     component: () => import('@/views/features/404.vue')
   },
   {
-    path: "/401",
+    path: '/401',
     meta: { hidden: true },
     component: () => import('@/views/features/401.vue')
   },
   {
-    path: "/redirect",
+    path: '/redirect',
     component: Layout,
     meta: { hidden: true },
     children: [
@@ -32,7 +32,7 @@ export const constantRoutes: Array<RouteConfig> = [
     ]
   },
   {
-    path: "/",
+    path: '/',
     component: Layout,
     redirect: '/dashboard',
     children: [
@@ -56,10 +56,10 @@ export const constantRoutes: Array<RouteConfig> = [
       }
     ]
   }
-];
+]
 
 const router = new VueRouter({
-  mode: "history",
+  mode: 'history',
   base: process.env.BASE_URL,
   scrollBehavior: (to, from, savedPosition) => {
     if (savedPosition) {
@@ -69,6 +69,6 @@ const router = new VueRouter({
     }
   },
   routes: constantRoutes
-});
+})
 
-export default router;
+export default router

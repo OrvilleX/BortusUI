@@ -142,63 +142,64 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from "vue-property-decorator";
-import crudDictDetail from "@/api/system/dictDetail";
-import CRUD from "@/components/Crud";
-import { mixins } from "vue-class-component";
+import { Component } from 'vue-property-decorator'
+import crudDictDetail from '@/api/system/dictDetail'
+import CRUD from '@/components/Crud'
+import { mixins } from 'vue-class-component'
 import {
-  IDictDetailQueryData,
-  IDictDetailDtoData,
-  IDictDetailData,
-} from "@/types/dictDetail";
+  DictDetailQueryData,
+  DictDetailDtoData,
+  DictDetailData
+} from '@/types/dictDetail'
 
 @Component({
-  name: "dictDetail"
+  name: 'dictDetail'
 })
 export default class extends mixins<
-  CRUD<IDictDetailData, IDictDetailQueryData, IDictDetailDtoData>
+  CRUD<DictDetailData, DictDetailQueryData, DictDetailDtoData>
 >(CRUD) {
-  public dictId: number = NaN;
+  public dictId = NaN;
   private rules = {
-    label: [{ required: true, message: "请输入字典标签", trigger: "blur" }],
-    value: [{ required: true, message: "请输入字典值", trigger: "blur" }],
+    label: [{ required: true, message: '请输入字典标签', trigger: 'blur' }],
+    value: [{ required: true, message: '请输入字典值', trigger: 'blur' }],
     dictSort: [
       {
         required: true,
-        message: "请输入序号",
-        trigger: "blur",
-        type: "number",
-      },
-    ],
+        message: '请输入序号',
+        trigger: 'blur',
+        type: 'number'
+      }
+    ]
   };
+
   private permission = {
-    add: ["admin", "dict:add"],
-    edit: ["admin", "dict:edit"],
-    del: ["admin", "dict:del"],
+    add: ['admin', 'dict:add'],
+    edit: ['admin', 'dict:edit'],
+    del: ['admin', 'dict:del']
   };
 
   created() {
-    this.title = "字典详情";
-    this.url = "api/dictDetail";
+    this.title = '字典详情'
+    this.url = 'api/dictDetail'
     this.query = {
-      dictName: "",
-    };
-    this.sort = ["dictSort,asc", "id,desc"];
-    this.crudMethod = { ...crudDictDetail };
+      dictName: ''
+    }
+    this.sort = ['dictSort,asc', 'id,desc']
+    this.crudMethod = { ...crudDictDetail }
     this.optShow = {
       add: true,
       edit: true,
       del: true,
       reset: false,
-      download: false,
-    };
-    this.queryOnPresenterCreated = false;
+      download: false
+    }
+    this.queryOnPresenterCreated = false
     this.defaultForm = {
       id: this.dictId,
-      label: "",
-      value: "",
-      dictSort: 999,
-    };
+      label: '',
+      value: '',
+      dictSort: 999
+    }
   }
 }
 </script>

@@ -21,36 +21,37 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Ref } from "vue-property-decorator";
+import { Vue, Component } from 'vue-property-decorator'
 import UploadExcelComponent, {
-  IExcelData,
-} from "@/components/UploadExcel/Index.vue";
+  ExcelData
+} from '@/components/UploadExcel/Index.vue'
 
 @Component({
-  name: "UploadExcel",
+  name: 'UploadExcel',
   components: {
-    UploadExcelComponent,
-  },
+    UploadExcelComponent
+  }
 })
 export default class UploadExcel extends Vue {
   tableData: any = [];
   tableHeader: string[] = [];
 
   beforeUpload(file: File) {
-    const isLt1M = file.size / 1024 / 1024 < 1;
+    const isLt1M = file.size / 1024 / 1024 < 1
     if (isLt1M) {
-      return true;
+      return true
     }
 
     this.$message({
-      message: "请不要上传大于1m的文件.",
-      type: "warning",
-    });
-    return false;
+      message: '请不要上传大于1m的文件.',
+      type: 'warning'
+    })
+    return false
   }
-  handleSuccess(e: IExcelData) {
-    this.tableData = e.results;
-    this.tableHeader = e.header;
+
+  handleSuccess(e: ExcelData) {
+    this.tableData = e.results
+    this.tableHeader = e.header
   }
 }
 </script>

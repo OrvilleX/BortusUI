@@ -262,68 +262,63 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from "vue-property-decorator";
-import { checkPermission } from "@/utils/permission";
-import dictDetail from "./dictDetail.vue";
-import crudDict from "@/api/system/dict";
-import CRUD from "@/components/Crud";
-import { mixins } from "vue-class-component";
-import { IDictQueryData, IDictDtoData, IDictData } from "@/types/dict";
-
-const defaultForm = {
-  id: null,
-  name: null,
-  description: null,
-  dictDetails: [],
-};
+import { Component } from 'vue-property-decorator'
+import { checkPermission } from '@/utils/permission'
+import dictDetail from './dictDetail.vue'
+import crudDict from '@/api/system/dict'
+import CRUD from '@/components/Crud'
+import { mixins } from 'vue-class-component'
+import { DictQueryData, DictDtoData, DictData } from '@/types/dict'
 
 @Component({
-  name: "Dict",
+  name: 'Dict',
   components: {
-    dictDetail,
-  },
+    dictDetail
+  }
 })
 export default class extends mixins<
-  CRUD<IDictData, IDictQueryData, IDictDtoData>
+  CRUD<DictData, DictQueryData, DictDtoData>
 >(CRUD) {
   private checkPermission = checkPermission;
   private queryTypeOptions = [
-    { key: "name", display_name: "字典名称" },
-    { key: "description", display_name: "描述" },
+    { key: 'name', displayName: '字典名称' },
+    { key: 'description', displayName: '描述' }
   ];
+
   private rules = {
-    name: [{ required: true, message: "请输入名称", trigger: "blur" }],
+    name: [{ required: true, message: '请输入名称', trigger: 'blur' }]
   };
+
   private permission = {
-    add: ["admin", "dict:add"],
-    edit: ["admin", "dict:edit"],
-    del: ["admin", "dict:del"],
+    add: ['admin', 'dict:add'],
+    edit: ['admin', 'dict:edit'],
+    del: ['admin', 'dict:del']
   };
 
   created() {
-    this.title = "字典";
-    this.url = "api/dict";
-    this.crudMethod = { ...crudDict };
+    this.title = '字典'
+    this.url = 'api/dict'
+    this.crudMethod = { ...crudDict }
     this.defaultForm = {
       id: NaN,
-      name: "",
-      description: "",
-      dictDetails: [],
-    };
+      name: '',
+      description: '',
+      dictDetails: []
+    }
   }
 
   beforeRefresh() {
     if (this.$refs.dictDetail) {
-      (this.$refs.dictDetail as dictDetail).query.dictName = "";
+      (this.$refs.dictDetail as dictDetail).query.dictName = ''
     }
-    return true;
+    return true
   }
 
-  handleCurrentChange(val: IDictDtoData) {
+  handleCurrentChange(val: DictDtoData) {
     if (val) {
       (this.$refs.dictDetail as dictDetail).query.dictName = val.name;
       (this.$refs.dictDetail as dictDetail).dictId = val.id;
-      (this.$refs.dictDetail as dictDetail).toQuery();
+      (this.$refs.dictDetail as dictDetail).toQuery()
     }
   }
 }

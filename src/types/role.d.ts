@@ -1,13 +1,12 @@
-import { Form } from 'element-ui';
-import { IPageable } from './base';
-import { IUserData } from './user';
-import { IDeptData, IDeptDtoData } from './dept';
-import { IMenuData, IMenuDtoData } from "./menu";
+import { Pageable } from './base'
+import { UserData } from './user'
+import { DeptData, DeptDtoData } from './dept'
+import { MenuData, MenuDtoData } from './menu'
 
 /**
  * 导出、查询角色数据包
  */
-export interface IRoleQueryData extends IPageable {
+export interface RoleQueryData extends Pageable {
     blurry?: string
     createTime?: number[]
 }
@@ -15,11 +14,11 @@ export interface IRoleQueryData extends IPageable {
 /**
  * 新增、修改角色数据包
  */
-export interface IRoleData {
+export interface RoleData {
     id?: number
-    users?: IUserData[]
-    menus?: IMenuData[]
-    depts?: IDeptData[]
+    users?: UserData[]
+    menus?: MenuData[]
+    depts?: DeptData[]
     name?: string
     dataScope?: string
     level?: number
@@ -29,10 +28,10 @@ export interface IRoleData {
 /**
  * 角色输出数据包
  */
-export interface IRoleDtoData {
+export interface RoleDtoData {
     id?: number
-    menus?: IMenuDtoData[]
-    depts?: IDeptDtoData[]
+    menus?: MenuDtoData[]
+    depts?: DeptDtoData[]
     name?: string
     dataScope?: string
     level?: number
@@ -42,7 +41,7 @@ export interface IRoleDtoData {
 /**
  * 角色精简数据包
  */
-export interface IRoleSmallDtoData {
+export interface RoleSmallDtoData {
     id?: number
     name?: string
     level?: number

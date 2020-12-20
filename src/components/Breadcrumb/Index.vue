@@ -3,7 +3,7 @@
     <transition-group name="breadcrumb">
       <el-breadcrumb-item v-for="(item, index) in levelList" :key="item.path">
         <span
-          v-if="item.redirect === 'noredirect' || index == levelList.length - 1"
+          v-if="item.redirect === 'noredirect' || index === levelList.length - 1"
           class="no-redirect"
           >{{ item.meta.title }}</span
         >
@@ -14,62 +14,62 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Watch } from "vue-property-decorator";
-import { compile } from "path-to-regexp";
-import { RouteRecord, Route } from "vue-router";
+import { Vue, Component, Watch } from 'vue-property-decorator'
+import { compile } from 'path-to-regexp'
+import { RouteRecord, Route } from 'vue-router'
 
-@Component({ name: "Breadcrumb" })
+@Component({ name: 'Breadcrumb' })
 export default class extends Vue {
   levelList: RouteRecord[] = [];
 
   public created() {
-    this.getBreadcrumb();
+    this.getBreadcrumb()
   }
 
-  @Watch("$route")
+  @Watch('$route')
   onRouteChanged(route: Route) {
-    if (route.path.startsWith("/redirect/")) {
-      return;
+    if (route.path.startsWith('/redirect/')) {
+      return
     }
-    this.getBreadcrumb();
+    this.getBreadcrumb()
   }
 
   private getBreadcrumb() {
     let matched = this.$route.matched.filter(
       (item) => item.meta && item.meta.title
-    );
-    const first = matched[0];
+    )
+    const first = matched[0]
     if (!this.isDashboard(first)) {
       matched = [
-        { path: "/dashboard", meta: { title: "首页" } } as RouteRecord,
-      ].concat(matched);
+        { path: '/dashboard', meta: { title: '首页' } } as RouteRecord
+      ].concat(matched)
     }
     this.levelList = matched.filter(
       (item) => item.meta && item.meta.title && item.meta.breadcrumb !== false
-    );
+    )
   }
 
   private isDashboard(route: RouteRecord) {
-    const name = route && route.name;
+    const name = route && route.name
     if (!name) {
-      return false;
+      return false
     }
-    return name.trim().toLocaleLowerCase() === "Dashboard".toLocaleLowerCase();
+    return name.trim().toLocaleLowerCase() === 'Dashboard'.toLocaleLowerCase()
   }
 
   private pathCompile(path: string) {
-    const { params } = this.$route;
-    var toPath = compile(path);
-    return toPath(params);
+    const { params } = this.$route
+    const toPath = compile(path)
+    return toPath(params)
   }
 
   private handleLink(item: any) {
-    const { redirect, path } = item;
+    const { redirect, path } = item
     if (redirect) {
-      this.$router.push(redirect);
-      return;
+      this.$router.push(redirect)
+      return
     }
-    this.$router.push(this.pathCompile(path));
+    this.$router.push(this.pathCompile(path))
   }
 }
 </script>

@@ -194,73 +194,72 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from "vue-property-decorator";
-import { mixins } from "vue-class-component";
-import { IOnlineUserQueryData, IOnlineUserDtoData } from "@/types/online";
-import { del } from "@/api/monitor/online";
-import CRUD from "@/components/Crud";
+import { Component } from 'vue-property-decorator'
+import { mixins } from 'vue-class-component'
+import { OnlineUserQueryData, OnlineUserDtoData } from '@/types/online'
+import { del } from '@/api/monitor/online'
+import CRUD from '@/components/Crud'
 
-interface IOnlineSearchData {
-  filter: string;
+interface OnlineSearchData {
+  filter: string
 }
 
 @Component({
-  name: "OnlineUser",
+  name: 'OnlineUser'
 })
 export default class extends mixins<
-  CRUD<IOnlineSearchData, IOnlineUserQueryData, IOnlineUserDtoData>
+  CRUD<OnlineSearchData, OnlineUserQueryData, OnlineUserDtoData>
 >(CRUD) {
   private delLoading = false;
 
   created() {
-    this.title = "在线用户";
-    this.url = "auth/online";
-    this.msg.del = "强退成功！";
+    this.title = '在线用户'
+    this.url = 'auth/online'
+    this.msg.del = '强退成功！'
     this.optShow = {
       add: false,
       edit: false,
       del: false,
       download: true,
-      reset: false,
-    };
+      reset: false
+    }
   }
 
   async doDelete(datas: number[]) {
-    this.$confirm(`确认强退选中的${datas.length}个用户?`, "提示", {
-      confirmButtonText: "确定",
-      cancelButtonText: "取消",
-      type: "warning",
+    this.$confirm(`确认强退选中的${datas.length}个用户?`, '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
     })
       .then(() => {
-        this.delMethod(datas);
+        this.delMethod(datas)
       })
-      .catch(() => {});
   }
 
-  private delMethod(key: any, index: number = NaN) {
-    const ids = [];
+  private delMethod(key: any, index = NaN) {
+    const ids = []
     if (key instanceof Array) {
       key.forEach((val) => {
-        ids.push(val.key);
-      });
-    } else ids.push(key);
-    this.delLoading = true;
+        ids.push(val.key)
+      })
+    } else ids.push(key)
+    this.delLoading = true
     del(ids)
       .then(() => {
-        this.delLoading = false;
+        this.delLoading = false
         if (this.$refs[index]) {
-          (this.$refs[index] as any).doClose();
+          (this.$refs[index] as any).doClose()
         }
-        this.dleChangePage(1);
-        this.delSuccessNotify();
-        this.toQuery();
+        this.dleChangePage(1)
+        this.delSuccessNotify()
+        this.toQuery()
       })
       .catch(() => {
-        this.delLoading = false;
+        this.delLoading = false
         if (this.$refs[index]) {
-          (this.$refs[index] as any).doClose();
+          (this.$refs[index] as any).doClose()
         }
-      });
+      })
   }
 }
 </script>

@@ -1,9 +1,9 @@
-import { IPageable } from './base'
+import { Pageable } from './base'
 
 /**
  * 岗位导出、列表查询数据包
  */
-export interface IJobQueryData extends IPageable {
+export interface JobQueryData extends Pageable {
     name?: string
     enabled?: boolean
     createTime?: string[]
@@ -12,7 +12,7 @@ export interface IJobQueryData extends IPageable {
 /**
  * 新增、编辑岗位
  */
-export interface IJobData {
+export interface JobData {
     id?: number
     name?: string
     jobSort?: number

@@ -47,76 +47,76 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { AppModule } from "@/store/modules/app";
-import { UserModule } from "@/store/modules/user";
-import { SettingsModule } from "@/store/modules/settings";
-import { ApiModule } from "@/store/modules/api";
-import Breadcrumb from "@/components/Breadcrumb/Index.vue";
-import Hamburger from "@/components/Hamburger/Index.vue";
-import Screenfull from "@/components/Screenfull/Index.vue";
-import SizeSelect from "@/components/SizeSelect/Index.vue";
-import Search from "@/components/HeaderSearch/Index.vue";
-import Avatar from "@/assets/images/avatar.png";
+import { Component, Vue } from 'vue-property-decorator'
+import { AppModule } from '@/store/modules/app'
+import { UserModule } from '@/store/modules/user'
+import { SettingsModule } from '@/store/modules/settings'
+import { ApiModule } from '@/store/modules/api'
+import Breadcrumb from '@/components/Breadcrumb/Index.vue'
+import Hamburger from '@/components/Hamburger/Index.vue'
+import Screenfull from '@/components/Screenfull/Index.vue'
+import SizeSelect from '@/components/SizeSelect/Index.vue'
+import Search from '@/components/HeaderSearch/Index.vue'
+import Avatar from '@/assets/images/avatar.png'
 
 @Component({
-  name: "Navbar",
+  name: 'Navbar',
   components: {
     Breadcrumb,
     Hamburger,
     Screenfull,
     SizeSelect,
-    Search,
-  },
+    Search
+  }
 })
 export default class extends Vue {
   private Avatar = Avatar;
   private dialogVisible = false;
 
   get sidebar() {
-    return AppModule.sidebar;
+    return AppModule.sidebar
   }
 
   get device() {
-    return AppModule.device;
+    return AppModule.device
   }
 
   get user() {
-    return UserModule.user;
+    return UserModule.user
   }
 
   get baseApi() {
-    return ApiModule.baseApi;
+    return ApiModule.baseApi
   }
 
   get show() {
-    return SettingsModule.showSettings;
+    return SettingsModule.showSettings
   }
 
   set show(value: boolean) {
     SettingsModule.ChangeSetting({
-      key: "showSettings",
-      value,
-    });
+      key: 'showSettings',
+      value
+    })
   }
 
   private toggleSideBar() {
-    AppModule.toggleSideBar();
+    AppModule.toggleSideBar()
   }
 
   private open() {
-    this.$confirm("确定注销并退出系统吗？", "提示", {
-      confirmButtonText: "确定",
-      cancelButtonText: "取消",
-      type: "warning",
+    this.$confirm('确定注销并退出系统吗？', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
     }).then(() => {
-      this.logout();
-    });
+      this.logout()
+    })
   }
 
   private async logout() {
-    await UserModule.LogOut();
-    location.reload();
+    await UserModule.LogOut()
+    location.reload()
   }
 }
 </script>

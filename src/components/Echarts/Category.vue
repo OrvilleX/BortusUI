@@ -1,12 +1,12 @@
 <template>
-  <div :class="className" :style="{height:height,width:width}" />
+  <div :class="className" :style="{height: height,width: width}" />
 </template>
 
 <script>
-import echarts from 'echarts'
-
-require('echarts/theme/macarons') // echarts theme
+import echarts from 'echarts' // echarts theme
 import { debounce } from '@/utils'
+
+require('echarts/theme/macarons')
 
 export default {
   props: {
@@ -191,7 +191,7 @@ export default {
             x: 'right',
             data: ['第一产业', '第二产业', '第三产业', 'GDP', '金融', '房地产'],
             selected: {
-              'GDP': false, '金融': false, '房地产': false
+              GDP: false, 金融: false, 房地产: false
             }
           },
           calculable: true,
@@ -213,12 +213,12 @@ export default {
           },
           xAxis: [
             {
-              'type': 'category',
-              'axisLabel': {
-                'interval': 0,
+              type: 'category',
+              axisLabel: {
+                interval: 0,
                 rotate: 45
               },
-              'data': [
+              data: [
                 '北京', '\n天津', '河北', '\n山西', '内蒙古', '\n辽宁', '吉林', '\n黑龙江',
                 '上海', '\n江苏', '浙江', '\n安徽', '福建', '\n江西', '山东', '\n河南',
                 '湖北', '\n湖南', '广东', '\n广西', '海南', '\n重庆', '四川', '\n贵州',

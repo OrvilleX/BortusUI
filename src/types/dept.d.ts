@@ -1,10 +1,10 @@
-import { IRoleData } from './role'
-import { IPageable } from './base'
+import { RoleData } from './role'
+import { Pageable } from './base'
 
 /**
  * 查询、导出部门数据包
  */
-export interface IDeptQueryData extends IPageable {
+export interface DeptQueryData extends Pageable {
     name?: string
     enabled?: boolean
     pid?: number
@@ -15,9 +15,9 @@ export interface IDeptQueryData extends IPageable {
 /**
  * 新增、修改部门数据包
  */
-export interface IDeptData {
+export interface DeptData {
     id?: number
-    roles?: IRoleData[]
+    roles?: RoleData[]
     deptSort?: number
     name?: string
     enabled?: boolean
@@ -27,19 +27,19 @@ export interface IDeptData {
     isTop?: string
 }
 
-export interface IDeptDtoData {
+export interface DeptDtoData {
     id: number
     name: string
     enabled: boolean
     deptSort: number
-    children: IDeptDtoData[]
+    children: DeptDtoData[]
     pid: number
     subCount: number
     createTime: string
     hasChildren: boolean
 }
 
-export interface IDeptSmallDtoData {
+export interface DeptSmallDtoData {
     id: number
     name: string
 }

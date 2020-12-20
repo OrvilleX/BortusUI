@@ -8,51 +8,51 @@
 </template>
 
 <script lang="ts">
-import screenfull from "screenfull";
-import { Component, Vue } from "vue-property-decorator";
+import screenfull from 'screenfull'
+import { Component, Vue } from 'vue-property-decorator'
 
-const sf = screenfull;
+const sf = screenfull
 
 @Component({
-  name: "Screenfull",
+  name: 'Screenfull'
 })
 export default class extends Vue {
   private isFullscreen = false;
 
   mounted() {
-    this.init();
+    this.init()
   }
 
   beforeDestroy() {
-    this.destroy();
+    this.destroy()
   }
 
   private click() {
     if (!sf.isEnabled) {
       this.$message({
-        message: "you browser can not work",
-        type: "warning",
-      });
-      return false;
+        message: 'you browser can not work',
+        type: 'warning'
+      })
+      return false
     }
-    sf.toggle();
+    sf.toggle()
   }
 
   private change() {
     if (sf.isEnabled) {
-      this.isFullscreen = sf.isFullscreen;
+      this.isFullscreen = sf.isFullscreen
     }
   }
 
   private init() {
     if (sf.isEnabled) {
-      sf.on("change", this.change);
+      sf.on('change', this.change)
     }
   }
 
   private destroy() {
     if (screenfull.isEnabled) {
-      screenfull.off("change", this.change);
+      screenfull.off('change', this.change)
     }
   }
 }

@@ -1,7 +1,7 @@
 <template>
   <div style="padding: 0 15px" @click="toggleClick">
     <svg
-      :class="{ 'is-active': isActive }"
+      :class="{'is-active': isActive}"
       class="hamburger"
       viewBox="0 0 1024 1024"
       xmlns="http://www.w3.org/2000/svg"
@@ -16,16 +16,16 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Prop, Vue } from 'vue-property-decorator'
 
 @Component({
-  name: "Hamburger",
+  name: 'Hamburger'
 })
 export default class extends Vue {
   @Prop({ default: false }) private isActive!: boolean;
 
   private toggleClick() {
-    this.$emit("toggleClick");
+    this.$emit('toggleClick')
   }
 }
 </script>

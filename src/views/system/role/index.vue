@@ -4,7 +4,7 @@
     <div class="head-container">
       <div v-if="props.searchToggle">
         <!-- 搜索 -->
-        <el-input v-model="query.blurry" size="small" clearable placeholder="输入名称或者描述搜索" 
+        <el-input v-model="query.blurry" size="small" clearable placeholder="输入名称或者描述搜索"
         style="width: 200px" class="filter-item" @keyup.enter.native="toQuery" />
         <date-range-picker v-model="query.createTime" class="date-item" />
         <span>
@@ -40,7 +40,7 @@
             </el-button>
             <el-checkbox v-model="allColumnsSelected" :indeterminate="allColumnsSelectedIndeterminate"
               @change="handleCheckAllChange">全选</el-checkbox>
-            <el-checkbox v-for="item in tableColumns" :key="item.property" v-model="item.visible" 
+            <el-checkbox v-for="item in tableColumns" :key="item.property" v-model="item.visible"
             @change="handleCheckedTableColumnsChange(item)">{{ item.label }}</el-checkbox>
           </el-popover>
         </el-button-group>
@@ -243,233 +243,237 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from "vue-property-decorator";
-import { mixins } from "vue-class-component";
-import DateRangePicker from "@/components/DateRangePicker/Index.vue";
-import crudRoles from "@/api/system/role";
-import { getDepts, getDeptSuperior } from "@/api/system/dept";
-import { getMenusTree } from "@/api/system/menu";
-import CRUD from "@/components/Crud";
-import Treeselect from "@riophae/vue-treeselect";
-import "@riophae/vue-treeselect/dist/vue-treeselect.css";
-import { LOAD_CHILDREN_OPTIONS } from "@riophae/vue-treeselect";
-import { IRoleQueryData, IRoleData, IRoleDtoData } from "@/types/role";
-import { IMenuData, IMenuDtoData } from "@/types/menu";
-import { IDeptData, IDeptDtoData } from "@/types/dept";
-import { ElTree, TreeData } from "element-ui/types/tree";
-import { NOTIFICATION_TYPE } from "@/components/Crud/base";
+import { Component } from 'vue-property-decorator'
+import { mixins } from 'vue-class-component'
+import DateRangePicker from '@/components/DateRangePicker/Index.vue'
+import crudRoles from '@/api/system/role'
+import { getDepts, getDeptSuperior } from '@/api/system/dept'
+import { getMenusTree } from '@/api/system/menu'
+import CRUD from '@/components/Crud'
+import Treeselect, { LOAD_CHILDREN_OPTIONS } from '@riophae/vue-treeselect'
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+
+import { RoleQueryData, RoleData, RoleDtoData } from '@/types/role'
+import { MenuDtoData } from '@/types/menu'
+import { DeptData, DeptDtoData } from '@/types/dept'
+import { ElTree, TreeData } from 'element-ui/types/tree'
+import { NOTIFICATION_TYPE } from '@/components/Crud/base'
 
 @Component({
-  name: "Role",
+  name: 'Role',
   components: {
     Treeselect,
-    DateRangePicker,
-  },
+    DateRangePicker
+  }
 })
 export default class extends mixins<
-  CRUD<IRoleData, IRoleQueryData, IRoleDtoData>
+  CRUD<RoleData, RoleQueryData, RoleDtoData>
 >(CRUD) {
   private defaultProps = {
-    children: "children",
-    label: "label",
-    isLeaf: "leaf",
+    children: 'children',
+    label: 'label',
+    isLeaf: 'leaf'
   };
-  private dateScopes = ["全部", "本级", "自定义"];
+
+  private dateScopes = ['全部', '本级', '自定义'];
   private level = 3;
   private currentId = 0;
   private menuLoading = false;
   private showButton = false;
-  private menus: IMenuDtoData[] = [];
+  private menus: MenuDtoData[] = [];
   private menuIds: number[] = [];
-  private depts: IDeptDtoData[] = [];
+  private depts: DeptDtoData[] = [];
   private deptDatas: number[] = [];
 
   private permission = {
-    add: ["admin", "roles:add"],
-    edit: ["admin", "roles:edit"],
-    del: ["admin", "roles:del"],
+    add: ['admin', 'roles:add'],
+    edit: ['admin', 'roles:edit'],
+    del: ['admin', 'roles:del']
   };
+
   private rules = {
-    name: [{ required: true, message: "请输入名称", trigger: "blur" }],
-    permission: [{ required: true, message: "请输入权限", trigger: "blur" }],
+    name: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+    permission: [{ required: true, message: '请输入权限', trigger: 'blur' }]
   };
 
   created() {
-    this.title = "角色";
-    this.url = "api/roles";
-    this.sort = ["level,asc"];
-    this.crudMethod = { ...crudRoles };
+    this.title = '角色'
+    this.url = 'api/roles'
+    this.sort = ['level,asc']
+    this.crudMethod = { ...crudRoles }
     this.defaultForm = {
       id: NaN,
-      name: "",
+      name: '',
       depts: [],
-      description: "",
-      dataScope: "全部",
-      level: 3,
-    };
+      description: '',
+      dataScope: '全部',
+      level: 3
+    }
     crudRoles.getLevel().then((res) => {
-      this.level = res.data.level;
-    });
+      this.level = res.data.level
+    })
   }
+
   getMenuDatas(node: TreeData, resolve: Function) {
     setTimeout(() => {
       getMenusTree(node.id ? node.id : 0).then((res) => {
-        resolve(res);
-      });
-    }, 100);
+        resolve(res)
+      })
+    }, 100)
   }
 
   afterRefresh() {
-    (this.$refs.menu as ElTree<any, any>).setCheckedKeys([]);
+    (this.$refs.menu as ElTree<any, any>).setCheckedKeys([])
   }
 
   beforeToAdd() {
-    this.deptDatas = [];
-    return true;
+    this.deptDatas = []
+    return true
   }
 
-  beforeToEdit(form: IRoleData) {
-    this.deptDatas = [];
-    if (form.dataScope === "自定义") {
-      if (form.depts) this.getSupDepts(form.depts);
+  beforeToEdit(form: RoleData) {
+    this.deptDatas = []
+    if (form.dataScope === '自定义') {
+      if (form.depts) this.getSupDepts(form.depts)
     }
     if (form.depts) {
       form.depts.forEach((dept) => {
-        if (dept.id) this.deptDatas.push(dept.id);
-      });
+        if (dept.id) this.deptDatas.push(dept.id)
+      })
     }
-    return true;
+    return true
   }
 
   afterValidateCU() {
-    if (this.form.dataScope === "自定义" && this.deptDatas.length === 0) {
+    if (this.form.dataScope === '自定义' && this.deptDatas.length === 0) {
       this.$message({
-        message: "自定义数据权限不能为空",
-        type: "warning",
-      });
-      return false;
-    } else if (this.form.dataScope === "自定义") {
-      const depts: { id: number }[] = [];
-      this.deptDatas.forEach(function (data) {
-        const dept = { id: data };
-        depts.push(dept);
-      });
-      this.form.depts = depts;
+        message: '自定义数据权限不能为空',
+        type: 'warning'
+      })
+      return false
+    } else if (this.form.dataScope === '自定义') {
+      const depts: { id: number }[] = []
+      this.deptDatas.forEach(function(data) {
+        const dept = { id: data }
+        depts.push(dept)
+      })
+      this.form.depts = depts
     } else {
-      this.form.depts = [];
+      this.form.depts = []
     }
-    return true;
+    return true
   }
 
-  private handleCurrentChange(val: IRoleDtoData) {
+  private handleCurrentChange(val: RoleDtoData) {
     if (val) {
-      (this.$refs.menu as ElTree<any, any>).setCheckedKeys([]);
-      if (val.id) this.currentId = val.id;
-      this.menuIds = [];
+      (this.$refs.menu as ElTree<any, any>).setCheckedKeys([])
+      if (val.id) this.currentId = val.id
+      this.menuIds = []
       if (val.menus) {
         val.menus.forEach((data) => {
-          this.menuIds.push(data.id);
-        });
+          this.menuIds.push(data.id)
+        })
       }
-      this.showButton = true;
+      this.showButton = true
     }
   }
 
   private menuChange(menu: any) {
-    const index = this.menuIds.indexOf(menu.id);
+    const index = this.menuIds.indexOf(menu.id)
     if (index !== -1) {
-      this.menuIds.splice(index, 1);
+      this.menuIds.splice(index, 1)
     } else {
-      this.menuIds.push(menu.id);
+      this.menuIds.push(menu.id)
     }
   }
 
   private async saveMenu() {
-    this.menuLoading = true;
-    const role: IRoleData = { id: this.currentId, menus: [] };
+    this.menuLoading = true
+    const role: RoleData = { id: this.currentId, menus: [] }
     // 得到已选中的 key 值
     this.menuIds.forEach((id) => {
-      const menu = { id: id };
-      role.menus?.push(menu);
-    });
+      const menu = { id: id }
+      // eslint-disable-next-line no-unused-expressions
+      role.menus?.push(menu)
+    })
 
     try {
-      await crudRoles.editMenu(role);
-      this.notify("保存成功", NOTIFICATION_TYPE.SUCCESS);
-      this.menuLoading = false;
-      this.update();
+      await crudRoles.editMenu(role)
+      this.notify('保存成功', NOTIFICATION_TYPE.SUCCESS)
+      this.menuLoading = false
+      this.update()
     } catch (err) {
-      this.menuLoading = false;
-      console.log(err.response.data.message);
+      this.menuLoading = false
+      console.log(err.response.data.message)
     }
   }
 
   private async update() {
-    let res = await crudRoles.get(this.currentId);
+    const res = await crudRoles.get(this.currentId)
     for (let i = 0; i < this.data.length; i++) {
       if (res.data.id === this.data[i].id) {
-        this.data[i] = res.data;
-        break;
+        this.data[i] = res.data
+        break
       }
     }
   }
 
   private async getDepts() {
-    let res = await getDepts({ enabled: true });
+    const res = await getDepts({ enabled: true })
     this.depts = res.data.content.map((obj) => {
       if (obj.hasChildren) {
-        obj.children = [];
+        obj.children = []
       }
-      return obj;
-    });
+      return obj
+    })
   }
 
-  private async getSupDepts(depts: IDeptData[]) {
-    const ids: number[] = [];
+  private async getSupDepts(depts: DeptData[]) {
+    const ids: number[] = []
     depts.forEach((dept) => {
-      if (dept.id) ids.push(dept.id);
-    });
-    let res = await getDeptSuperior(ids);
-    this.buildDepts(res.data);
-    this.depts = res.data;
+      if (dept.id) ids.push(dept.id)
+    })
+    const res = await getDeptSuperior(ids)
+    this.buildDepts(res.data)
+    this.depts = res.data
   }
 
-  private buildDepts(depts: IDeptDtoData[]) {
+  private buildDepts(depts: DeptDtoData[]) {
     depts.forEach((data) => {
       if (data.children) {
-        this.buildDepts(data.children);
+        this.buildDepts(data.children)
       }
       if (data.hasChildren && !data.children) {
-        data.children = [];
+        data.children = []
       }
-    });
+    })
   }
 
-  private loadDepts(e: { action: any; parentNode: any; callback: Function }) {
+  private loadDepts(e: { action: any, parentNode: any, callback: Function }) {
     if (e.action === LOAD_CHILDREN_OPTIONS) {
       getDepts({ enabled: true, pid: e.parentNode.id }).then((res) => {
         e.parentNode.children = res.data.content.map((obj) => {
           if (obj.hasChildren) {
-            obj.children = [];
+            obj.children = []
           }
-          return obj;
-        });
+          return obj
+        })
         setTimeout(() => {
-          e.callback();
-        }, 200);
-      });
+          e.callback()
+        }, 200)
+      })
     }
   }
 
   private changeScope() {
-    if (this.form.dataScope === "自定义") {
-      this.getDepts();
+    if (this.form.dataScope === '自定义') {
+      this.getDepts()
     }
   }
 
-  private checkboxT(row: IRoleDtoData) {
-    let level = row.level ? row.level : 0;
-    return level >= this.level;
+  private checkboxT(row: RoleDtoData) {
+    const level = row.level ? row.level : 0
+    return level >= this.level
   }
 }
 </script>

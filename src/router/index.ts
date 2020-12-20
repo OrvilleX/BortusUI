@@ -1,17 +1,33 @@
 import router from './routers'
 import { UserModule } from '@/store/modules/user'
-import { PermissionModule } from '@/store/modules/permission'
+import { PermissionModule, filterAsyncRouter } from '@/store/modules/permission'
 import Config from '@/settings'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import { getToken } from '@/utils/auth'
 import { buildMenus } from '@/api/system/menu'
-import { filterAsyncRouter } from '@/store/modules/permission'
+
 import { Route } from 'vue-router'
 
 NProgress.configure({ showSpinner: false })
 
 const whiteList = ['/login']
+
+export const loadMenus = (next: any, to: Route) => {
+  buildMenus().then(res => {
+    const asyncRouter = filterAsyncRouter(res.data)
+    asyncRouter.push({
+      path: '*',
+      redirect: '/404',
+      meta: {
+        hidden: true
+      }
+    })
+    PermissionModule.GenerateRoutes(asyncRouter)
+    router.addRoutes(asyncRouter)
+    next({ ...to, replace: true })
+  })
+}
 
 router.beforeEach(async(to: Route, _: Route, next: any) => {
   if (to.meta.title) {
@@ -49,22 +65,6 @@ router.beforeEach(async(to: Route, _: Route, next: any) => {
   }
 })
 
-export const loadMenus = (next: any, to: Route) => {
-  buildMenus().then(res => {
-    const asyncRouter = filterAsyncRouter(res.data)
-    asyncRouter.push({
-      path: '*',
-      redirect: '/404',
-      meta: {
-        hidden: true
-      }
-    })
-    PermissionModule.GenerateRoutes(asyncRouter)
-    router.addRoutes(asyncRouter)
-    next({ ...to, replace: true})
-  })
-}
-
-router.afterEach((to: Route) => {
+router.afterEach(() => {
   NProgress.done()
 })

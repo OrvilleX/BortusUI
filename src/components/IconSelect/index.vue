@@ -24,33 +24,33 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from "vue-property-decorator";
-import icons from "./requireIcons";
+import { Vue, Component } from 'vue-property-decorator'
+import icons from './requireIcons'
 
 @Component({
-  name: "IconSelect",
+  name: 'IconSelect'
 })
 export default class extends Vue {
-  name = "";
+  name = '';
   iconList = icons;
 
   filterIcons() {
-    this.iconList = icons;
+    this.iconList = icons
     if (this.name) {
       this.iconList = this.iconList.filter((item: any) =>
         item.includes(this.name)
-      );
+      )
     }
   }
 
   private selectedIcon(name: string) {
-    this.$emit("selected", name);
-    document.body.click();
+    this.$emit('selected', name)
+    document.body.click()
   }
 
   private reset() {
-    this.name = "";
-    this.iconList = icons;
+    this.name = ''
+    this.iconList = icons
   }
 }
 </script>

@@ -1,16 +1,16 @@
-import { IDeptData } from "./dept";
-import { IJobData } from './job';
-import { IPageable } from './base';
-import { IRoleData, IRoleSmallDtoData } from './role';
+import { DeptData } from './dept'
+import { JobData } from './job'
+import { Pageable } from './base'
+import { RoleData, RoleSmallDtoData } from './role'
 
 /**
  * 新增、修改用户数据包
  */
-export interface IUserData {
+export interface UserData {
     id?: number
-    roles?: IRoleData[]
-    jobs?: IJobData[]
-    dept?: IDeptData
+    roles?: RoleData[]
+    jobs?: JobData[]
+    dept?: DeptData
     userName?: string
     nickName?: string
     email?: string
@@ -25,7 +25,7 @@ export interface IUserData {
 /**
  * 导出、查询用户数据包
  */
-export interface IUserQueryData extends IPageable {
+export interface UserQueryData extends Pageable {
     id?: number
     deptIds?: number[]
     blurry?: string
@@ -37,7 +37,7 @@ export interface IUserQueryData extends IPageable {
 /**
  * 修改用户密码数据包
  */
-export interface IUserPassData {
+export interface UserPassData {
     oldPass: string
     newPass: string
 }
@@ -45,10 +45,10 @@ export interface IUserPassData {
 /**
  * 列表、详情输出数据包
  */
-export interface IUserDtoData {
+export interface UserDtoData {
     id: number
-    roles: IRoleSmallDtoData[]
-    jobs: IJobData[]
+    roles: RoleSmallDtoData[]
+    jobs: JobData[]
     dept: object
     deptId: number
     username: string

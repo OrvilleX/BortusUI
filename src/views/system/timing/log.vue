@@ -24,7 +24,7 @@
         <el-option
           v-for="item in enabledTypeOptions"
           :key="item.key"
-          :label="item.display_name"
+          :label="item.displayName"
           :value="item.key"
         />
       </el-select>
@@ -143,47 +143,47 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from "vue-property-decorator";
-import crud from "@/mixins/crud";
-import DateRangePicker from "@/components/DateRangePicker/Index.vue";
-import { ILogQueryData, ILogData } from "@/types/log";
-import { mixins } from "vue-class-component";
+import { Component } from 'vue-property-decorator'
+import crud from '@/mixins/crud'
+import DateRangePicker from '@/components/DateRangePicker/Index.vue'
+import { LogQueryData, LogData } from '@/types/log'
+import { mixins } from 'vue-class-component'
 
 @Component({
-  name: "Log",
+  name: 'Log',
   components: {
-    DateRangePicker,
-  },
+    DateRangePicker
+  }
 })
-export default class extends mixins<crud<ILogData, ILogQueryData, ILogData>>(
+export default class extends mixins<crud<LogData, LogQueryData, LogData>>(
   crud
 ) {
-  errorInfo = "";
+  errorInfo = '';
   errorDialog = false;
   enabledTypeOptions = [
-    { key: "true", display_name: "成功" },
-    { key: "false", display_name: "失败" },
+    { key: 'true', displayName: '成功' },
+    { key: 'false', displayName: '失败' }
   ];
 
   created() {
-    this.title = "任务日志";
+    this.title = '任务日志'
   }
 
   doInit() {
     this.$nextTick(() => {
-      this.init();
-    });
+      this.init()
+    })
   }
 
   beforeInit() {
-    this.url = "api/jobs/logs";
-    this.size = 6;
-    return true;
+    this.url = 'api/jobs/logs'
+    this.size = 6
+    return true
   }
-  
+
   info(errorInfo: string) {
-    this.errorInfo = errorInfo;
-    this.errorDialog = true;
+    this.errorInfo = errorInfo
+    this.errorDialog = true
   }
 }
 </script>

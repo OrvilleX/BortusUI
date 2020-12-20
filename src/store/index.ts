@@ -1,21 +1,21 @@
-import Vue from "vue";
-import Vuex from "vuex";
-import { IApiState } from "./modules/api";
-import { IAppState } from "./modules/app";
-import { IPermissonState } from "./modules/permission";
-import { ISettingsState } from "./modules/settings";
-import { ITagsViewState } from "./modules/tagsView";
-import { IUserState } from './modules/user';
+import Vue from 'vue'
+import Vuex from 'vuex'
+import { ApiState } from './modules/api'
+import { AppState } from './modules/app'
+import { PermissonState } from './modules/permission'
+import { SettingsState } from './modules/settings'
+import { TagsViewState } from './modules/tagsView'
+import { UserState } from './modules/user'
 
-Vue.use(Vuex);
+Vue.use(Vuex)
 
-export interface IRootState {
-  user: IUserState
-  app: IAppState
-  tagsView: ITagsViewState
-  api: IApiState
-  permission: IPermissonState
-  settings: ISettingsState
+export interface RootState {
+  user: UserState
+  app: AppState
+  tagsView: TagsViewState
+  api: ApiState
+  permission: PermissonState
+  settings: SettingsState
 }
 
-export default new Vuex.Store<IRootState>({});
+export default new Vuex.Store<RootState>({})

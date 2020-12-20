@@ -19,15 +19,15 @@ export const handleClipboard = (text: string, event: MouseEvent) => {
     text: () => text
   })
   clipboard.on('success', () => {
-    clipboardSuccess()
-    (clipboard as any).off("error")
-    (clipboard as any).off("success")
+    clipboardSuccess();
+    (clipboard as any).off('error');
+    (clipboard as any).off('success')
     clipboard.destroy()
   })
   clipboard.on('error', () => {
-    clipboardError()
-    (clipboard as any).off("error")
-    (clipboard as any).off("success")
+    clipboardError();
+    (clipboard as any).off('error');
+    (clipboard as any).off('success')
     clipboard.destroy()
   });
   (clipboard as any).onClick(event)

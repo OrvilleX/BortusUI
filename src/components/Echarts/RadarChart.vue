@@ -1,111 +1,111 @@
 <template>
-  <div :class="className" :style="{ height: height, width: width }" />
+  <div :class="className" :style="{height: height, width: width}" />
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from "vue-property-decorator";
-import echarts from "echarts";
-require("echarts/theme/macarons"); // echarts theme
-import { ResizeObserver } from "@juggle/resize-observer";
+import { Vue, Component, Prop } from 'vue-property-decorator'
+import echarts from 'echarts' // echarts theme
+import { ResizeObserver } from '@juggle/resize-observer'
+require('echarts/theme/macarons')
 
-const animationDuration = 3000;
+const animationDuration = 3000
 
 @Component({
-  name: "RadarChart",
+  name: 'RadarChart'
 })
 export default class extends Vue {
-  @Prop({ default: "chart" }) className!: string;
-  @Prop({ default: "100%" }) width!: string;
-  @Prop({ default: "300px" }) heigth!: string;
+  @Prop({ default: 'chart' }) className!: string;
+  @Prop({ default: '100%' }) width!: string;
+  @Prop({ default: '300px' }) heigth!: string;
 
   chart!: echarts.ECharts;
   resizeHandler!: ResizeObserver;
 
   mounted() {
-    this.initChart();
+    this.initChart()
     this.resizeHandler = new ResizeObserver(() => {
       if (this.chart) {
-        this.chart.resize();
+        this.chart.resize()
       }
-    });
-    this.resizeHandler.observe(document.body);
+    })
+    this.resizeHandler.observe(document.body)
   }
 
   beforeDestroy() {
     if (!this.chart) {
-      return;
+      return
     }
-    this.resizeHandler.disconnect();
-    this.chart.dispose();
+    this.resizeHandler.disconnect()
+    this.chart.dispose()
   }
 
   initChart() {
-    this.chart = echarts.init(this.$el as HTMLDivElement, "macarons");
+    this.chart = echarts.init(this.$el as HTMLDivElement, 'macarons')
 
     this.chart.setOption({
       tooltip: {
-        trigger: "axis",
+        trigger: 'axis',
         axisPointer: {
-          type: "shadow",
-        },
+          type: 'shadow'
+        }
       },
       radar: {
-        radius: "66%",
-        center: ["50%", "42%"],
+        radius: '66%',
+        center: ['50%', '42%'],
         splitNumber: 8,
         splitArea: {
           areaStyle: {
-            color: "rgba(127,95,132,.3)",
+            color: 'rgba(127,95,132,.3)',
             opacity: 1,
             shadowBlur: 45,
-            shadowColor: "rgba(0,0,0,.5)",
+            shadowColor: 'rgba(0,0,0,.5)',
             shadowOffsetX: 0,
-            shadowOffsetY: 15,
-          },
+            shadowOffsetY: 15
+          }
         },
         indicator: [
-          { name: "Sales", max: 10000 },
-          { name: "Administration", max: 20000 },
-          { name: "Information Techology", max: 20000 },
-          { name: "Customer Support", max: 20000 },
-          { name: "Development", max: 20000 },
-          { name: "Marketing", max: 20000 },
-        ],
+          { name: 'Sales', max: 10000 },
+          { name: 'Administration', max: 20000 },
+          { name: 'Information Techology', max: 20000 },
+          { name: 'Customer Support', max: 20000 },
+          { name: 'Development', max: 20000 },
+          { name: 'Marketing', max: 20000 }
+        ]
       },
       legend: {
-        left: "center",
-        bottom: "10",
-        data: ["Allocated Budget", "Expected Spending", "Actual Spending"],
+        left: 'center',
+        bottom: '10',
+        data: ['Allocated Budget', 'Expected Spending', 'Actual Spending']
       },
       series: [
         {
-          type: "radar",
+          type: 'radar',
           symbolSize: 0,
           areaStyle: {
             shadowBlur: 13,
-            shadowColor: "rgba(0,0,0,.2)",
+            shadowColor: 'rgba(0,0,0,.2)',
             shadowOffsetX: 0,
             shadowOffsetY: 10,
-            opacity: 1,
+            opacity: 1
           },
           data: [
             {
               value: [5000, 7000, 12000, 11000, 15000, 14000],
-              name: "Allocated Budget",
+              name: 'Allocated Budget'
             },
             {
               value: [4000, 9000, 15000, 15000, 13000, 11000],
-              name: "Expected Spending",
+              name: 'Expected Spending'
             },
             {
               value: [5500, 11000, 12000, 15000, 12000, 12000],
-              name: "Actual Spending",
-            },
+              name: 'Actual Spending'
+            }
           ],
-          animationDuration: animationDuration,
-        },
-      ],
-    });
+          animationDuration: animationDuration
+        }
+      ]
+    })
   }
 }
 </script>

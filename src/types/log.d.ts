@@ -1,7 +1,6 @@
-import { login } from '@/api/login';
-import { IPageable } from './base';
+import { Pageable } from './base'
 
-export interface ILogErrorDTOData {
+export interface LogErrorDTOData {
     id: number
     username: string
     description: string
@@ -13,13 +12,13 @@ export interface ILogErrorDTOData {
     createTime: string
 }
 
-export interface ILogQueryData extends IPageable {
+export interface LogQueryData extends Pageable {
     blurry?: string
     logType?: string
     createTime?: string
 }
 
-export interface ILogSmallDTOData {
+export interface LogSmallDTOData {
     description: string
     requestIp: string
     time: number
@@ -28,7 +27,7 @@ export interface ILogSmallDTOData {
     createTime: string
 }
 
-export interface ILogData {
+export interface LogData {
     id: number
     username: string
     description: string

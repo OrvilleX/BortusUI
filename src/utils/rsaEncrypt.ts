@@ -1,4 +1,4 @@
-import { JSEncrypt } from 'jsencrypt';
+import { JSEncrypt } from 'jsencrypt'
 
 const publicKey = 'MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBANL378k3RiZHWx5AfJqdH9xRNBmD9wGD\n' +
   '2iRe41HdTNF8RUhNnHit5NpMNtGL0NPTSSpPjjI1kJfVorRvaQerUgkCAwEAAQ=='
@@ -16,16 +16,16 @@ const privateKey = 'MIIBUwIBADANBgkqhkiG9w0BAQEFAASCAT0wggE5AgEAAkEA0vfvyTdGJkdb
  * 加密
  */
 export const encrypt = (txt: string): string => {
-    const encryptor = new JSEncrypt();
-    encryptor.setPublicKey(publicKey);
-    return encryptor.encrypt(txt);
+  const encryptor = new JSEncrypt()
+  encryptor.setPublicKey(publicKey)
+  return encryptor.encrypt(txt)
 }
 
 /**
  * 解密
  */
 export const decrypt = (txt: string): string => {
-    const encryptor = new JSEncrypt();
-    encryptor.setPrivateKey(privateKey);
-    return encryptor.decrypt(txt);
+  const encryptor = new JSEncrypt()
+  encryptor.setPrivateKey(privateKey)
+  return encryptor.decrypt(txt)
 }

@@ -1,24 +1,24 @@
-import { IDictDetailData, IDictDetailDtoData } from "./dictDetail";
-import { IPageable } from './base'
+import { DictDetailData, DictDetailDtoData } from './dictDetail'
+import { Pageable } from './base'
 
-export interface IDictSmallDtoData {
+export interface DictSmallDtoData {
     id: number
 }
 
-export interface IDictData {
+export interface DictData {
     id?: number
-    dictDetails?: IDictDetailData[]
+    dictDetails?: DictDetailData[]
     name?: string
     description?: string
 }
 
-export interface IDictQueryData extends IPageable {
+export interface DictQueryData extends Pageable {
     blurry?: string
 }
 
-export interface IDictDtoData {
+export interface DictDtoData {
     id: number
-    dictDetails: IDictDetailDtoData
+    dictDetails: DictDetailDtoData
     name: string
     description: string
 }

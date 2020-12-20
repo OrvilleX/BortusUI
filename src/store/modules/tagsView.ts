@@ -2,22 +2,22 @@ import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-dec
 import { Route } from 'vue-router'
 import store from '@/store'
 
-export interface ITagView extends Partial<Route> {
+export interface TagView extends Partial<Route> {
   title?: string
 }
 
-export interface ITagsViewState {
-  visitedViews: ITagView[]
+export interface TagsViewState {
+  visitedViews: TagView[]
   cachedViews: (string | undefined)[]
 }
 
 @Module({ dynamic: true, store, name: 'tagsView' })
-class TagsView extends VuexModule implements ITagsViewState {
-  public visitedViews: ITagView[] = []
+class TagsView extends VuexModule implements TagsViewState {
+  public visitedViews: TagView[] = []
   public cachedViews: (string | undefined)[] = []
 
   @Mutation
-  private ADD_VISITED_VIEW(view: ITagView) {
+  private ADD_VISITED_VIEW(view: TagView) {
     if (this.visitedViews.some(v => v.path === view.path)) return
     this.visitedViews.push(
       Object.assign({}, view, {
@@ -27,7 +27,7 @@ class TagsView extends VuexModule implements ITagsViewState {
   }
 
   @Mutation
-  private ADD_CACHED_VIEW(view: ITagView) {
+  private ADD_CACHED_VIEW(view: TagView) {
     if (view.name === null) return
     if (this.cachedViews.includes(view.name)) return
     if (!view.meta.noCache) {
@@ -36,7 +36,7 @@ class TagsView extends VuexModule implements ITagsViewState {
   }
 
   @Mutation
-  private DEL_VISITED_VIEW(view: ITagView) {
+  private DEL_VISITED_VIEW(view: TagView) {
     for (const [i, v] of this.visitedViews.entries()) {
       if (v.path === view.path) {
         this.visitedViews.splice(i, 1)
@@ -46,21 +46,21 @@ class TagsView extends VuexModule implements ITagsViewState {
   }
 
   @Mutation
-  private DEL_CACHED_VIEW(view: ITagView) {
+  private DEL_CACHED_VIEW(view: TagView) {
     if (view.name === null) return
     const index = this.cachedViews.indexOf(view.name)
     index > -1 && this.cachedViews.splice(index, 1)
   }
 
   @Mutation
-  private DEL_OTHERS_VISITED_VIEWS(view: ITagView) {
+  private DEL_OTHERS_VISITED_VIEWS(view: TagView) {
     this.visitedViews = this.visitedViews.filter(v => {
       return v.meta.affix || v.path === view.path
     })
   }
 
   @Mutation
-  private DEL_OTHERS_CACHED_VIEWS(view: ITagView) {
+  private DEL_OTHERS_CACHED_VIEWS(view: TagView) {
     if (view.name === null) return
     const index = this.cachedViews.indexOf(view.name)
     if (index > -1) {
@@ -82,7 +82,7 @@ class TagsView extends VuexModule implements ITagsViewState {
   }
 
   @Mutation
-  private UPDATE_VISITED_VIEW(view: ITagView) {
+  private UPDATE_VISITED_VIEW(view: TagView) {
     for (let v of this.visitedViews) {
       if (v.path === view.path) {
         v = Object.assign(v, view)
@@ -92,50 +92,50 @@ class TagsView extends VuexModule implements ITagsViewState {
   }
 
   @Action
-  public addView(view: ITagView) {
+  public addView(view: TagView) {
     this.ADD_VISITED_VIEW(view)
     this.ADD_CACHED_VIEW(view)
   }
 
   @Action
-  public addVisitedView(view: ITagView) {
+  public addVisitedView(view: TagView) {
     this.ADD_VISITED_VIEW(view)
   }
 
   @Action
-  public addCachedView(view: ITagView) {
+  public addCachedView(view: TagView) {
     this.ADD_CACHED_VIEW(view)
   }
 
   @Action
-  public delView(view: ITagView) {
+  public delView(view: TagView) {
     this.DEL_VISITED_VIEW(view)
     this.DEL_CACHED_VIEW(view)
   }
 
   @Action
-  public delVisitedView(view: ITagView) {
+  public delVisitedView(view: TagView) {
     this.DEL_VISITED_VIEW(view)
   }
 
   @Action
-  public delCachedView(view: ITagView) {
+  public delCachedView(view: TagView) {
     this.DEL_CACHED_VIEW(view)
   }
 
   @Action
-  public delOthersViews(view: ITagView) {
+  public delOthersViews(view: TagView) {
     this.DEL_OTHERS_VISITED_VIEWS(view)
     this.DEL_OTHERS_CACHED_VIEWS(view)
   }
 
   @Action
-  public delOthersVisitedViews(view: ITagView) {
+  public delOthersVisitedViews(view: TagView) {
     this.DEL_OTHERS_VISITED_VIEWS(view)
   }
 
   @Action
-  public delOthersCachedViews(view: ITagView) {
+  public delOthersCachedViews(view: TagView) {
     this.DEL_OTHERS_CACHED_VIEWS(view)
   }
 
@@ -156,7 +156,7 @@ class TagsView extends VuexModule implements ITagsViewState {
   }
 
   @Action
-  public updateVisitedView(view: ITagView) {
+  public updateVisitedView(view: TagView) {
     this.UPDATE_VISITED_VIEW(view)
   }
 }

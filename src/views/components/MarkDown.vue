@@ -14,13 +14,13 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Ref } from "vue-property-decorator";
-import { ApiModule } from "@/store/modules/api";
-import { upload } from "@/utils/upload";
+import { Vue, Component } from 'vue-property-decorator'
+import { ApiModule } from '@/store/modules/api'
+import { upload } from '@/utils/upload'
 
 @Component
 export default class Markdown extends Vue {
-  height = document.documentElement.clientHeight - 200 + "px";
+  height = document.documentElement.clientHeight - 200 + 'px';
 
   get imagesUploadApi() {
     return ApiModule.imagesUploadApi
@@ -31,21 +31,18 @@ export default class Markdown extends Vue {
   }
 
   mounted() {
-    const that = this;
-    window.onresize = function temp() {
-      that.height = document.documentElement.clientHeight - 200 + "px";
-    };
+    window.onresize = () => {
+      this.height = document.documentElement.clientHeight - 200 + 'px'
+    }
   }
 
   async imgAdd(pos: number, $file: File) {
-    let res = await upload(this.imagesUploadApi, $file);
-    const data = res.data;
-    const url: any = this.baseApi + "/file/" + data.type + "/" + data.realName;
-    let md = this.$refs.md as any;
-    md.$img2Url(pos, url);
+    const res = await upload(this.imagesUploadApi, $file)
+    const data = res.data
+    const url: string =
+      this.baseApi + '/file/' + data.type + '/' + data.realName
+    const md = this.$refs.md as any
+    md.$img2Url(pos, url)
   }
 }
 </script>
-
-<style scoped>
-</style>

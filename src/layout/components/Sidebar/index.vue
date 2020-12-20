@@ -1,5 +1,5 @@
 <template>
-  <div :class="{ 'has-logo': showLogo }">
+  <div :class="{'has-logo': showLogo}">
     <logo v-if="showLogo" :collapse="isCollapse" />
     <el-scrollbar wrap-class="scrollbar-wrapper">
       <el-menu
@@ -13,7 +13,7 @@
         mode="vertical"
       >
         <sidebar-item
-          v-for="route in permission_routers"
+          v-for="route in permissionRouters"
           :key="route.path"
           :item="route"
           :base-path="route.path"
@@ -24,44 +24,43 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import { Getter } from "vuex-class";
-import Logo from "./SidebarLogo.vue";
-import SidebarItem from "./SidebarItem.vue";
-import variables from "@/assets/styles/variables.scss";
-import { AppModule } from "@/store/modules/app";
-import { PermissionModule } from "@/store/modules/permission";
-import { SettingsModule } from "@/store/modules/settings";
+import { Component, Vue } from 'vue-property-decorator'
+import Logo from './SidebarLogo.vue'
+import SidebarItem from './SidebarItem.vue'
+import variables from '@/assets/styles/variables.scss'
+import { AppModule } from '@/store/modules/app'
+import { PermissionModule } from '@/store/modules/permission'
+import { SettingsModule } from '@/store/modules/settings'
 
 @Component({ components: { SidebarItem, Logo } })
 export default class extends Vue {
-  get permission_routers() {
-    return PermissionModule.routers;
+  get permissionRouters() {
+    return PermissionModule.routers
   }
 
   get sidebar() {
-    return AppModule.sidebar;
+    return AppModule.sidebar
   }
 
   get activeMenu() {
-    const route = this.$route;
-    const { meta, path } = route;
+    const route = this.$route
+    const { meta, path } = route
     if (meta.activeMenu) {
-      return meta.activeMenu;
+      return meta.activeMenu
     }
-    return path;
+    return path
   }
 
   get showLogo() {
-    return SettingsModule.sidebarLogo;
+    return SettingsModule.sidebarLogo
   }
 
   get variables() {
-    return variables;
+    return variables
   }
 
   get isCollapse() {
-    return !this.sidebar.opened;
+    return !this.sidebar.opened
   }
 }
 </script>

@@ -173,61 +173,62 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from "vue-property-decorator";
-import { delAllInfo } from "@/api/monitor/log";
-import CRUD from "@/components/Crud";
-import { parseTime } from "@/utils";
-import { ILogQueryData, ILogData } from "@/types/log";
-import DateRangePicker from "@/components/DateRangePicker/Index.vue";
-import { mixins } from "vue-class-component";
+import { Component } from 'vue-property-decorator'
+import { delAllInfo } from '@/api/monitor/log'
+import CRUD from '@/components/Crud'
+import { parseTime } from '@/utils'
+import { LogQueryData, LogData } from '@/types/log'
+import DateRangePicker from '@/components/DateRangePicker/Index.vue'
+import { mixins } from 'vue-class-component'
 
-interface ILogSearch {
-  blurry?: string;
-  createTime?: string;
+interface LogSearch {
+  blurry?: string
+  createTime?: string
 }
 
 @Component({
-  name: "Log",
+  name: 'Log',
   components: {
-    DateRangePicker,
-  },
+    DateRangePicker
+  }
 })
-export default class extends mixins<CRUD<ILogSearch, ILogQueryData, ILogData>>(
+export default class extends mixins<CRUD<LogSearch, LogQueryData, LogData>>(
   CRUD
 ) {
+  private parseTime = parseTime
+
   created() {
-    this.title = "日志";
-    this.url = "api/logs";
+    this.title = '日志'
+    this.url = 'api/logs'
     this.optShow = {
       add: false,
       edit: false,
       del: false,
       download: true,
-      reset: false,
-    };
+      reset: false
+    }
   }
 
   confirmDelAll() {
-    this.$confirm(`确认清空所有操作日志吗?`, "提示", {
-      confirmButtonText: "确定",
-      cancelButtonText: "取消",
-      type: "warning",
+    this.$confirm('确认清空所有操作日志吗?', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
     })
       .then(() => {
-        this.delAllLoading = true;
+        this.delAllLoading = true
         delAllInfo()
-          .then((res) => {
-            this.delAllLoading = false;
-            this.dleChangePage(1);
-            this.delSuccessNotify();
-            this.toQuery();
+          .then(() => {
+            this.delAllLoading = false
+            this.dleChangePage(1)
+            this.delSuccessNotify()
+            this.toQuery()
           })
-          .catch((err) => {
-            this.delAllLoading = false;
-            console.log(err.response.data.message);
-          });
+          .catch(err => {
+            this.delAllLoading = false
+            console.log(err.response.data.message)
+          })
       })
-      .catch(() => {});
   }
 }
 </script>

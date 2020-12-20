@@ -1,20 +1,20 @@
-import Cookies from "js-cookie";
-import Config from "@/settings";
+import Cookies from 'js-cookie'
+import Config from '@/settings'
 
-const TokenKey = Config.tokenKey;
+const TokenKey = Config.tokenKey
 
 export const getToken = () => {
-    return Cookies.get(TokenKey);
+  return Cookies.get(TokenKey)
 }
 
 export const setToken = (token: string, rememeberMe: boolean) => {
-    if (rememeberMe) {
-        return Cookies.set(TokenKey, token, {expires: 100})
-    } else {
-        return Cookies.set(TokenKey, token);
-    }
+  if (rememeberMe) {
+    return Cookies.set(TokenKey, token, { expires: 100 })
+  } else {
+    return Cookies.set(TokenKey, token)
+  }
 }
 
 export const removeToken = () => {
-    return Cookies.remove(TokenKey);
+  return Cookies.remove(TokenKey)
 }

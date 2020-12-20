@@ -1,5 +1,5 @@
-import request from "@/utils/request";
-import { IJwtUserDtoData } from "../types/login";
+import request from '@/utils/request'
+import { JwtUserDtoData } from '../types/login'
 
 /**
  * 登录
@@ -8,34 +8,34 @@ import { IJwtUserDtoData } from "../types/login";
  * @param code 验证码
  */
 export const login = (username: string, password: string, code: string, uuid: string) => {
-    return request.post<{token:string, user:IJwtUserDtoData}>(
-        "auth/login",
-        {
-            username,
-            password,
-            code,
-            uuid
-        }
-    );
+  return request.post<{token: string, user: JwtUserDtoData}>(
+    'auth/login',
+    {
+      username,
+      password,
+      code,
+      uuid
+    }
+  )
 }
 
 /**
  * 获取当前登录用户信息
  */
 export const getInfo = () => {
-    return request.get<IJwtUserDtoData>("auth/info");
+  return request.get<JwtUserDtoData>('auth/info')
 }
 
 /**
  * 获取验证码图片
  */
 export const getCodeImg = () => {
-    return request.get<{img:string, uuid:string}>("auth/code");
+  return request.get<{img: string, uuid: string}>('auth/code')
 }
 
 /**
  * 退出登录
  */
 export const logout = () => {
-    return request.delete("auth/logout");
+  return request.delete('auth/logout')
 }

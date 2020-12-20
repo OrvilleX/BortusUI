@@ -182,70 +182,69 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from "vue-property-decorator";
-import { getErrDetail, delAllError } from "@/api/monitor/log";
-import CRUD from "@/components/Crud";
-import { mixins } from "vue-class-component";
-import { ILogQueryData, ILogErrorDTOData } from "@/types/log";
+import { Component } from 'vue-property-decorator'
+import { getErrDetail, delAllError } from '@/api/monitor/log'
+import CRUD from '@/components/Crud'
+import { mixins } from 'vue-class-component'
+import { LogQueryData, LogErrorDTOData } from '@/types/log'
 import DateRangePicker from '@/components/DateRangePicker/Index.vue'
 
-interface ILogSearch {
-  blurry?: string;
-  createTime?: string;
+interface LogSearch {
+  blurry?: string
+  createTime?: string
 }
 
 @Component({
-  name: "ErrorLog",
+  name: 'ErrorLog',
   components: {
     DateRangePicker
   }
 })
 export default class extends mixins<
-  CRUD<ILogSearch, ILogQueryData, ILogErrorDTOData>
+  CRUD<LogSearch, LogQueryData, LogErrorDTOData>
 >(CRUD) {
-  private errorInfo = "";
+  private errorInfo = '';
   private dialog = false;
 
   created() {
-    this.title = "异常日志";
-    this.url = "api/logs/error";
+    this.title = '异常日志'
+    this.url = 'api/logs/error'
     this.optShow = {
       add: false,
       edit: false,
       del: false,
       download: true,
-      reset: false,
-    };
+      reset: false
+    }
   }
 
   private info(id: number) {
-    this.dialog = true;
-    getErrDetail(id).then((res) => {
-      this.errorInfo = res.data.exception;
-    });
+    this.dialog = true
+    getErrDetail(id).then(res => {
+      this.errorInfo = res.data.exception
+    })
   }
 
   private confirmDelAll() {
-    this.$confirm(`确认清空所有异常日志吗?`, "提示", {
-      confirmButtonText: "确定",
-      cancelButtonText: "取消",
-      type: "warning",
+    this.$confirm('确认清空所有异常日志吗?', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
     })
       .then(() => {
-        this.delAllLoading = true;
+        this.delAllLoading = true
         delAllError()
-          .then((res) => {
-            this.delAllLoading = false;
-            this.dleChangePage(1);
-            this.delSuccessNotify();
-            this.toQuery();
+          .then(() => {
+            this.delAllLoading = false
+            this.dleChangePage(1)
+            this.delSuccessNotify()
+            this.toQuery()
           })
-          .catch((err) => {
-            this.delAllLoading = false;
-            console.log(err.response.data.message);
-          });
+          .catch(err => {
+            this.delAllLoading = false
+            console.log(err.response.data.message)
+          })
       })
-      .catch(() => {});
   }
 }
 </script>

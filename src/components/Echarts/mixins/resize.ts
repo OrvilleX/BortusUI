@@ -14,7 +14,7 @@ export default class extends Vue {
     this.initResizeEvent()
     this.initSidebarResizeEvent()
     this.resizeHandler = new ResizeObserver(() => {
-        this.chartResizeHandler()
+      this.chartResizeHandler()
     })
   }
 
@@ -47,13 +47,13 @@ export default class extends Vue {
 
   private initResizeEvent() {
     if (this.resizeHandler) {
-        this.resizeHandler.observe(document.body)
+      this.resizeHandler.observe(document.body)
     }
   }
 
   private destroyResizeEvent() {
     if (this.resizeHandler) {
-        this.resizeHandler.disconnect();
+      this.resizeHandler.disconnect()
     }
   }
 

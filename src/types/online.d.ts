@@ -1,10 +1,10 @@
-import { IPageable } from './base';
+import { Pageable } from './base'
 
-export interface IOnlineUserQueryData extends IPageable {
+export interface OnlineUserQueryData extends Pageable {
     filter: string
 }
 
-export interface IOnlineUserDtoData {
+export interface OnlineUserDtoData {
     userName: string
     nickName: string
     dept: string

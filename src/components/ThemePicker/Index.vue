@@ -9,7 +9,7 @@
       '#11a983',
       '#13c2c2',
       '#6959CD',
-      '#f5222d',
+      '#f5222d'
     ]"
     class="theme-picker"
     popper-class="theme-picker-dropdown"
@@ -17,88 +17,88 @@
 </template>
 
 <script lang="ts">
-const version = require("element-ui/package.json").version;
-const ORIGINAL_THEME = "#409EFF";
-import Cookies from "js-cookie";
-import { Component, Vue, Prop, PropSync, Watch } from "vue-property-decorator";
-import { SettingsModule } from "@/store/modules/settings";
+import Cookies from 'js-cookie'
+import { Component, Vue, Watch } from 'vue-property-decorator'
+import { SettingsModule } from '@/store/modules/settings'
+const version = require('element-ui/package.json').version
+const ORIGINAL_THEME = '#409EFF'
 
 @Component
 export default class ThemePicker extends Vue {
-  chalk = "";
-  theme = "";
+  chalk = '';
+  theme = '';
 
   get defaultTheme() {
-    return SettingsModule.theme;
+    return SettingsModule.theme
   }
 
-  @Watch("defaultTheme", { immediate: true })
+  @Watch('defaultTheme', { immediate: true })
   private onDefaultThemeChange(value: string) {
-    this.theme = value;
+    this.theme = value
   }
 
-  @Watch("theme")
+  @Watch('theme')
   private async onThemeChange(value: string) {
-    Cookies.set("theme", value, { expires: 365 });
+    Cookies.set('theme', value, { expires: 365 })
     const oldVal = this.chalk
       ? this.theme
-      : Cookies.get("theme")
-      ? Cookies.get("theme")
-      : ORIGINAL_THEME;
-    if (typeof value !== "string") return;
-    const themeCluster = this.getThemeCluster(value.replace("#", ""));
-    const originalCluster = this.getThemeCluster(oldVal!.replace("#", ""));
+      : Cookies.get('theme')
+        ? Cookies.get('theme') ?? ''
+        : ORIGINAL_THEME
+    if (typeof value !== 'string') return
+    const themeCluster = this.getThemeCluster(value.replace('#', ''))
+    const originalCluster = this.getThemeCluster(oldVal.replace('#', ''))
 
     const getHandler = (variable: string, id: string) => {
       return () => {
         const originalCluster = this.getThemeCluster(
-          ORIGINAL_THEME.replace("#", "")
-        );
+          ORIGINAL_THEME.replace('#', '')
+        )
         const newStyle = this.updateStyle(
           this[variable],
           originalCluster,
           themeCluster
-        );
+        )
 
-        let styleTag = document.getElementById(id);
+        let styleTag = document.getElementById(id)
         if (!styleTag) {
-          styleTag = document.createElement("style");
-          styleTag.setAttribute("id", id);
-          document.head.appendChild(styleTag);
+          styleTag = document.createElement('style')
+          styleTag.setAttribute('id', id)
+          document.head.appendChild(styleTag)
         }
-        styleTag.innerText = newStyle;
-      };
-    };
-
-    if (!this.chalk) {
-      const url = `https://unpkg.com/element-ui@${version}/lib/theme-chalk/index.css`;
-      await this.getCSSString(url, "chalk");
+        styleTag.innerText = newStyle
+      }
     }
 
-    const chalkHandler = getHandler("chalk", "chalk-style");
+    if (!this.chalk) {
+      const url = `https://unpkg.com/element-ui@${version}/lib/theme-chalk/index.css`
+      await this.getCSSString(url, 'chalk')
+    }
 
-    chalkHandler();
+    const chalkHandler = getHandler('chalk', 'chalk-style')
+
+    chalkHandler()
 
     let styles: HTMLElement[] = [].slice.call(
-      document.querySelectorAll("style")
-    );
+      document.querySelectorAll('style')
+    )
     styles = styles.filter((style) => {
-      const text = style.innerText;
+      const text = style.innerText
       return (
-        new RegExp(oldVal!, "i").test(text) && !/Chalk Variables/.test(text)
-      );
-    });
+        new RegExp(oldVal, 'i').test(text) && !/Chalk Variables/.test(text)
+      )
+    })
     styles.forEach((style) => {
-      const { innerText } = style;
-      if (typeof innerText !== "string") return;
+      const { innerText } = style
+      if (typeof innerText !== 'string') return
       style.innerText = this.updateStyle(
         innerText,
         originalCluster,
         themeCluster
-      );
-    });
+      )
+    })
 
-    this.$emit("change", value);
+    this.$emit('change', value)
   }
 
   private updateStyle(
@@ -106,62 +106,62 @@ export default class ThemePicker extends Vue {
     oldCluster: string[],
     newCluster: string[]
   ) {
-    let newStyle = style;
+    let newStyle = style
     oldCluster.forEach((color, index) => {
-      newStyle = newStyle.replace(new RegExp(color, "ig"), newCluster[index]);
-    });
-    return newStyle;
+      newStyle = newStyle.replace(new RegExp(color, 'ig'), newCluster[index])
+    })
+    return newStyle
   }
 
   private getCSSString(url: string, variable: string) {
     return new Promise((resolve) => {
-      const xhr = new XMLHttpRequest();
+      const xhr = new XMLHttpRequest()
       xhr.onreadystatechange = () => {
         if (xhr.readyState === 4 && xhr.status === 200) {
-          this[variable] = xhr.responseText.replace(/@font-face{[^}]+}/, "");
-          resolve(null);
+          this[variable] = xhr.responseText.replace(/@font-face{[^}]+}/, '')
+          resolve(null)
         }
-      };
-      xhr.open("GET", url);
-      xhr.send();
-    });
+      }
+      xhr.open('GET', url)
+      xhr.send()
+    })
   }
 
   getThemeCluster(theme: string) {
     const tintColor = (color: string, tint: number) => {
-      let red = parseInt(color.slice(0, 2), 16);
-      let green = parseInt(color.slice(2, 4), 16);
-      let blue = parseInt(color.slice(4, 6), 16);
+      let red = parseInt(color.slice(0, 2), 16)
+      let green = parseInt(color.slice(2, 4), 16)
+      let blue = parseInt(color.slice(4, 6), 16)
 
       if (tint === 0) {
-        return [red, green, blue].join(",");
+        return [red, green, blue].join(',')
       } else {
-        red += Math.round(tint * (255 - red));
-        green += Math.round(tint * (255 - green));
-        blue += Math.round(tint * (255 - blue));
+        red += Math.round(tint * (255 - red))
+        green += Math.round(tint * (255 - green))
+        blue += Math.round(tint * (255 - blue))
 
-        return `#${red.toString(16)}${green.toString(16)}${blue.toString(16)}`;
+        return `#${red.toString(16)}${green.toString(16)}${blue.toString(16)}`
       }
-    };
+    }
 
     const shadeColor = (color: string, shade: number) => {
-      let red = parseInt(color.slice(0, 2), 16);
-      let green = parseInt(color.slice(2, 4), 16);
-      let blue = parseInt(color.slice(4, 6), 16);
+      let red = parseInt(color.slice(0, 2), 16)
+      let green = parseInt(color.slice(2, 4), 16)
+      let blue = parseInt(color.slice(4, 6), 16)
 
-      red = Math.round((1 - shade) * red);
-      green = Math.round((1 - shade) * green);
-      blue = Math.round((1 - shade) * blue);
+      red = Math.round((1 - shade) * red)
+      green = Math.round((1 - shade) * green)
+      blue = Math.round((1 - shade) * blue)
 
-      return `#${red.toString(16)}${green.toString(16)}${blue.toString(16)}`;
-    };
-
-    const clusters = [theme];
-    for (let i = 0; i <= 9; i++) {
-      clusters.push(tintColor(theme, Number((i / 10).toFixed(2))));
+      return `#${red.toString(16)}${green.toString(16)}${blue.toString(16)}`
     }
-    clusters.push(shadeColor(theme, 0.1));
-    return clusters;
+
+    const clusters = [theme]
+    for (let i = 0; i <= 9; i++) {
+      clusters.push(tintColor(theme, Number((i / 10).toFixed(2))))
+    }
+    clusters.push(shadeColor(theme, 0.1))
+    return clusters
   }
 }
 </script>

@@ -1,23 +1,23 @@
-import request from "@/utils/request";
-import { IEmailConfigData, IEmailVoData } from "@/types/email";
+import request from '@/utils/request'
+import { EmailConfigData, EmailVoData } from '@/types/email'
 
 /**
  * 获取邮箱配置
  */
 export const get = () => {
-    return request.get<IEmailConfigData>("api/email");
+  return request.get<EmailConfigData>('api/email')
 }
 
 /**
  * 配置邮箱
  */
-export const update = (data: IEmailConfigData) => {
-    return request.put("api/email", data);
+export const update = (data: EmailConfigData) => {
+  return request.put('api/email', data)
 }
 
 /**
  * 发送邮件
  */
-export const send = (data: IEmailVoData) => {
-    return request.post("api/email", data);
+export const send = (data: EmailVoData) => {
+  return request.post('api/email', data)
 }

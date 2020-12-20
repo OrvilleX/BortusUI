@@ -28,10 +28,10 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Ref } from "vue-property-decorator";
-import XLSX from "xlsx";
+import { Vue, Component, Prop, Ref } from 'vue-property-decorator'
+import XLSX from 'xlsx'
 
-export interface IExcelData {
+export interface ExcelData {
   header: string[]
   results: any
 }
@@ -41,109 +41,109 @@ export default class UploadExcelComponent extends Vue {
   @Prop() beforeUpload?: Function;
   @Prop() onSuccess?: Function;
 
-  @Ref("excel-upload-input") uploadInput!: HTMLInputElement;
+  @Ref('excel-upload-input') uploadInput!: HTMLInputElement;
 
   loading = false;
-  excelData!: IExcelData
+  excelData!: ExcelData;
 
   generateData(header: string[], results: any) {
-    this.excelData.header = header;
-    this.excelData.results = results;
-    this.onSuccess && this.onSuccess(this.excelData);
-    let es = new HTMLInputElement();
-    es.onchange;
+    this.excelData.header = header
+    this.excelData.results = results
+    this.onSuccess && this.onSuccess(this.excelData)
   }
 
   handleDrop(e: DragEvent) {
-    e.stopPropagation();
-    e.preventDefault();
-    if (this.loading) return;
-    const files = e.dataTransfer?.files;
+    e.stopPropagation()
+    e.preventDefault()
+    if (this.loading) return
+    const files = e.dataTransfer?.files
 
     if (files) {
       if (files.length !== 1) {
-        this.$message.error("只支持单个文件上传!");
-        return;
+        this.$message.error('只支持单个文件上传!')
+        return
       }
-      const rawFile = files[0];
+      const rawFile = files[0]
 
       if (!this.isExcel(rawFile)) {
-        this.$message.error("只支持.xlsx, .xls, .csv 格式文件");
-        return false;
+        this.$message.error('只支持.xlsx, .xls, .csv 格式文件')
+        return false
       }
-      this.upload(rawFile);
-      e.stopPropagation();
-      e.preventDefault();
+      this.upload(rawFile)
+      e.stopPropagation()
+      e.preventDefault()
     }
   }
 
   handleDragover(e: DragEvent) {
-    e.stopPropagation();
-    e.preventDefault();
-    if (e.dataTransfer) e.dataTransfer.dropEffect = "copy";
+    e.stopPropagation()
+    e.preventDefault()
+    if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy'
   }
 
   handleUpload() {
-    this.uploadInput.click();
+    this.uploadInput.click()
   }
 
   handleClick(e: Event) {
     if (e.target instanceof HTMLInputElement) {
-      const files = e.target.files!;
-      const rawFile = files[0];
-      if (!rawFile) return;
-      this.upload(rawFile);
+      if (e.target.files) {
+        const files = e.target.files
+        const rawFile = files[0]
+        if (!rawFile) return
+        this.upload(rawFile)
+      }
     }
   }
 
   upload(rawFile: File) {
-    this.uploadInput.value = "";
+    this.uploadInput.value = ''
 
     if (!this.beforeUpload) {
-      this.readerData(rawFile);
-      return;
+      this.readerData(rawFile)
+      return
     }
-    const before = this.beforeUpload(rawFile);
+    const before = this.beforeUpload(rawFile)
     if (before) {
-      this.readerData(rawFile);
+      this.readerData(rawFile)
     }
   }
 
   readerData(rawFile: File) {
-    this.loading = true;
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
+    this.loading = true
+    return new Promise((resolve) => {
+      const reader = new FileReader()
       reader.onload = (e) => {
-        const data = e.target?.result;
-        const workbook = XLSX.read(data, { type: "array" });
-        const firstSheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[firstSheetName];
-        const header = this.getHeaderRow(worksheet);
-        const results = XLSX.utils.sheet_to_json(worksheet);
-        this.generateData(header, results);
-        this.loading = false;
-        resolve(null);
-      };
-      reader.readAsArrayBuffer(rawFile);
-    });
+        const data = e.target?.result
+        const workbook = XLSX.read(data, { type: 'array' })
+        const firstSheetName = workbook.SheetNames[0]
+        const worksheet = workbook.Sheets[firstSheetName]
+        const header = this.getHeaderRow(worksheet)
+        const results = XLSX.utils.sheet_to_json(worksheet)
+        this.generateData(header, results)
+        this.loading = false
+        resolve(null)
+      }
+      reader.readAsArrayBuffer(rawFile)
+    })
   }
 
   getHeaderRow(sheet: XLSX.WorkSheet) {
-    const headers = [];
-    const range = XLSX.utils.decode_range(sheet["!ref"]!);
-    let C;
-    const R = range.s.r;
+    const headers = []
+    const range = XLSX.utils.decode_range(sheet['!ref']!)
+    let C
+    const R = range.s.r
     for (C = range.s.c; C <= range.e.c; ++C) {
-      const cell = sheet[XLSX.utils.encode_cell({ c: C, r: R })];
-      let hdr = "UNKNOWN " + C;
-      if (cell && cell.t) hdr = XLSX.utils.format_cell(cell);
-      headers.push(hdr);
+      const cell = sheet[XLSX.utils.encode_cell({ c: C, r: R })]
+      let hdr = 'UNKNOWN ' + C
+      if (cell && cell.t) hdr = XLSX.utils.format_cell(cell)
+      headers.push(hdr)
     }
-    return headers;
+    return headers
   }
 
   isExcel(file: File) {
-    return /\.(xlsx|xls|csv)$/.test(file.name);
+    return /\.(xlsx|xls|csv)$/.test(file.name)
   }
 }
 </script>
