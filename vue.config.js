@@ -17,18 +17,23 @@ module.exports = {
   productionSourceMap: false,
   devServer: {
     port: devServerPort,
-    open: true,
     overlay: {
       warnings: false,
       errors: true
     },
     proxy: {
-      [process.env.VUE_APP_BASE_API]: {
+      '/api': {
         target: `http://127.0.0.1:${mockServerPort}/mock-api/v1`,
         changeOrigin: true,
-        ws: true,
         pathRewrite: {
-          ['^' + process.env.VUE_APP_BASE_API]: ''
+          '^/api': '/api'
+        }
+      },
+      '/auth': {
+        target: `http://127.0.0.1:${mockServerPort}/mock-api/v1`,
+        changeOrigin: true,
+        pathRewrite: {
+          '^/auth': '/auth'
         }
       }
     }
