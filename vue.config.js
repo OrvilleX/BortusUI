@@ -34,11 +34,12 @@ module.exports = {
     }
   },
   configureWebpack: {
-    name: name
+    name: name,
+    devtool: "source-map"
   },
   chainWebpack(config) {
-    config.plugins.delete('preload') // TODO: need test
-    config.plugins.delete('prefetch') // TODO: need test
+    config.plugins.delete('preload')
+    config.plugins.delete('prefetch')
 
     config.module
       .rule('svg')
@@ -65,11 +66,6 @@ module.exports = {
         return options
       })
       .end()
-
-    config
-      .when(process.env.NODE_ENV === 'development',
-        config => config.devtool('cheap-source-map')
-      )
 
     config
       .when(process.env.NODE_ENV !== 'development',
