@@ -1,5 +1,5 @@
-import request from '@/utils/request';
-import { IJobData, IJobQueryData } from '@/types/job'
+import request from "@/utils/request";
+import { IJobData } from "@/types/job";
 
 /**
  * 获取所有岗位

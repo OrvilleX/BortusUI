@@ -1,5 +1,4 @@
-import request from '@/utils/request';
-import { ILogData, ILogErrorDTOData, ILogQueryData, ILogSmallDTOData } from '@/types/log';
+import request from "@/utils/request";
 
 /**
  * 获取具体错误信息

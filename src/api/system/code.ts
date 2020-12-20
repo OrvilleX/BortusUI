@@ -1,5 +1,5 @@
-import request from '@/utils/request';
-import { IUserPassData } from '@/types/user';
+import request from "@/utils/request";
+import { IUserPassData } from "@/types/user";
 
 /**
  * 重发校验码

@@ -1,6 +1,6 @@
-import request from '@/utils/request';
-import { encrypt } from '@/utils/rsaEncrypt';
-import { IUserData, IUserPassData } from '@/types/user';
+import request from "@/utils/request";
+import { encrypt } from "@/utils/rsaEncrypt";
+import { IUserData, IUserPassData } from "@/types/user";
 
 /**
  * 新增用户
@@ -11,7 +11,7 @@ export const add = (data: IUserData) => {
         method: "post",
         data
     });
-};
+}
 
 /**
  * 删除用户

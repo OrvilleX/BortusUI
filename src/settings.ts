@@ -71,8 +71,8 @@ const settings: ISettings = {
     timeout: 1200000,
     sidebarLogo: true,
     showFooter: true,
-    footerTxt: '© 2020 OrvilleX <a href="http://www.orvillex.com" target="_blank">奥维尔智能物联</a>',
-    caseNumber: '苏ICP备2020064536号'
+    footerTxt: "© 2020 OrvilleX <a href='http://www.orvillex.com' target='_blank'>奥维尔智能物联</a>",
+    caseNumber: "苏ICP备2020064536号"
 }
 
 export default settings;

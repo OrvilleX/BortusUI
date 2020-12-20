@@ -1,5 +1,4 @@
-import request from '@/utils/request';
-import { IOnlineUserDtoData, IOnlineUserQueryData } from '@/types/online';
+import request from "@/utils/request";
 
 /**
  * 踢出用户

@@ -1,6 +1,6 @@
-import request from '@/utils/request';
-import { IDeptData, IDeptDtoData, IDeptQueryData, IDeptSmallDtoData } from '@/types/dept';
-import { IPageableBody } from '@/types/base';
+import request from "@/utils/request";
+import { IDeptData, IDeptDtoData, IDeptQueryData } from "@/types/dept";
+import { IPageableBody } from "@/types/base";
 
 /**
  * 查询部门

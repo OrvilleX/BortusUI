@@ -1,5 +1,5 @@
-import request from '@/utils/request';
-import { IEmailConfigData, IEmailVoData } from '@/types/email';
+import request from "@/utils/request";
+import { IEmailConfigData, IEmailVoData } from "@/types/email";
 
 /**
  * 获取邮箱配置

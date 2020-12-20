@@ -1,6 +1,5 @@
-import request from '@/utils/request';
-import { IDictData, IDictSmallDtoData, IDictDtoData, IDictQueryData } from '@/types/dict';
-import { IPageableBody } from '@/types/base';
+import request from "@/utils/request";
+import { IDictData, IDictDtoData } from "@/types/dict";
 
 /**
  * 获取所有字典

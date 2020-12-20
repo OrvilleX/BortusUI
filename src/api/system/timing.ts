@@ -1,5 +1,5 @@
-import request from '@/utils/request';
-import { IJobQueryData, IQuartzJobData } from '@/types/timing';
+import request from "@/utils/request";
+import { IQuartzJobData } from "@/types/timing";
 
 /**
  * 新增调度任务
