@@ -29,7 +29,7 @@ export const loadMenus = (next: any, to: Route) => {
   })
 }
 
-router.beforeEach(async(to: Route, _: Route, next: any) => {
+router.beforeEach(async (to: Route, _: Route, next: any) => {
   if (to.meta.title) {
     document.title = to.meta.title + ' - ' + Config.title
   }
@@ -45,11 +45,11 @@ router.beforeEach(async(to: Route, _: Route, next: any) => {
           await UserModule.GetInfo()
           loadMenus(next, to)
         } catch (err) {
-          UserModule.LogOut()
+          await UserModule.LogOut()
           location.reload()
         }
       } else if (UserModule.loadMenus) {
-        UserModule.UpdateLoadMenus()
+        await UserModule.UpdateLoadMenus()
         loadMenus(next, to)
       } else {
         next()

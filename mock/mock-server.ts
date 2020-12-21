@@ -5,6 +5,7 @@ import morgan from 'morgan'
 import cors from 'cors'
 import http from 'http'
 import login from './login'
+import menu from './menu'
 
 const app = express()
 const port = 9528
@@ -29,7 +30,8 @@ app.use((req, res, next) => {
   next()
 })
 
-app.use('/auth', login)
+app.use('/mock-api/v1/auth', login)
+app.use('/mock-api/v1/api/menus', menu)
 
 // Catch 404 error
 app.use((req, res, next) => {

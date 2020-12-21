@@ -371,7 +371,8 @@ export default class extends mixins<
       this.menuIds = []
       if (val.menus) {
         val.menus.forEach((data) => {
-          this.menuIds.push(data.id)
+          if (data.id)
+            this.menuIds.push(data.id)
         })
       }
       this.showButton = true

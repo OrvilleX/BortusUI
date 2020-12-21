@@ -230,9 +230,9 @@ export default class extends mixins<
   created() {
     this.form = {
       id: UserModule.user.id,
-      nickName: UserModule.user.nickName,
-      gender: UserModule.user.gender,
-      phone: UserModule.user.phone
+      nickName: UserModule.user.user?.nickName,
+      gender: UserModule.user.user?.gender,
+      phone: UserModule.user.user?.phone
     }
     store.dispatch('GetInfo')
   }

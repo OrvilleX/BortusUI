@@ -16,5 +16,5 @@ export const setToken = (token: string, rememeberMe: boolean) => {
 }
 
 export const removeToken = () => {
-  return Cookies.remove(TokenKey)
+  Cookies.remove(TokenKey)
 }

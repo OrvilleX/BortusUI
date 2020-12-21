@@ -34,8 +34,12 @@ export interface MenuData {
  * 菜单输出数据包
  */
 export interface MenuDtoData {
-    id: number
+    id?: number
+    alwaysShow?: boolean
+    redirect?: string
+    name?: string
     children?: MenuDtoData[]
+    meta?: any
     type?: number
     permission?: string
     title?: string

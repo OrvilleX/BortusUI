@@ -1,9 +1,8 @@
+import { UserDtoData } from './user'
+
 export interface JwtUserDtoData {
     id: number
-    username: string
-    nickName: string
-    gender: string
-    phone: string
+    user?: UserDtoData
     roles: string[]
     dataScopee: number[]
 }
