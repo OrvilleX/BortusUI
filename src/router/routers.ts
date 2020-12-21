@@ -34,6 +34,7 @@ export const constantRoutes: Array<RouteConfig> = [
   {
     path: '/',
     component: Layout,
+    meta: { hidden: true },
     redirect: '/dashboard',
     children: [
       {
@@ -48,6 +49,7 @@ export const constantRoutes: Array<RouteConfig> = [
     path: '/user',
     component: Layout,
     redirect: 'noredirect',
+    meta: { hidden: true },
     children: [
       {
         path: 'center',

@@ -16,7 +16,7 @@ const animationDuration = 3000
 export default class extends Vue {
   @Prop({ default: 'chart' }) className!: string;
   @Prop({ default: '100%' }) width!: string;
-  @Prop({ default: '300px' }) heigth!: string;
+  @Prop({ default: '300px' }) height!: string;
 
   chart!: echarts.ECharts;
   resizeHandler!: ResizeObserver;

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!item.hidden" class="menu-wrapper">
+  <div v-if="!item.meta.hidden" class="menu-wrapper">
     <template
       v-if="
         hasOneShowingChild(item.children, item) &&
@@ -12,10 +12,8 @@
           :index="resolvePath(onlyOneChild.path)"
           :class="{'submenu-title-noDropdown': !isNest}"
         >
-          <item
-            :icon="onlyOneChild.meta.icon || (item.meta && item.meta.icon)"
-            :title="onlyOneChild.meta.title"
-          />
+        <svg-icon :icon-class="onlyOneChild.meta.icon || (item.meta && item.meta.icon)"/>
+        <span slot='title'>{{onlyOneChild.meta.title}}</span>
         </el-menu-item>
       </app-link>
     </template>
@@ -27,11 +25,8 @@
       popper-append-to-body
     >
       <template slot="title">
-        <item
-          v-if="item.meta"
-          :icon="item.meta && item.meta.icon"
-          :title="item.meta.title"
-        />
+        <svg-icon v-if="item.meta" :icon-class="item.meta && item.meta.icon" />
+        <span v-if="item.meta" slot='title'>{{item.meta.title}}</span>
       </template>
       <sidebar-item
         v-for="child in item.children"
@@ -49,7 +44,6 @@
 import path from 'path'
 import { Component, Prop } from 'vue-property-decorator'
 import { isExternal } from '@/utils/validate'
-import Item from './Item.vue'
 import AppLink from './Link.vue'
 import FixiOSBug from './fixiOSBug'
 import { mixins } from 'vue-class-component'
@@ -58,7 +52,6 @@ import { RouteConfig } from 'vue-router'
 @Component({
   name: 'SidebarItem',
   components: {
-    Item,
     AppLink
   }
 })
@@ -69,7 +62,7 @@ export default class extends mixins(FixiOSBug) {
 
   onlyOneChild?: RouteConfig;
 
-  hasOneShowingChild(children: RouteConfig[], parent: RouteConfig) {
+  hasOneShowingChild(children: RouteConfig[] = [], parent: RouteConfig) {
     const showingChildren = children.filter((item) => {
       if (item.meta.hidden) {
         return false

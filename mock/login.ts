@@ -16,6 +16,24 @@ router.post('/login', (req: Request, res: Response) => {
     })
 })
 
+router.get('/info', (req: Request, res: Response) => {
+    const user: JwtUserDtoData = {
+        id: 1,
+        user: {
+            id: 1,
+            username: 'admin',
+            nickName: 'admin',
+            email: 'admin@orvillex.com',
+            phone: '123213142',
+            gender: '男',
+            enabled: true
+        },
+        roles: ['admin'],
+        dataScopee: [1]
+    }
+    return res.json(user)
+})
+
 router.get('/code', (req: Request, res: Response) => {
     return res.json({
         img: 'http://admin.dlszywz.cn/include/captcha/captcha.php',

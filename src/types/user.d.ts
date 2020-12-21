@@ -46,18 +46,18 @@ export interface UserPassData {
  * 列表、详情输出数据包
  */
 export interface UserDtoData {
-    id: number
-    roles: RoleSmallDtoData[]
-    jobs: JobData[]
-    dept: object
-    deptId: number
-    username: string
-    nickName: string
-    email: string
-    phone: string
-    gender: string
-    avatarName: string
-    avatarPath: string
-    enabled: boolean
-    pwdResetTime: string
+    id?: number
+    roles?: RoleSmallDtoData[]
+    jobs?: JobData[]
+    dept?: object
+    deptId?: number
+    username?: string
+    nickName?: string
+    email?: string
+    phone?: string
+    gender?: string
+    avatarName?: string
+    avatarPath?: string
+    enabled?: boolean
+    pwdResetTime?: string
 }
