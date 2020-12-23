@@ -6,7 +6,7 @@ let router = Router()
 
 router.get('/build', (req: Request, res: Response) => {
     let menus: MenuDtoData[] = [{"alwaysShow":true,"children":[
-        {"component":"system/user/index","meta":{"icon":"peoples","noCache":true,"title":"用户管理","hidden":false},"name":"User","path":"user"},
+        {"component":"system/user/Index.vue","meta":{"icon":"peoples","noCache":true,"title":"用户管理","hidden":false},"name":"User","path":"user"},
         {"component":"system/role/index","meta":{"icon":"role","noCache":true,"title":"角色管理","hidden":false},"name":"Role","path":"role"},
         {"component":"system/menu/index","meta":{"icon":"menu","noCache":true,"title":"菜单管理","hidden":false},"name":"Menu","path":"menu"},
         {"component":"system/dept/index","meta":{"icon":"dept","noCache":true,"title":"部门管理","hidden":false},"name":"Dept","path":"dept"},
