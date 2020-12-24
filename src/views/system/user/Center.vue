@@ -60,7 +60,7 @@
               <li>
                 <svg-icon icon-class="anq" /> 安全设置
                 <div class="user-right">
-                  <a @click="$refs.pass.dialog = true">修改密码</a>
+                  <a @click="$refs.pass.dialog = true">修改密码</a>/
                   <a @click="$refs.email.dialog = true">修改邮箱</a>
                 </div>
               </li>
@@ -180,6 +180,7 @@ import updateEmail from './center/UpdateEmail.vue'
 import { getToken } from '@/utils/auth'
 import store from '@/store'
 import { UserModule } from '@/store/modules/user'
+import { ApiModule } from '@/store/modules/api'
 import { isvalidPhone } from '@/utils/validate'
 import { parseTime } from '@/utils/index'
 import crud from '@/mixins/crud'
@@ -205,6 +206,9 @@ export default class extends mixins<
   activeName = 'first';
   saveLoading = false;
   parseTime = parseTime;
+  user = UserModule.user.user;
+  updateAvatarApi = ApiModule.updateAvatarApi;
+  form = {};
   headers = {
     Authorization: getToken()
   };
@@ -227,14 +231,14 @@ export default class extends mixins<
     }
   }
 
-  created() {
+  async created() {
     this.form = {
-      id: UserModule.user.id,
-      nickName: UserModule.user.user?.nickName,
-      gender: UserModule.user.user?.gender,
-      phone: UserModule.user.user?.phone
+      id: this.user.id,
+      nickName: this.user?.nickName,
+      gender: this.user?.gender,
+      phone: this.user?.phone
     }
-    store.dispatch('GetInfo')
+    await UserModule.GetInfo()
   }
 
   toggleShow() {
@@ -252,24 +256,23 @@ export default class extends mixins<
     return true
   }
 
-  cropUploadSuccess() {
-    store.dispatch('GetInfo')
+  async cropUploadSuccess() {
+    await UserModule.GetInfo()
   }
 
   doSubmit() {
     if (this.$refs.form) {
-      (this.$refs.form as ElForm).validate((valid) => {
+      (this.$refs.form as ElForm).validate(async (valid) => {
         if (valid) {
           this.saveLoading = true
-          editUser(this.form)
-            .then(() => {
-              this.editSuccessNotify()
-              store.dispatch('GetInfo')
-              this.saveLoading = false
-            })
-            .catch(() => {
-              this.saveLoading = false
-            })
+          try {
+            await editUser(this.form)
+            this.editSuccessNotify()
+            await UserModule.GetInfo()
+            this.saveLoading = false
+          } catch(err) {
+            this.saveLoading = false
+          }
         }
       })
     }

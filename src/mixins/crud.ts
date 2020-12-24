@@ -4,7 +4,7 @@ import { checkPermission } from '@/utils/permission'
 import { AxiosResponse } from 'axios'
 import { ElForm } from 'element-ui/types/form'
 import { MessageType } from 'element-ui/types/message'
-import { Vue } from 'vue-property-decorator'
+import { Vue, Component } from 'vue-property-decorator'
 
 interface CurdMethod<T> {
     add?: (form: T) => Promise<AxiosResponse<any>>
@@ -14,6 +14,9 @@ interface CurdMethod<T> {
     delAll?: (ids: number[]) => Promise<AxiosResponse<any>>
 }
 
+@Component({
+  name: 'CRUD'
+})
 export default class CRUD<T extends object, Q, D> extends Vue {
     data: D[] = []
     sort = ['id,desc']

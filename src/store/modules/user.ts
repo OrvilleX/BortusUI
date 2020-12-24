@@ -17,7 +17,8 @@ export default class User extends VuexModule implements UserState {
     public user: JwtUserDtoData = {
       id: NaN,
       roles: [],
-      dataScopee: []
+      dataScopee: [],
+      user: {}
     };
 
     public roles: string[] = [];

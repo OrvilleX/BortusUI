@@ -1,4 +1,4 @@
-import { DeptData } from './dept'
+import { DeptData, DeptDtoData } from './dept'
 import { JobData } from './job'
 import { Pageable } from './base'
 import { RoleData, RoleSmallDtoData } from './role'
@@ -49,7 +49,7 @@ export interface UserDtoData {
     id?: number
     roles?: RoleSmallDtoData[]
     jobs?: JobData[]
-    dept?: object
+    dept?: DeptDtoData
     deptId?: number
     username?: string
     nickName?: string

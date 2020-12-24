@@ -8,7 +8,16 @@ router.post('/login', (req: Request, res: Response) => {
     const user: JwtUserDtoData = {
         id: 1,
         roles: ['admin'],
-        dataScopee: [-1]
+        dataScopee: [-1],
+        user: {
+            username: 'admin',
+            nickName: 'admin',
+            phone: '13300000000',
+            email: 'admin@ovrillex.com',
+            dept: {
+                name: 'admin'
+            }
+        }
     }
     return res.json({
         token: '123',
@@ -26,7 +35,10 @@ router.get('/info', (req: Request, res: Response) => {
             email: 'admin@orvillex.com',
             phone: '123213142',
             gender: '男',
-            enabled: true
+            enabled: true,
+            dept: {
+                name: 'admin'
+            }
         },
         roles: ['admin'],
         dataScopee: [1]

@@ -28,15 +28,15 @@ export interface DeptData {
 }
 
 export interface DeptDtoData {
-    id: number
-    name: string
-    enabled: boolean
-    deptSort: number
-    children: DeptDtoData[]
-    pid: number
-    subCount: number
-    createTime: string
-    hasChildren: boolean
+    id?: number
+    name?: string
+    enabled?: boolean
+    deptSort?: number
+    children?: DeptDtoData[]
+    pid?: number
+    subCount?: number
+    createTime?: string
+    hasChildren?: boolean
 }
 
 export interface DeptSmallDtoData {
