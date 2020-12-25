@@ -1,5 +1,4 @@
-
-import { Vue } from 'vue-property-decorator'
+import { Vue, Component } from 'vue-property-decorator'
 import { get as getDictDetail } from '@/api/system/dictDetail'
 
 export enum NOTIFICATION_TYPE {
@@ -20,8 +19,10 @@ export interface DataStatus {
     edit: CRUD_TYPE
 }
 
-export abstract class Base<F> extends Vue {
+@Component({})
+export class Base<F> extends Vue {
     title = ''
+    dicts: string[] = []
     debug = false
     props: any = {}
     queryOnPresenterCreated = true
@@ -75,7 +76,7 @@ export abstract class Base<F> extends Vue {
       return this.addStatus > CRUD_TYPE.NORMAL ? `新增${this.title}` : this.editStatus > CRUD_TYPE.NORMAL ? `编辑${this.title}` : this.title
     }
 
-    abstract refresh(): Promise<void>
+    refresh(): void { }
 
     /** 刷新 - 之前 */
     beforeRefresh(): boolean { return true }
@@ -171,17 +172,17 @@ export abstract class Base<F> extends Vue {
 
     created() {
       this.updateProp('searchToggle', true)
-      if ((this.$options as any).dicts instanceof Array) {
+      if (this.dicts instanceof Array) {
         const ps: Promise<void>[] = [];
-        (this.$options as any).forEach((n: any) => {
+        this.dicts.forEach((n: string) => {
           Vue.set(this.dict.dict, n, {})
           Vue.set(this.dict.label, n, {})
           Vue.set(this.dict, n, [])
-          ps.push(getDictDetail(n).then(data => {
-            this.dict[n].splice(0, 0, ...data.data)
-            data.data.forEach(d => {
-              Vue.set(this.dict.dict[n], d.value, d)
-              Vue.set(this.dict.label[n], d.value, d.label)
+          ps.push(getDictDetail({ dictName: n }).then(data => {
+            this.dict[n].splice(0, 0, ...data.data.content)
+            data.data.content.forEach(d => {
+              Vue.set(this.dict.dict[n], d.value!, d)
+              Vue.set(this.dict.label[n], d.value!, d.label)
             })
           }))
         })
@@ -226,12 +227,12 @@ export abstract class Base<F> extends Vue {
       this.refresh()
     }
 
-    protected pageChangeHandler(e: number) {
+    protected pageChange(e: number) {
       this.page.page = e
       this.refresh()
     }
 
-    protected sizeChangeHandler(e: number) {
+    protected sizeChange(e: number) {
       this.page.size = e
       this.page.page = 1
       this.refresh()

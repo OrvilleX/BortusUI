@@ -19,3 +19,16 @@ export interface JobData {
     enabled?: boolean
     createTime?: string
 }
+
+/**
+ * 新增、编辑岗位数据包
+ */
+export interface JobDtoData {
+    id?: number
+    createTime?: string
+    updateTime?: string
+    updatedBy?: string
+    jobSort?: number
+    name?: string
+    enabled?: boolean
+}

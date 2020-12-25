@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import { PageableBody } from '@/types/base'
 import { DictDetailData, DictDetailQueryData, DictDetailDtoData } from '@/types/dictDetail'
 
 export interface DictMap {
@@ -11,7 +12,7 @@ export interface DictMap {
 export const get = (params: DictDetailQueryData) => {
   params.page = 0
   params.size = 9999
-  return request.get<DictDetailDtoData[]>('api/dictDetail', { params })
+  return request.get<PageableBody<DictDetailDtoData>>('api/dictDetail', { params })
 }
 
 /**

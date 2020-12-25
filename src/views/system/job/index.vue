@@ -297,7 +297,7 @@ import { NOTIFICATION_TYPE } from '@/components/Crud/base'
 export default class extends mixins<CRUD<JobData, JobQueryData, JobData>>(
   CRUD
 ) {
-  private dicts = ['job_status'];
+  dicts = ['job_status'];
   private permission = {
     add: ['admin', 'job:add'],
     edit: ['admin', 'job:edit'],

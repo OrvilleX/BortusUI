@@ -8,6 +8,10 @@ import login from './login'
 import menu from './menu'
 import user from './user'
 import log from './log'
+import dept from './dept'
+import dictDetail from './dictDetail'
+import job from './job'
+import role from './role'
 
 const app = express()
 const port = 9528
@@ -36,6 +40,10 @@ app.use('/mock-api/v1/auth', login)
 app.use('/mock-api/v1/api/menus', menu)
 app.use('/mock-api/v1/api/users', user)
 app.use('/mock-api/v1/api/logs', log)
+app.use('/mock-api/v1/api/dept', dept)
+app.use('/mock-api/v1/api/dictDetail', dictDetail)
+app.use('/mock-api/v1/api/job', job)
+app.use('/mock-api/v1/api/roles', role)
 
 // Catch 404 error
 app.use((req, res, next) => {

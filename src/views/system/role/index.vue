@@ -435,8 +435,8 @@ export default class extends mixins<
       if (dept.id) ids.push(dept.id)
     })
     const res = await getDeptSuperior(ids)
-    this.buildDepts(res.data)
-    this.depts = res.data
+    this.buildDepts(res.data.content)
+    this.depts = res.data.content
   }
 
   private buildDepts(depts: DeptDtoData[]) {

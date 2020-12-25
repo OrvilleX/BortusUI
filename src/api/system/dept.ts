@@ -13,7 +13,7 @@ export const getDepts = (params: DeptQueryData) => {
  * 获取同级或上级部门
  */
 export const getDeptSuperior = (ids: number[]) => {
-  return request.post<DeptDtoData[]>('api/dept/superior', ids)
+  return request.post<PageableBody<DeptDtoData>>('api/dept/superior', ids)
 }
 
 /**

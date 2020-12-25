@@ -1,5 +1,6 @@
 import request from '@/utils/request'
-import { JobData } from '@/types/job'
+import { PageableBody } from '@/types/base'
+import { JobData, JobDtoData } from '@/types/job'
 
 /**
  * 获取所有岗位
@@ -10,7 +11,7 @@ export const getAllJob = () => {
     size: 9999,
     enabled: true
   }
-  return request.get('api/job', { params })
+  return request.get<PageableBody<JobDtoData>>('api/job', { params })
 }
 
 /**

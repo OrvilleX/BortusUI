@@ -47,6 +47,10 @@ export interface UserPassData {
  */
 export interface UserDtoData {
     id?: number
+    createBy?: string
+    updatedBy?: string
+    updateTime?: string
+    createTime?: string
     roles?: RoleSmallDtoData[]
     jobs?: JobData[]
     dept?: DeptDtoData

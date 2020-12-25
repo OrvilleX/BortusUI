@@ -37,6 +37,11 @@ export interface DeptDtoData {
     subCount?: number
     createTime?: string
     hasChildren?: boolean
+    createBy?: string
+    label?: string
+    leaf?: boolean
+    updateTime?: string
+    updatedBy?: string
 }
 
 export interface DeptSmallDtoData {

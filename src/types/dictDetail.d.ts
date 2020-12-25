@@ -24,9 +24,10 @@ export interface DictDetailData {
  * 字典明细输出
  */
 export interface DictDetailDtoData {
-    id: number
+    id?: number
+    createTime?: string
     dict: DictSmallDtoData
-    label: string
-    value: string
-    dictSort: number
+    label?: string
+    value?: string
+    dictSort?: number
 }
