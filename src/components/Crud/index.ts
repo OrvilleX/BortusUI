@@ -83,7 +83,7 @@ export default class CRUD<T extends object, Q, D> extends Base<T> {
         this.loading = false
         this.afterRefresh()
       }, this.time)
-    }).catch(err => {
+    }).catch(() => {
       this.loading = false
     })
   }
@@ -483,7 +483,7 @@ export default class CRUD<T extends object, Q, D> extends Base<T> {
     })
     if (selectedCount === 0) {
       this.notify('请至少选择一列', NOTIFICATION_TYPE.WARNING)
-      this.$nextTick(function () {
+      this.$nextTick(function() {
         item.visible = true
       })
       return
@@ -521,7 +521,7 @@ export default class CRUD<T extends object, Q, D> extends Base<T> {
 
   doCancelUD(row: any) {
     this.pop = false
-    this.cancelDelete(row);
+    this.cancelDelete(row)
   }
 
   toDeleteUD() {

@@ -76,6 +76,7 @@ export class Base<F> extends Vue {
       return this.addStatus > CRUD_TYPE.NORMAL ? `新增${this.title}` : this.editStatus > CRUD_TYPE.NORMAL ? `编辑${this.title}` : this.title
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     refresh(): void { }
 
     /** 刷新 - 之前 */
@@ -173,7 +174,7 @@ export class Base<F> extends Vue {
     created() {
       this.updateProp('searchToggle', true)
       if (this.dicts instanceof Array) {
-        const ps: Promise<void>[] = [];
+        const ps: Promise<void>[] = []
         this.dicts.forEach((n: string) => {
           Vue.set(this.dict.dict, n, {})
           Vue.set(this.dict.label, n, {})

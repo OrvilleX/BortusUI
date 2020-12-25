@@ -378,7 +378,7 @@ export default class extends mixins<
 
   private getSupDepts(id: number) {
     crudDept.getDeptSuperior([id]).then((res) => {
-      const date = res.data
+      const date = res.data.content
       this.buildDepts(date)
       this.depts = date
     })

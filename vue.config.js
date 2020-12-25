@@ -40,7 +40,7 @@ module.exports = {
   },
   configureWebpack: {
     name: name,
-    devtool: "source-map"
+    devtool: 'source-map'
   },
   chainWebpack(config) {
     config.plugins.delete('preload')

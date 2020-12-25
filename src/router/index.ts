@@ -29,7 +29,7 @@ export const loadMenus = (next: any, to: Route) => {
   })
 }
 
-router.beforeEach(async (to: Route, _: Route, next: any) => {
+router.beforeEach(async(to: Route, _: Route, next: any) => {
   if (to.meta.title) {
     document.title = to.meta.title + ' - ' + Config.title
   }

@@ -396,42 +396,42 @@
 </template>
 
 <script lang="ts">
-import { Component } from "vue-property-decorator";
-import { parseTime } from "@/utils/index";
-import { mixins } from "vue-class-component";
-import crudUser from "@/api/system/user";
-import { isvalidPhone } from "@/utils/validate";
-import { getDepts, getDeptSuperior } from "@/api/system/dept";
-import { getAll, getLevel } from "@/api/system/role";
-import { getAllJob } from "@/api/system/job";
-import CRUD from "@/components/Crud";
-import DateRangePicker from "@/components/DateRangePicker/Index.vue";
-import Treeselect, { LOAD_CHILDREN_OPTIONS } from "@riophae/vue-treeselect";
-import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import { Component } from 'vue-property-decorator'
+import { parseTime } from '@/utils/index'
+import { mixins } from 'vue-class-component'
+import crudUser from '@/api/system/user'
+import { isvalidPhone } from '@/utils/validate'
+import { getDepts, getDeptSuperior } from '@/api/system/dept'
+import { getAll, getLevel } from '@/api/system/role'
+import { getAllJob } from '@/api/system/job'
+import CRUD from '@/components/Crud'
+import DateRangePicker from '@/components/DateRangePicker/Index.vue'
+import Treeselect, { LOAD_CHILDREN_OPTIONS } from '@riophae/vue-treeselect'
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
-import { UserData, UserQueryData, UserDtoData } from "@/types/user";
-import { DeptDtoData } from "@/types/dept";
-import { JobData } from "@/types/job";
-import { RoleData, RoleDtoData } from "@/types/role";
-import { UserModule } from "@/store/modules/user";
-import { NOTIFICATION_TYPE } from "@/components/Crud/base";
+import { UserData, UserQueryData, UserDtoData } from '@/types/user'
+import { DeptDtoData } from '@/types/dept'
+import { JobData } from '@/types/job'
+import { RoleData, RoleDtoData } from '@/types/role'
+import { UserModule } from '@/store/modules/user'
+import { NOTIFICATION_TYPE } from '@/components/Crud/base'
 
-let userRoles: RoleData[] = [];
-let userJobs: JobData[] = [];
+let userRoles: RoleData[] = []
+let userJobs: JobData[] = []
 
 @Component({
-  name: "User",
+  name: 'User',
   components: {
     Treeselect,
-    DateRangePicker,
-  },
+    DateRangePicker
+  }
 })
 export default class extends mixins<CRUD<UserData, UserQueryData, UserDtoData>>(
   CRUD
 ) {
-  dicts = ["user_status"];
-  height = document.documentElement.clientHeight - 180 + "px;";
-  deptName = "";
+  dicts = ['user_status'];
+  height = document.documentElement.clientHeight - 180 + 'px;';
+  deptName = '';
   depts: DeptDtoData[] = [];
   deptDatas: DeptDtoData[] = [];
   jobs: JobData[] = [];
@@ -440,242 +440,243 @@ export default class extends mixins<CRUD<UserData, UserQueryData, UserDtoData>>(
   jobDatas: number[] = [];
   roleDatas: number[] = [];
   parseTime = parseTime;
-  defaultProps = { children: "children", label: "name", isLeaf: "leaf" };
+  defaultProps = { children: 'children', label: 'name', isLeaf: 'leaf' };
   permission = {
-    add: ["admin", "user:add"],
-    edit: ["admin", "user:edit"],
-    del: ["admin", "user:del"],
+    add: ['admin', 'user:add'],
+    edit: ['admin', 'user:edit'],
+    del: ['admin', 'user:del']
   };
+
   user = UserModule.user;
 
   enabledTypeOptions = [
-    { key: "true", displayName: "激活" },
-    { key: "false", displayName: "锁定" },
+    { key: 'true', displayName: '激活' },
+    { key: 'false', displayName: '锁定' }
   ];
 
   rules = {
     username: [
-      { required: true, message: "请输入用户名", trigger: "blur" },
-      { min: 2, max: 20, message: "长度在 2 到 20 个字符", trigger: "blur" },
+      { required: true, message: '请输入用户名', trigger: 'blur' },
+      { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
     ],
     nickName: [
-      { required: true, message: "请输入用户昵称", trigger: "blur" },
-      { min: 2, max: 20, message: "长度在 2 到 20 个字符", trigger: "blur" },
+      { required: true, message: '请输入用户昵称', trigger: 'blur' },
+      { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
     ],
     email: [
-      { required: true, message: "请输入邮箱地址", trigger: "blur" },
-      { type: "email", message: "请输入正确的邮箱地址", trigger: "blur" },
+      { required: true, message: '请输入邮箱地址', trigger: 'blur' },
+      { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
     ],
-    phone: [{ required: true, trigger: "blur", validator: this.validPhone }],
+    phone: [{ required: true, trigger: 'blur', validator: this.validPhone }]
   };
 
   created() {
-    this.title = "用户";
-    this.url = "api/users";
-    this.crudMethod = { ...crudUser };
-    this.msg.add = "新增成功，默认密码：123456";
+    this.title = '用户'
+    this.url = 'api/users'
+    this.crudMethod = { ...crudUser }
+    this.msg.add = '新增成功，默认密码：123456'
     this.defaultForm = {
       id: NaN,
-      userName: "",
-      nickName: "",
-      gender: "男",
-      email: "",
+      userName: '',
+      nickName: '',
+      gender: '男',
+      email: '',
       enabled: false,
       roles: [],
       jobs: [],
       dept: { id: NaN },
-      phone: "",
-    };
-    this.query = {};
-    this.form = {};
-    this.resetForm();
+      phone: ''
+    }
+    this.query = {}
+    this.form = {}
+    this.resetForm()
     if (this.queryOnPresenterCreated) {
-      this.toQuery();
+      this.toQuery()
     }
   }
 
   private validPhone(rule: string, value: string, callback: Function) {
     if (!value) {
-      callback(new Error("请输入电话号码"));
+      callback(new Error('请输入电话号码'))
     } else if (!isvalidPhone(value)) {
-      callback(new Error("请输入正确的11位手机号码"));
+      callback(new Error('请输入正确的11位手机号码'))
     } else {
-      callback();
+      callback()
     }
   }
 
   mounted() {
     window.onresize = () => {
-      this.height = document.documentElement.clientHeight - 180 + "px;";
-    };
+      this.height = document.documentElement.clientHeight - 180 + 'px;'
+    }
   }
 
   private changeRole(value: number[]) {
-    userRoles = [];
+    userRoles = []
     value.forEach((data) => {
-      const role = { id: data };
-      userRoles.push(role);
-    });
+      const role = { id: data }
+      userRoles.push(role)
+    })
   }
 
   private changeJob(value: number[]) {
-    userJobs = [];
+    userJobs = []
     value.forEach((data) => {
-      const job = { id: data };
-      userJobs.push(job);
-    });
+      const job = { id: data }
+      userJobs.push(job)
+    })
   }
 
   private deleteTag(value: number) {
-    userRoles.forEach(function (data, index) {
+    userRoles.forEach(function(data, index) {
       if (data.id === value) {
-        userRoles.splice(index, value);
+        userRoles.splice(index, value)
       }
-    });
+    })
   }
 
   afterToCU(form: UserData) {
-    this.getRoles();
+    this.getRoles()
     if (form.id == null) {
-      this.getDepts();
+      this.getDepts()
     } else {
-      if (form.dept?.id) this.getSupDepts(form.dept.id);
+      if (form.dept?.id) this.getSupDepts(form.dept.id)
     }
-    this.getRoleLevel();
-    this.getJobs();
+    this.getRoleLevel()
+    this.getJobs()
   }
 
   beforeToAdd() {
-    this.jobDatas = [];
-    this.roleDatas = [];
-    return true;
+    this.jobDatas = []
+    this.roleDatas = []
+    return true
   }
 
   beforeToEdit(form: UserData) {
-    this.getJobs();
-    this.jobDatas = [];
-    this.roleDatas = [];
-    userRoles = [];
-    userJobs = [];
+    this.getJobs()
+    this.jobDatas = []
+    this.roleDatas = []
+    userRoles = []
+    userJobs = []
 
     if (form.roles) {
       form.roles.forEach((role) => {
-        if (role.id) this.roleDatas.push(role.id);
-        const rol = { id: role.id };
-        userRoles.push(rol);
-      });
+        if (role.id) this.roleDatas.push(role.id)
+        const rol = { id: role.id }
+        userRoles.push(rol)
+      })
     }
 
     if (form.jobs) {
       form.jobs.forEach((job) => {
-        if (job.id) this.jobDatas.push(job.id);
-        const data = { id: job.id };
-        userJobs.push(data);
-      });
+        if (job.id) this.jobDatas.push(job.id)
+        const data = { id: job.id }
+        userJobs.push(data)
+      })
     }
 
-    return true;
+    return true
   }
 
   afterValidateCU() {
     if (!this.form.dept?.id) {
       this.$message({
-        message: "部门不能为空",
-        type: "warning",
-      });
-      return false;
+        message: '部门不能为空',
+        type: 'warning'
+      })
+      return false
     } else if (this.jobDatas.length === 0) {
       this.$message({
-        message: "岗位不能为空",
-        type: "warning",
-      });
-      return false;
+        message: '岗位不能为空',
+        type: 'warning'
+      })
+      return false
     } else if (this.roleDatas.length === 0) {
       this.$message({
-        message: "角色不能为空",
-        type: "warning",
-      });
-      return false;
+        message: '角色不能为空',
+        type: 'warning'
+      })
+      return false
     }
-    this.form.roles = userRoles;
-    this.form.jobs = userJobs;
-    return true;
+    this.form.roles = userRoles
+    this.form.jobs = userJobs
+    return true
   }
 
   private getDeptDatas(node: any, resolve: Function) {
-    const sort = "id,desc";
-    const params = { name: "", sort: sort, pid: 0 };
-    if (typeof node !== "object") {
+    const sort = 'id,desc'
+    const params = { name: '', sort: sort, pid: 0 }
+    if (typeof node !== 'object') {
       if (node) {
-        params.name = node;
+        params.name = node
       }
     } else if (node.level !== 0) {
-      params.pid = node.data.id;
+      params.pid = node.data.id
     }
     setTimeout(() => {
       getDepts(params).then((res) => {
         if (resolve) {
-          resolve(res.data.content);
+          resolve(res.data.content)
         } else {
-          this.deptDatas = res.data.content;
+          this.deptDatas = res.data.content
         }
-      });
-    }, 100);
+      })
+    }, 100)
   }
 
   private getDepts() {
     getDepts({ enabled: true }).then((res) => {
       this.depts = res.data.content.map((obj) => {
         if (obj.hasChildren) {
-          obj.children = [];
+          obj.children = []
         }
-        return obj;
-      });
-    });
+        return obj
+      })
+    })
   }
 
   private getSupDepts(deptId: number) {
     getDeptSuperior([deptId]).then((res) => {
-      const date = res.data.content;
-      this.buildDepts(date);
-      this.depts = date;
-    });
+      const date = res.data.content
+      this.buildDepts(date)
+      this.depts = date
+    })
   }
 
   private buildDepts(depts: DeptDtoData[]) {
     depts.forEach((data) => {
       if (data.children) {
-        this.buildDepts(data.children);
+        this.buildDepts(data.children)
       }
       if (data.hasChildren && !data.children) {
-        data.children = [];
+        data.children = []
       }
-    });
+    })
   }
 
-  private loadDepts(e: { action: any; parentNode: any; callback: Function }) {
+  private loadDepts(e: { action: any, parentNode: any, callback: Function }) {
     if (e.action === LOAD_CHILDREN_OPTIONS) {
       getDepts({ enabled: true, pid: e.parentNode.id }).then((res) => {
         e.parentNode.children = res.data.content.map((obj) => {
           if (obj.hasChildren) {
-            obj.children = [];
+            obj.children = []
           }
-          return obj;
-        });
+          return obj
+        })
         setTimeout(() => {
-          e.callback();
-        }, 200);
-      });
+          e.callback()
+        }, 200)
+      })
     }
   }
 
   private handleNodeClick(data: DeptDtoData) {
     if (data.pid === 0) {
-      this.query.deptId = NaN;
+      this.query.deptId = NaN
     } else {
-      this.query.deptId = data.id;
+      this.query.deptId = data.id
     }
-    this.toQuery();
+    this.toQuery()
   }
 
   // 改变状态
@@ -685,12 +686,12 @@ export default class extends mixins<CRUD<UserData, UserQueryData, UserDtoData>>(
         this.dict.label.user_status[val] +
         '" ' +
         data.userName +
-        ", 是否继续？",
-      "提示",
+        ', 是否继续？',
+      '提示',
       {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
       }
     )
       .then(() => {
@@ -698,39 +699,39 @@ export default class extends mixins<CRUD<UserData, UserQueryData, UserDtoData>>(
           .edit(data)
           .then(() => {
             this.notify(
-              this.dict.label.user_status[val] + "成功",
+              this.dict.label.user_status[val] + '成功',
               NOTIFICATION_TYPE.SUCCESS
-            );
+            )
           })
           .catch(() => {
-            data.enabled = !data.enabled;
-          });
+            data.enabled = !data.enabled
+          })
       })
       .catch(() => {
-        data.enabled = !data.enabled;
-      });
+        data.enabled = !data.enabled
+      })
   }
 
   private getRoles() {
     getAll().then((res) => {
-      this.roles = res.data;
-    });
+      this.roles = res.data
+    })
   }
 
   private getJobs() {
     getAllJob().then((res) => {
-      this.jobs = res.data.content;
-    });
+      this.jobs = res.data.content
+    })
   }
 
   private getRoleLevel() {
     getLevel().then((res) => {
-      this.level = res.data.level;
-    });
+      this.level = res.data.level
+    })
   }
 
   private checkboxT(row: UserData) {
-    return row.id !== UserModule.user.id;
+    return row.id !== UserModule.user.id
   }
 }
 </script>

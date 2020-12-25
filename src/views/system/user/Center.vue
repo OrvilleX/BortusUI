@@ -178,7 +178,6 @@ import myUpload from 'vue-image-crop-upload'
 import updatePass from './center/UpdatePass.vue'
 import updateEmail from './center/UpdateEmail.vue'
 import { getToken } from '@/utils/auth'
-import store from '@/store'
 import { UserModule } from '@/store/modules/user'
 import { ApiModule } from '@/store/modules/api'
 import { isvalidPhone } from '@/utils/validate'
@@ -262,7 +261,7 @@ export default class extends mixins<
 
   doSubmit() {
     if (this.$refs.form) {
-      (this.$refs.form as ElForm).validate(async (valid) => {
+      (this.$refs.form as ElForm).validate(async(valid) => {
         if (valid) {
           this.saveLoading = true
           try {
@@ -270,7 +269,7 @@ export default class extends mixins<
             this.editSuccessNotify()
             await UserModule.GetInfo()
             this.saveLoading = false
-          } catch(err) {
+          } catch (err) {
             this.saveLoading = false
           }
         }

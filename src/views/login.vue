@@ -84,126 +84,126 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Watch } from "vue-property-decorator";
-import { encrypt } from "@/utils/rsaEncrypt";
-import Config from "@/settings";
-import { getCodeImg } from "@/api/login";
-import Cookies from "js-cookie";
-import Background from "@/assets/images/background.jpg";
-import { Route } from "vue-router";
-import { ElForm } from "element-ui/types/form";
-import { UserModule } from "@/store/modules/user";
+import { Vue, Component, Watch } from 'vue-property-decorator'
+import { encrypt } from '@/utils/rsaEncrypt'
+import Config from '@/settings'
+import { getCodeImg } from '@/api/login'
+import Cookies from 'js-cookie'
+import Background from '@/assets/images/background.jpg'
+import { Route } from 'vue-router'
+import { ElForm } from 'element-ui/types/form'
+import { UserModule } from '@/store/modules/user'
 
 @Component({
-  name: "Login",
+  name: 'Login'
 })
 export default class extends Vue {
   private Background = Background;
-  private codeUrl = "";
-  private cookiePass = "";
+  private codeUrl = '';
+  private cookiePass = '';
   private loading = false;
   private redirect: any = undefined;
   private loginForm = {
-    username: "",
-    password: "",
+    username: '',
+    password: '',
     rememberMe: false,
-    code: "",
-    uuid: "",
+    code: '',
+    uuid: ''
   };
 
   private loginRules = {
-    username: [{ required: true, trigger: "blur", message: "用户名不能为空" }],
-    password: [{ required: true, trigger: "blur", message: "密码不能为空" }],
-    code: [{ required: true, trigger: "change", message: "验证码不能为空" }],
+    username: [{ required: true, trigger: 'blur', message: '用户名不能为空' }],
+    password: [{ required: true, trigger: 'blur', message: '密码不能为空' }],
+    code: [{ required: true, trigger: 'change', message: '验证码不能为空' }]
   };
 
-  @Watch("$route", { immediate: true })
+  @Watch('$route', { immediate: true })
   private onRouteChange(route: Route) {
-    this.redirect = route.query && route.query.redirect;
+    this.redirect = route.query && route.query.redirect
   }
 
   created() {
-    this.getCode();
-    this.getCookie();
-    this.point();
+    this.getCode()
+    this.getCookie()
+    this.point()
   }
 
   private getCode() {
     getCodeImg().then((res) => {
-      this.codeUrl = res.data.img;
-      this.loginForm.uuid = res.data.uuid;
-    });
+      this.codeUrl = res.data.img
+      this.loginForm.uuid = res.data.uuid
+    })
   }
 
   private getCookie() {
-    const username = Cookies.get("username");
-    let password = Cookies.get("password");
-    const rememberMe = Cookies.get("rememberMe");
-    this.cookiePass = password === undefined ? "" : password;
-    password = password === undefined ? this.loginForm.password : password;
+    const username = Cookies.get('username')
+    let password = Cookies.get('password')
+    const rememberMe = Cookies.get('rememberMe')
+    this.cookiePass = password === undefined ? '' : password
+    password = password === undefined ? this.loginForm.password : password
     this.loginForm = {
       username: username === undefined ? this.loginForm.username : username,
       password: password,
       rememberMe: rememberMe === undefined ? false : Boolean(rememberMe),
-      code: "",
-      uuid: "",
-    };
+      code: '',
+      uuid: ''
+    }
   }
 
   handleLogin() {
-    (this.$refs.loginForm as ElForm).validate(async (valid) => {
+    (this.$refs.loginForm as ElForm).validate(async(valid) => {
       const user = {
         username: this.loginForm.username,
         password: this.loginForm.password,
         rememberMe: this.loginForm.rememberMe,
         code: this.loginForm.code,
-        uuid: this.loginForm.uuid,
-      };
+        uuid: this.loginForm.uuid
+      }
       if (user.password !== this.cookiePass) {
-        user.password = encrypt(user.password);
+        user.password = encrypt(user.password)
       }
       if (valid) {
-        this.loading = true;
+        this.loading = true
         if (user.rememberMe) {
-          Cookies.set("username", user.username, {
-            expires: Config.passCookieExpires,
-          });
-          Cookies.set("password", user.password, {
-            expires: Config.passCookieExpires,
-          });
-          Cookies.set("rememberMe", String(user.rememberMe), {
-            expires: Config.passCookieExpires,
-          });
+          Cookies.set('username', user.username, {
+            expires: Config.passCookieExpires
+          })
+          Cookies.set('password', user.password, {
+            expires: Config.passCookieExpires
+          })
+          Cookies.set('rememberMe', String(user.rememberMe), {
+            expires: Config.passCookieExpires
+          })
         } else {
-          Cookies.remove("username");
-          Cookies.remove("password");
-          Cookies.remove("rememberMe");
+          Cookies.remove('username')
+          Cookies.remove('password')
+          Cookies.remove('rememberMe')
         }
         try {
-          await UserModule.Login(user);
-          this.loading = false;
-          this.$router.push({ path: this.redirect || "/" });
+          await UserModule.Login(user)
+          this.loading = false
+          this.$router.push({ path: this.redirect || '/' })
         } catch (err) {
-          this.loading = false;
-          this.getCode();
+          this.loading = false
+          this.getCode()
         }
       } else {
-        console.log("error submit!!");
-        return false;
+        console.log('error submit!!')
+        return false
       }
-    });
+    })
   }
 
   point() {
-    const point = Cookies.get("point") !== undefined;
+    const point = Cookies.get('point') !== undefined
     if (point) {
       this.$notify({
-        title: "提示",
-        message: "当前登录状态已过期，请重新登录！",
-        type: "warning",
-        duration: 5000,
-      });
-      Cookies.remove("point");
+        title: '提示',
+        message: '当前登录状态已过期，请重新登录！',
+        type: 'warning',
+        duration: 5000
+      })
+      Cookies.remove('point')
     }
   }
 }

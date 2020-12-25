@@ -4,7 +4,7 @@ import { RenderContext } from 'vue/types/options'
 import { VNode } from 'vue/types/vnode'
 import { CreateElement } from 'vue/types/vue'
 
-@Component({ name: 'MenuItem'})
+@Component({ name: 'MenuItem' })
 export default class extends Vue {
   functional = true
   @Prop({ default: '' }) icon!: string;
