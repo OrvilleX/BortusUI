@@ -112,7 +112,7 @@
                 size="mini"
                 :loading="delAllLoading"
                 :disabled="selections.length === 0"
-                @click="toDelete(selections)"
+                @click="toTableDelete(selections)"
               >
                 删除
               </el-button>
@@ -235,7 +235,7 @@
                 <el-radio
                   v-for="item in dict.user_status"
                   :key="item.id"
-                  :label="item.value"
+                  :label="item.value === 'true' ? true : false"
                   >{{ item.label }}</el-radio
                 >
               </el-radio-group>
@@ -349,34 +349,15 @@
                   icon="el-icon-edit"
                   @click="toEdit(scope.row)"
                 />
-                <el-popover
-                  v-model="pop"
-                  v-permission="permission.del"
-                  placement="top"
-                  width="180"
-                  trigger="manual"
-                >
-                  <p>确定删除本条数据吗？</p>
-                  <div style="text-align: right; margin: 0">
-                    <el-button size="mini" type="text" @click="doCancelUD(scope.row)"
-                      >取消</el-button
-                    >
-                    <el-button
-                      :loading="dataStatus[getDataId(scope.row)].delete === 2"
-                      type="primary"
-                      size="mini"
-                      @click="doDelete(scope.row)"
-                      >确定</el-button
-                    >
-                  </div>
-                  <el-button
-                    slot="reference"
-                    type="danger"
-                    icon="el-icon-delete"
-                    size="mini"
-                    @click="toDeleteUD"
-                  />
-                </el-popover>
+                <span>
+                <el-button
+                  :loading="dataStatus[getDataId(scope.row)].delete === 2"
+                  type="danger"
+                  icon="el-icon-delete"
+                  size="mini"
+                  @click="toDeleteUD(scope.row)"
+                />
+              </span>
               </div>
             </template>
           </el-table-column>
@@ -470,6 +451,12 @@ export default class extends mixins<CRUD<UserData, UserQueryData, UserDtoData>>(
     phone: [{ required: true, trigger: 'blur', validator: this.validPhone }]
   };
 
+  constructor() {
+    super()
+    this.form = {}
+    this.query = {}
+  }
+
   created() {
     this.title = '用户'
     this.url = 'api/users'
@@ -477,7 +464,7 @@ export default class extends mixins<CRUD<UserData, UserQueryData, UserDtoData>>(
     this.msg.add = '新增成功，默认密码：123456'
     this.defaultForm = {
       id: NaN,
-      userName: '',
+      username: '',
       nickName: '',
       gender: '男',
       email: '',
@@ -487,8 +474,6 @@ export default class extends mixins<CRUD<UserData, UserQueryData, UserDtoData>>(
       dept: { id: NaN },
       phone: ''
     }
-    this.query = {}
-    this.form = {}
     this.resetForm()
     if (this.queryOnPresenterCreated) {
       this.toQuery()
@@ -680,12 +665,12 @@ export default class extends mixins<CRUD<UserData, UserQueryData, UserDtoData>>(
   }
 
   // 改变状态
-  private changeEnabled(data: UserData, val: string) {
+  private changeEnabled(data: UserDtoData, val: string) {
     this.$confirm(
       '此操作将 "' +
         this.dict.label.user_status[val] +
         '" ' +
-        data.userName +
+        data.username +
         ', 是否继续？',
       '提示',
       {

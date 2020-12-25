@@ -35,6 +35,11 @@ export interface MenuData {
  */
 export interface MenuDtoData {
     id?: number
+    createTime?: string
+    updateTime?: string
+    createBy?: string
+    updatedBy?: string
+    hasChildren?: boolean
     alwaysShow?: boolean
     redirect?: string
     name?: string

@@ -404,8 +404,8 @@ export default class CRUD<T extends object, Q, D> extends Base<T> {
     return result
   }
 
-  @Watch('$refs.table')
-  private onTableChange() {
+  @Watch('loading')
+  protected onTableChange() {
     this.updateTableColumns()
     this.tableColumns.forEach(column => {
       if (this.hiddenColumns.indexOf(column.property) !== -1) {
@@ -416,7 +416,7 @@ export default class CRUD<T extends object, Q, D> extends Base<T> {
   }
 
   @Watch('$refs.table.store.states.columns')
-  private onTableStoreColumnsChange() {
+  protected onTableStoreColumnsChange() {
     this.updateTableColumns()
   }
 
@@ -446,6 +446,16 @@ export default class CRUD<T extends object, Q, D> extends Base<T> {
       columns.push(column)
     })
     this.tableColumns = columns
+  }
+
+  private toDeleteUD(data: any) {
+    this.$confirm('确认删除本数据?', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(() => {
+      this.doDelete(data)
+    })
   }
 
   private toTableDelete(datas: any) {
@@ -512,19 +522,5 @@ export default class CRUD<T extends object, Q, D> extends Base<T> {
 
   private toggleSearch() {
     this.props.searchToggle = !this.props.searchToggle
-  }
-
-  /**
-   * UD组件
-   */
-  pop = false
-
-  doCancelUD(row: any) {
-    this.pop = false
-    this.cancelDelete(row)
-  }
-
-  toDeleteUD() {
-    this.pop = true
   }
 }

@@ -45,7 +45,18 @@ router.get('/build', (req: Request, res: Response) => {
         "component":"ParentView","meta":{"icon":"menu","noCache":true,"title":"二级菜单1","hidden":false},"name":"二级菜单1","path":"menu1","redirect":"noredirect"},
         {"component":"nested/menu2/index","meta":{"icon":"menu","noCache":true,"title":"二级菜单2","hidden":false},"name":"二级菜单2","path":"menu2"}],
         "component":"Layout","meta":{"icon":"menu","noCache":true,"title":"多级菜单","hidden":false},"name":"多级菜单","path":"/nested","redirect":"noredirect"}]
-    return res.json(menus)
+    
+    res.json(menus)
+})
+
+router.get('/lazy', (req: Request, res: Response<MenuDtoData[]>) => {
+    let datas: MenuDtoData[] = [{"cache":false,"createTime":"2018-12-18 15:11:29","hasChildren":true,"hidden":false,"iFrame":false,"icon":"system","id":1,"label":"系统管理","leaf":false,"menuSort":1,"path":"system","subCount":7,"title":"系统管理","type":0},
+    {"cache":false,"createTime":"2018-12-18 15:17:48","hasChildren":true,"hidden":false,"iFrame":false,"icon":"monitor","id":6,"label":"系统监控","leaf":false,"menuSort":10,"path":"monitor","subCount":5,"title":"系统监控","type":0},{"cache":false,"createTime":"2018-12-19 13:38:16","hasChildren":true,"hidden":false,"iFrame":false,"icon":"zujian","id":10,"label":"组件管理","leaf":false,"menuSort":50,"path":"components","subCount":5,"title":"组件管理","type":0},
+    {"cache":false,"component":"","createTime":"2019-01-04 16:22:03","hasChildren":true,"hidden":false,"iFrame":false,"icon":"menu","id":21,"label":"多级菜单","leaf":false,"menuSort":900,"path":"nested","subCount":2,"title":"多级菜单","type":0,"updateTime":"2020-06-21 17:27:35","updatedBy":"admin"},
+    {"cache":false,"component":"","createTime":"2019-03-29 10:57:35","hasChildren":true,"hidden":false,"iFrame":false,"icon":"sys-tools","id":36,"label":"系统工具","leaf":false,"menuSort":30,"path":"sys-tools","subCount":7,"title":"系统工具","type":0},
+    {"cache":false,"component":"","componentName":"Mnt","createTime":"2019-11-09 10:31:08","hasChildren":true,"hidden":false,"iFrame":false,"icon":"mnt","id":90,"label":"运维管理","leaf":false,"menuSort":20,"path":"mnt","subCount":5,"title":"运维管理","type":1}]
+
+    res.json(datas)
 })
 
 export default router;

@@ -30,6 +30,7 @@ export interface RoleData {
  */
 export interface RoleDtoData {
     id?: number
+    createTime?: string
     menus?: MenuDtoData[]
     depts?: DeptDtoData[]
     name?: string

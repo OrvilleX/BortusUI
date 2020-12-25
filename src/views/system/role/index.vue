@@ -149,54 +149,34 @@
                   <el-button
                     v-permission="permission.edit"
                     :loading="status === 2"
-                    :disabled="disabledEdit"
                     size="mini"
                     type="primary"
                     icon="el-icon-edit"
                     @click="toEdit(scope.row)"
                   />
-                  <el-popover
-                    v-model="pop"
-                    v-permission="permission.del"
-                    placement="top"
-                    width="180"
-                    trigger="manual"
-                  >
-                    <p>{{ msg }}</p>
-                    <div style="text-align: right; margin: 0">
-                      <el-button size="mini" type="text" @click="doCancel"
-                        >取消</el-button
-                      >
-                      <el-button
-                        :loading="dataStatus[getDataId(scope.row)].delete === 2"
-                        type="primary"
-                        size="mini"
-                        @click="doDelete(scope.row)"
-                        >确定</el-button
-                      >
-                    </div>
+                  <span>
                     <el-button
-                      slot="reference"
+                      :loading="dataStatus[getDataId(scope.row)].delete === 2"
                       type="danger"
                       icon="el-icon-delete"
                       size="mini"
-                      @click="toDelete"
+                      @click="toDeleteUD(scope.row)"
                     />
-                  </el-popover>
+                  </span>
                 </div>
               </template>
             </el-table-column>
           </el-table>
           <!--分页组件-->
             <el-pagination
-    :page-size.sync="page.size"
-    :total="page.total"
-    :current-page.sync="page.page"
-    style="margin-top: 8px;"
-    layout="total, prev, pager, next, sizes"
-    @size-change="sizeChangeHandler($event)"
-    @current-change="pageChangeHandler"
-  />
+            :page-size.sync="page.size"
+            :total="page.total"
+            :current-page.sync="page.page"
+            style="margin-top: 8px;"
+            layout="total, prev, pager, next, sizes"
+            @size-change="sizeChange($event)"
+            @current-change="pageChange"
+            />
         </el-card>
       </el-col>
       <!-- 菜单授权 -->
@@ -252,7 +232,7 @@ import { getMenusTree } from '@/api/system/menu'
 import CRUD from '@/components/Crud'
 import Treeselect, { LOAD_CHILDREN_OPTIONS } from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
-
+import { parseTime } from '@/utils/index'
 import { RoleQueryData, RoleData, RoleDtoData } from '@/types/role'
 import { MenuDtoData } from '@/types/menu'
 import { DeptData, DeptDtoData } from '@/types/dept'
@@ -284,6 +264,7 @@ export default class extends mixins<
   private menuIds: number[] = [];
   private depts: DeptDtoData[] = [];
   private deptDatas: number[] = [];
+  parseTime = parseTime;
 
   private permission = {
     add: ['admin', 'roles:add'],
@@ -295,6 +276,12 @@ export default class extends mixins<
     name: [{ required: true, message: '请输入名称', trigger: 'blur' }],
     permission: [{ required: true, message: '请输入权限', trigger: 'blur' }]
   };
+
+  constructor() {
+    super()
+    this.query = {}
+    this.form = {}
+  }
 
   created() {
     this.title = '角色'
@@ -312,12 +299,16 @@ export default class extends mixins<
     crudRoles.getLevel().then((res) => {
       this.level = res.data.level
     })
+    this.resetForm()
+    if (this.queryOnPresenterCreated) {
+      this.toQuery()
+    }
   }
 
   getMenuDatas(node: TreeData, resolve: Function) {
     setTimeout(() => {
       getMenusTree(node.id ? node.id : 0).then((res) => {
-        resolve(res)
+        resolve(res.data)
       })
     }, 100)
   }

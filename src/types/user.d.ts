@@ -11,7 +11,7 @@ export interface UserData {
     roles?: RoleData[]
     jobs?: JobData[]
     dept?: DeptData
-    userName?: string
+    username?: string
     nickName?: string
     email?: string
     phone?: string
