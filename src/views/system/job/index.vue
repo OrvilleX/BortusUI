@@ -86,7 +86,7 @@
             size="mini"
             :loading="delAllLoading"
             :disabled="selections.length === 0"
-            @click="toDelete(selections)"
+            @click="toTableDelete(selections)"
           >
             删除
           </el-button>
@@ -188,54 +188,35 @@
               icon="el-icon-edit"
               @click="toEdit(scope.row)"
             />
-            <el-popover
-              v-model="pop"
-              v-permission="permission.del"
-              placement="top"
-              width="180"
-              trigger="manual"
-            >
-              <p>确定删除本条数据吗？</p>
-              <div style="text-align: right; margin: 0">
-                <el-button size="mini" type="text" @click="doCancel"
-                  >取消</el-button
-                >
-                <el-button
-                  :loading="dataStatus[getDataId(scope.row)].delete === 2"
-                  type="primary"
-                  size="mini"
-                  @click="doDelete(scope.row)"
-                  >确定</el-button
-                >
-              </div>
+            <span>
               <el-button
-                slot="reference"
+                :loading="dataStatus[getDataId(scope.row)].delete === 2"
                 type="danger"
                 icon="el-icon-delete"
                 size="mini"
-                @click="toDelete"
+                @click="toDeleteUD(scope.row)"
               />
-            </el-popover>
+            </span>
           </div>
         </template>
       </el-table-column>
     </el-table>
     <!--分页组件-->
-      <el-pagination
-    :page-size.sync="page.size"
-    :total="page.total"
-    :current-page.sync="page.page"
-    style="margin-top: 8px;"
-    layout="total, prev, pager, next, sizes"
-    @size-change="sizeChangeHandler($event)"
-    @current-change="pageChangeHandler"
-  />
+    <el-pagination
+      :page-size.sync="page.size"
+      :total="page.total"
+      :current-page.sync="page.page"
+      style="margin-top: 8px;"
+      layout="total, prev, pager, next, sizes"
+      @size-change="sizeChange($event)"
+      @current-change="pageChange"
+    />
     <!--表单渲染-->
     <el-dialog
       append-to-body
       :close-on-click-modal="false"
       :before-close="cancelCU"
-      :visible="status.cu > 0"
+      :visible="status > 0"
       :title="status.title"
       width="500px"
     >
@@ -283,6 +264,7 @@
 import { Component } from 'vue-property-decorator'
 import { mixins } from 'vue-class-component'
 import crudJob from '@/api/system/job'
+import { parseTime } from '@/utils/index'
 import CRUD from '@/components/Crud'
 import DateRangePicker from '@/components/DateRangePicker/Index.vue'
 import { JobQueryData, JobData } from '@/types/job'
@@ -298,6 +280,7 @@ export default class extends mixins<CRUD<JobData, JobQueryData, JobData>>(
   CRUD
 ) {
   dicts = ['job_status'];
+  parseTime = parseTime;
   private permission = {
     add: ['admin', 'job:add'],
     edit: ['admin', 'job:edit'],
@@ -316,6 +299,12 @@ export default class extends mixins<CRUD<JobData, JobQueryData, JobData>>(
     ]
   };
 
+  constructor() {
+    super()
+    this.query = {}
+    this.form = {}
+  }
+
   created() {
     this.title = '岗位'
     this.url = 'api/job'
@@ -326,6 +315,10 @@ export default class extends mixins<CRUD<JobData, JobQueryData, JobData>>(
       name: '',
       jobSort: 999,
       enabled: true
+    }
+    this.resetForm()
+    if (this.queryOnPresenterCreated) {
+      this.toQuery()
     }
   }
 
