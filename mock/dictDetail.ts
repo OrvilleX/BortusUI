@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express'
 import { PageableBody } from '../src/types/base'
-import { DictDetailDtoData } from '../src/types/dictDetail'
+import { DictDetailDtoData, DictDetailData } from '../src/types/dictDetail'
 
 let router = Router()
 
@@ -13,6 +13,45 @@ router.get('/', (req: Request, res: Response<PageableBody<DictDetailDtoData>>) =
         totalElements: datas.length,
         content: datas
     })
+})
+
+router.post('/', (req: Request, res: Response) => {
+    let data = req.body as DictDetailData
+    if (data.value && data.label && data.dictSort && data.dict) {
+        res.json({
+            ok: 'ok'
+        })
+    } else {
+        res.json({
+            ok: 'no'
+        })
+    }
+})
+
+router.put('/', (req: Request, res: Response) => {
+    let data = req.body as DictDetailData
+    if (data.id && data.value && data.label) {
+        res.json({
+            ok: 'ok'
+        })
+    } else {
+        res.json({
+            ok: 'no'
+        })
+    }
+})
+
+router.delete('/:id', (req: Request, res: Response) => {
+    let id = req.params.id
+    if (id) {
+        res.json({
+            ok: 'ok'
+        })
+    } else {
+        res.json({
+            ok: 'no'
+        })
+    }
 })
 
 export default router;

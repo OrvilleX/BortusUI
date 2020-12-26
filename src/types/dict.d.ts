@@ -18,7 +18,8 @@ export interface DictQueryData extends Pageable {
 
 export interface DictDtoData {
     id: number
-    dictDetails: DictDetailDtoData
+    createTime?: string
+    dictDetails: DictDetailDtoData[]
     name: string
     description: string
 }

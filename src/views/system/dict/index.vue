@@ -97,7 +97,7 @@
                   size="mini"
                   :loading="delAllLoading"
                   :disabled="selections.length === 0"
-                  @click="toDelete(selections)"
+                  @click="toTableDelete(selections)"
                 >
                   删除
                 </el-button>
@@ -189,49 +189,29 @@
                     icon="el-icon-edit"
                     @click="toEdit(scope.row)"
                   />
-                  <el-popover
-                    v-model="pop"
-                    v-permission="permission.del"
-                    placement="top"
-                    width="180"
-                    trigger="manual"
-                    @show="onPopoverShow"
-                  >
-                    <p>确定删除本条数据吗？</p>
-                    <div style="text-align: right; margin: 0">
-                      <el-button size="mini" type="text" @click="doCancel"
-                        >取消</el-button
-                      >
-                      <el-button
-                        :loading="dataStatus[getDataId(scope.row)].delete === 2"
-                        type="primary"
-                        size="mini"
-                        @click="doDelete(scope.row)"
-                        >确定</el-button
-                      >
-                    </div>
+                  <span>
                     <el-button
-                      slot="reference"
+                      :loading="dataStatus[getDataId(scope.row)].delete === 2"
                       type="danger"
                       icon="el-icon-delete"
                       size="mini"
-                      @click="toDelete"
+                      @click="toDeleteUD(scope.row)"
                     />
-                  </el-popover>
+                  </span>
                 </div>
               </template>
             </el-table-column>
           </el-table>
           <!--分页组件-->
-            <el-pagination
-    :page-size.sync="page.size"
-    :total="page.total"
-    :current-page.sync="page.page"
-    style="margin-top: 8px;"
-    layout="total, prev, pager, next, sizes"
-    @size-change="sizeChangeHandler($event)"
-    @current-change="pageChangeHandler"
-  />
+          <el-pagination
+            :page-size.sync="page.size"
+            :total="page.total"
+            :current-page.sync="page.page"
+            style="margin-top: 8px;"
+            layout="total, prev, pager, next, sizes"
+            @size-change="sizeChange($event)"
+            @current-change="pageChange"
+          />
         </el-card>
       </el-col>
       <!-- 字典详情列表 -->
@@ -266,6 +246,7 @@ import { Component } from 'vue-property-decorator'
 import { checkPermission } from '@/utils/permission'
 import dictDetail from './dictDetail.vue'
 import crudDict from '@/api/system/dict'
+import { parseTime } from '@/utils/index'
 import CRUD from '@/components/Crud'
 import { mixins } from 'vue-class-component'
 import { DictQueryData, DictDtoData, DictData } from '@/types/dict'
@@ -284,6 +265,7 @@ export default class extends mixins<
     { key: 'name', displayName: '字典名称' },
     { key: 'description', displayName: '描述' }
   ];
+  parseTime = parseTime;
 
   private rules = {
     name: [{ required: true, message: '请输入名称', trigger: 'blur' }]
@@ -295,6 +277,12 @@ export default class extends mixins<
     del: ['admin', 'dict:del']
   };
 
+  constructor() {
+    super()
+    this.query = {}
+    this.form = {}
+  }
+
   created() {
     this.title = '字典'
     this.url = 'api/dict'
@@ -304,6 +292,10 @@ export default class extends mixins<
       name: '',
       description: '',
       dictDetails: []
+    }
+    this.resetForm()
+    if (this.queryOnPresenterCreated) {
+      this.toQuery()
     }
   }
 

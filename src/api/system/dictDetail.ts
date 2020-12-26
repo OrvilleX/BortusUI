@@ -36,7 +36,7 @@ export const add = (data: DictDetailData) => {
  * 删除字典明细
  */
 export const del = (ids: number | number[]) => {
-  return request.delete('api/dictDetail' + ids)
+  return request.delete('api/dictDetail/' + ids)
 }
 
 /**

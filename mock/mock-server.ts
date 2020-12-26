@@ -12,6 +12,7 @@ import dept from './dept'
 import dictDetail from './dictDetail'
 import job from './job'
 import role from './role'
+import dict from './dict'
 
 const app = express()
 const port = 9528
@@ -44,6 +45,7 @@ app.use('/mock-api/v1/api/dept', dept)
 app.use('/mock-api/v1/api/dictDetail', dictDetail)
 app.use('/mock-api/v1/api/job', job)
 app.use('/mock-api/v1/api/roles', role)
+app.use('/mock-api/v1/api/dict', dict)
 
 // Catch 404 error
 app.use((req, res, next) => {

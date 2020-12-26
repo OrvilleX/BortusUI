@@ -6,7 +6,7 @@
     <div v-else>
       <!--工具栏-->
       <div class="head-container">
-        <div v-if="crud.props.searchToggle">
+        <div v-if="props.searchToggle">
           <!-- 搜索 -->
           <el-input
             v-model="query.label"
@@ -17,16 +17,34 @@
             class="filter-item"
             @keyup.enter.native="toQuery"
           />
-          <rrOperation />
+          <span>
+              <el-button
+                class="filter-item"
+                size="mini"
+                type="success"
+                icon="el-icon-search"
+                @click="toQuery"
+                >搜索</el-button
+              >
+              <el-button
+                v-if="optShow.reset"
+                class="filter-item"
+                size="mini"
+                type="warning"
+                icon="el-icon-refresh-left"
+                @click="resetQuery()"
+                >重置</el-button
+              >
+            </span>
         </div>
       </div>
       <!--表单组件-->
       <el-dialog
         append-to-body
         :close-on-click-modal="false"
-        :before-close="crud.cancelCU"
-        :visible="crud.status.cu > 0"
-        :title="crud.status.title"
+        :before-close="cancelCU"
+        :visible="status > 0"
+        :title="dialogTitle"
         width="500px"
       >
         <el-form
@@ -53,11 +71,11 @@
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-          <el-button type="text" @click="crud.cancelCU">取消</el-button>
+          <el-button type="text" @click="cancelCU">取消</el-button>
           <el-button
-            :loading="crud.status.cu === 2"
+            :loading="status === 2"
             type="primary"
-            @click="crud.submitCU"
+            @click="submitCU"
             >确认</el-button
           >
         </div>
@@ -65,11 +83,11 @@
       <!--表格渲染-->
       <el-table
         ref="table"
-        v-loading="crud.loading"
-        :data="crud.data"
+        v-loading="loading"
+        :data="data"
         highlight-current-row
         style="width: 100%"
-        @selection-change="crud.selectionChangeHandler"
+        @selection-change="selectionChangeHandler"
       >
         <el-table-column label="所属字典">
           {{ query.dictName }}
@@ -94,35 +112,15 @@
                 icon="el-icon-edit"
                 @click="toEdit(scope.row)"
               />
-              <el-popover
-                v-model="pop"
-                v-permission="permission.del"
-                placement="top"
-                width="180"
-                trigger="manual"
-              >
-                <p>确定删除本条数据吗？</p>
-                <div style="text-align: right; margin: 0">
-                  <el-button size="mini" type="text" @click="doCancel"
-                    >取消</el-button
-                  >
-                  <el-button
-                    :loading="dataStatus[getDataId(scope.row)].delete === 2"
-                    type="primary"
-                    size="mini"
-                    @click="doDelete(scope.row)"
-                    >确定</el-button
-                  >
-                </div>
+              <span>
                 <el-button
-                  slot="reference"
-                  :disabled="disabledDle"
+                  :loading="dataStatus[getDataId(scope.row)].delete === 2"
                   type="danger"
                   icon="el-icon-delete"
                   size="mini"
-                  @click="toDelete"
+                  @click="toDeleteUD(scope.row)"
                 />
-              </el-popover>
+              </span>
             </div>
           </template>
         </el-table-column>
@@ -134,8 +132,8 @@
         :current-page.sync="page.page"
         style="margin-top: 8px"
         layout="total, prev, pager, next, sizes"
-        @size-change="sizeChangeHandler($event)"
-        @current-change="pageChangeHandler"
+        @size-change="sizeChange($event)"
+        @current-change="pageChange"
       />
     </div>
   </div>
@@ -178,12 +176,17 @@ export default class extends mixins<
     del: ['admin', 'dict:del']
   };
 
-  created() {
-    this.title = '字典详情'
-    this.url = 'api/dictDetail'
+  constructor() {
+    super()
     this.query = {
       dictName: ''
     }
+    this.form = {}
+  }
+
+  created() {
+    this.title = '字典详情'
+    this.url = 'api/dictDetail'
     this.sort = ['dictSort,asc', 'id,desc']
     this.crudMethod = { ...crudDictDetail }
     this.optShow = {
@@ -200,6 +203,7 @@ export default class extends mixins<
       value: '',
       dictSort: 999
     }
+    this.resetForm()
   }
 }
 </script>

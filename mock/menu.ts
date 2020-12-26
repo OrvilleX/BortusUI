@@ -12,7 +12,7 @@ router.get('/build', (req: Request, res: Response) => {
         {"component":"system/menu/Index.vue","meta":{"icon":"menu","noCache":true,"title":"菜单管理","hidden":false},"name":"Menu","path":"menu"},
         {"component":"system/dept/Index.vue","meta":{"icon":"dept","noCache":true,"title":"部门管理","hidden":false},"name":"Dept","path":"dept"},
         {"component":"system/job/Index.vue","meta":{"icon":"Steve-Jobs","noCache":true,"title":"岗位管理","hidden":false},"name":"Job","path":"job"},
-        {"component":"system/dict/index.vue","meta":{"icon":"dictionary","noCache":true,"title":"字典管理","hidden":false},"name":"Dict","path":"dict"},
+        {"component":"system/dict/Index.vue","meta":{"icon":"dictionary","noCache":true,"title":"字典管理","hidden":false},"name":"Dict","path":"dict"},
         {"component":"system/timing/index.vue","meta":{"icon":"timing","noCache":true,"title":"任务调度","hidden":false},"name":"Timing","path":"timing"}],
         "component":"Layout","meta":{"icon":"system","noCache":true,"title":"系统管理","hidden":false},"name":"系统管理","path":"/system","redirect":"noredirect"},
         {"alwaysShow":true,"children":[{"component":"monitor/online/index","meta":{"icon":"Steve-Jobs","noCache":true,"title":"在线用户","hidden":false},"name":"OnlineUser","path":"online"},
