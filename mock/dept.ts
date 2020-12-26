@@ -1,7 +1,8 @@
 import faker from 'faker'
 import { Request, Response, Router } from 'express'
 import { PageableBody } from '../src/types/base'
-import { DeptDtoData } from '../src/types/dept'
+import { DeptDtoData, DeptData } from '../src/types/dept'
+import { Resolver } from 'dns'
 
 let router = Router()
 
@@ -25,6 +26,45 @@ router.post('/superior', (req: Request, res: Response<PageableBody<DeptDtoData>>
         totalElements: datas.length,
         content: datas
     })
+})
+
+router.post('/', (req: Request, res: Response) => {
+    let data = req.body as DeptData
+    if (data.name && data.enabled && data.isTop) {
+        res.json({
+            ok: 'ok'
+        })
+    } else {
+        res.json({
+            ok: 'no'
+        })
+    }
+})
+
+router.put('/', (req: Request, res: Response) => {
+    let data = req.body as DeptData
+    if (data.id) {
+        res.json({
+            ok: 'ok'
+        })
+    } else {
+        res.json({
+            ok: 'no'
+        })
+    }
+})
+
+router.delete('/', (req: Request, res: Response) => {
+    let ids = req.body as number[]
+    if (ids && ids.length > 0) {
+        res.json({
+            ok: 'ok'
+        })
+    } else {
+        res.json({
+            ok: 'no'
+        })
+    }
 })
 
 export default router;

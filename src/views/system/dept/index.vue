@@ -87,7 +87,7 @@
             size="mini"
             :loading="delAllLoading"
             :disabled="selections.length === 0"
-            @click="toDelete(selections)"
+            @click="toTableDelete(selections)"
           >
             删除
           </el-button>
@@ -177,7 +177,7 @@
             v-for="item in dict.dept_status"
             :key="item.id"
             v-model="form.enabled"
-            :label="item.value"
+            :label="item.value === 'true' ? true : false"
             >{{ item.label }}</el-radio
           >
         </el-form-item>
@@ -247,43 +247,21 @@
             <el-button
               v-permission="permission.edit"
               :loading="status === 2"
-              :disabled="disabledEdit"
               size="mini"
               type="primary"
               icon="el-icon-edit"
-              @click="toEdit(data)"
+              @click="toEdit(scope.row)"
             />
-            <el-popover
-              v-model="pop"
-              v-permission="permission.del"
-              placement="top"
-              width="180"
-              trigger="manual"
-              @show="onPopoverShow"
-              @hide="onPopoverHide"
-            >
-              <p>确定删除吗,如果存在下级节点则一并删除，此操作不能撤销！</p>
-              <div style="text-align: right; margin: 0">
-                <el-button size="mini" type="text" @click="doCancel"
-                  >取消</el-button
-                >
-                <el-button
-                  :loading="dataStatus[getDataId(scope.row)].delete === 2"
-                  type="primary"
-                  size="mini"
-                  @click="doDelete(scope.row)"
-                  >确定</el-button
-                >
-              </div>
+            <span>
               <el-button
-                slot="reference"
+                :loading="dataStatus[getDataId(scope.row)].delete === 2"
                 :disabled="scope.row.id === 1"
                 type="danger"
                 icon="el-icon-delete"
                 size="mini"
-                @click="toDelete"
+                @click="toDeleteUD(scope.row)"
               />
-            </el-popover>
+            </span>
           </div>
         </template>
       </el-table-column>
@@ -296,7 +274,7 @@ import { Component } from 'vue-property-decorator'
 import crudDept from '@/api/system/dept'
 import Treeselect, { LOAD_CHILDREN_OPTIONS } from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
-
+import { parseTime } from '@/utils/index'
 import CRUD from '@/components/Crud'
 import DateRangePicker from '@/components/DateRangePicker/Index.vue'
 import { mixins } from 'vue-class-component'
@@ -313,19 +291,8 @@ import { NOTIFICATION_TYPE } from '@/components/Crud/base'
 export default class extends mixins<
   CRUD<DeptData, DeptQueryData, DeptDtoData>
 >(CRUD) {
-  title = '部门';
-  url = 'api/dept';
-  crudMethod = { ...crudDept };
+  parseTime = parseTime;
   dicts = ['dept_status'];
-  defaultForm = {
-    id: NaN,
-    name: '',
-    isTop: '1',
-    subCount: 0,
-    pid: NaN,
-    deptSort: 999,
-    enabled: true
-  };
 
   private depts: DeptDtoData[] = [];
   private rules = {
@@ -351,8 +318,29 @@ export default class extends mixins<
     { key: 'false', displayName: '禁用' }
   ];
 
+  constructor() {
+    super()
+    this.query = {}
+    this.form = {}
+  }
+
   created() {
+    this.title = '部门'
+    this.url = 'api/dept'
+    this.crudMethod = { ...crudDept }
+    this.defaultForm = {
+      id: NaN,
+      name: '',
+      isTop: '1',
+      subCount: 0,
+      pid: NaN,
+      deptSort: 999,
+      enabled: true
+    }
     this.resetForm()
+    if (this.queryOnPresenterCreated) {
+      this.toQuery()
+    }
   }
 
   private getDeptDatas(tree: DeptDtoData, treeNode: any, resolve: Function) {
@@ -488,8 +476,15 @@ export default class extends mixins<
   height: 30px;
   line-height: 30px;
 }
-</style>
-<style rel="stylesheet/scss" lang="scss" scoped>
+.crud-opts {
+  padding: 4px 0;
+  display: -webkit-flex;
+  display: flex;
+  align-items: center;
+}
+.crud-opts .crud-opts-right {
+  margin-left: auto;
+}
 ::v-deep .el-input-number .el-input__inner {
   text-align: left;
 }

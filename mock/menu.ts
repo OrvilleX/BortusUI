@@ -10,7 +10,7 @@ router.get('/build', (req: Request, res: Response) => {
         {"component":"system/user/Index.vue","meta":{"icon":"peoples","noCache":true,"title":"用户管理","hidden":false},"name":"User","path":"user"},
         {"component":"system/role/Index.vue","meta":{"icon":"role","noCache":true,"title":"角色管理","hidden":false},"name":"Role","path":"role"},
         {"component":"system/menu/Index.vue","meta":{"icon":"menu","noCache":true,"title":"菜单管理","hidden":false},"name":"Menu","path":"menu"},
-        {"component":"system/dept/index.vue","meta":{"icon":"dept","noCache":true,"title":"部门管理","hidden":false},"name":"Dept","path":"dept"},
+        {"component":"system/dept/Index.vue","meta":{"icon":"dept","noCache":true,"title":"部门管理","hidden":false},"name":"Dept","path":"dept"},
         {"component":"system/job/index.vue","meta":{"icon":"Steve-Jobs","noCache":true,"title":"岗位管理","hidden":false},"name":"Job","path":"job"},
         {"component":"system/dict/index.vue","meta":{"icon":"dictionary","noCache":true,"title":"字典管理","hidden":false},"name":"Dict","path":"dict"},
         {"component":"system/timing/index.vue","meta":{"icon":"timing","noCache":true,"title":"任务调度","hidden":false},"name":"Timing","path":"timing"}],
