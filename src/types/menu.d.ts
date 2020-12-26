@@ -1,4 +1,5 @@
 import { Pageable } from './base'
+import { RoleData } from './role'
 
 /**
  * 导出、查询菜单数据包
@@ -28,6 +29,7 @@ export interface MenuData {
     pid?: number
     subCount?: number
     iFrame?: boolean
+    roles?: RoleData[]
 }
 
 /**

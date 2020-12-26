@@ -62,7 +62,7 @@
             size="mini"
             :loading="delAllLoading"
             :disabled="selections.length === 0"
-            @click="toDelete(selections)"
+            @click="toTableDelete(selections)"
           >
             删除
           </el-button>
@@ -169,9 +169,9 @@
         <el-form-item
           v-show="form.type.toString() !== '2'"
           label="外链菜单"
-          prop="iframe"
+          prop="iFrame"
         >
-          <el-radio-group v-model="form.iframe" size="mini">
+          <el-radio-group v-model="form.iFrame" size="mini">
             <el-radio-button label="true">是</el-radio-button>
             <el-radio-button label="false">否</el-radio-button>
           </el-radio-group>
@@ -227,7 +227,7 @@
         >
           <el-input
             v-model="form.permission"
-            :disabled="form.iframe"
+            :disabled="form.iFrame === 'true' ? true : false"
             placeholder="权限标识"
             style="width: 178px"
           />
@@ -253,7 +253,7 @@
           />
         </el-form-item>
         <el-form-item
-          v-show="!form.iframe && form.type.toString() === '1'"
+          v-show="!form.iFrame && form.type.toString() === '1'"
           label="组件名称"
           prop="componentName"
         >
@@ -264,7 +264,7 @@
           />
         </el-form-item>
         <el-form-item
-          v-show="!form.iframe && form.type.toString() === '1'"
+          v-show="!form.iFrame && form.type.toString() === '1'"
           label="组件路径"
           prop="component"
         >
@@ -331,9 +331,9 @@
         prop="component"
         label="组件路径"
       />
-      <el-table-column prop="iframe" label="外链" width="75px">
+      <el-table-column prop="iFrame" label="外链" width="75px">
         <template slot-scope="scope">
-          <span v-if="scope.row.iframe">是</span>
+          <span v-if="scope.row.iFrame">是</span>
           <span v-else>否</span>
         </template>
       </el-table-column>
@@ -371,34 +371,15 @@
               icon="el-icon-edit"
               @click="toEdit(scope.row)"
             />
-            <el-popover
-              v-model="pop"
-              v-permission="permission.del"
-              placement="top"
-              width="180"
-              trigger="manual"
-            >
-              <p>确定删除吗,如果存在下级节点则一并删除，此操作不能撤销！</p>
-              <div style="text-align: right; margin: 0">
-                <el-button size="mini" type="text" @click="doCancel"
-                  >取消</el-button
-                >
-                <el-button
-                  :loading="dataStatus[getDataId(scope.row)].delete === 2"
-                  type="primary"
-                  size="mini"
-                  @click="doDelete(scope.row)"
-                  >确定</el-button
-                >
-              </div>
+            <span>
               <el-button
-                slot="reference"
+                :loading="dataStatus[getDataId(scope.row)].delete === 2"
                 type="danger"
                 icon="el-icon-delete"
                 size="mini"
-                @click="toDelete"
+                @click="toDeleteUD(scope.row)"
               />
-            </el-popover>
+            </span>
           </div>
         </template>
       </el-table-column>
@@ -412,7 +393,7 @@ import crudMenu from '@/api/system/menu'
 import IconSelect from '@/components/IconSelect/Index.vue'
 import Treeselect, { LOAD_CHILDREN_OPTIONS } from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
-
+import { parseTime } from '@/utils/index'
 import CRUD from '@/components/Crud'
 import DateRangePicker from '@/components/DateRangePicker/Index.vue'
 import { mixins } from 'vue-class-component'
@@ -430,23 +411,7 @@ export default class extends mixins<
   CRUD<MenuData, MenuQueryData, MenuDtoData>
 >(CRUD) {
   private menus: MenuDtoData[] = [];
-  defaultForm = {
-    id: NaN,
-    title: '',
-    menuSort: 999,
-    path: '',
-    component: '',
-    componentName: '',
-    iFrame: false,
-    roles: [],
-    pid: 0,
-    icon: '',
-    cache: false,
-    hidden: false,
-    type: 0,
-    permission: ''
-  };
-
+  parseTime = parseTime;
   permission = {
     add: ['admin', 'menu:add'],
     edit: ['admin', 'menu:edit'],
@@ -458,10 +423,36 @@ export default class extends mixins<
     path: [{ required: true, message: '请输入地址', trigger: 'blur' }]
   };
 
+  constructor() {
+    super()
+    this.query = {}
+    this.form = {}
+  }
+
   created() {
     this.title = '菜单'
     this.url = 'api/menus'
     this.crudMethod = { ...crudMenu }
+    this.defaultForm = {
+      id: NaN,
+      title: '',
+      menuSort: 999,
+      path: '',
+      component: '',
+      componentName: '',
+      iFrame: false,
+      roles: [],
+      pid: 0,
+      icon: '',
+      cache: false,
+      hidden: false,
+      type: 0,
+      permission: ''
+    }
+    this.resetForm()
+    if (this.queryOnPresenterCreated) {
+      this.toQuery()
+    }
   }
 
   afterToCU(form: MenuData) {
