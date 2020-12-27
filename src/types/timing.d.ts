@@ -26,4 +26,24 @@ export interface QuartzJobData {
     subTask?: string
     pauseAfterFailure?: boolean
     description?: string
+    createBy?: string
+    updatedBy?: string
+    createTime?: string
+    updateTime?: string
+}
+
+/**
+ * 任务日志数据包
+ */
+export interface QuartzLogData {
+    id?: number
+    jobName?: string
+    beanName?: string
+    methodName?: string
+    params?: string
+    cronExpression?: string
+    isSuccess?: boolean
+    exceptionDetail?: string
+    time?: number
+    createTime?: string
 }

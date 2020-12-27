@@ -78,7 +78,7 @@
             size="mini"
             :loading="delAllLoading"
             :disabled="selections.length === 0"
-            @click="toDelete(selections)"
+            @click="toTableDelete(selections)"
           >
             删除
           </el-button>
@@ -154,30 +154,12 @@
       </el-table-column>
       <el-table-column label="操作" width="70px" fixed="right">
         <template slot-scope="scope">
-          <el-popover
-            :ref="scope.$index"
-            v-permission="['admin']"
-            placement="top"
-            width="180"
-          >
-            <p>确定强制退出该用户吗？</p>
-            <div style="text-align: right; margin: 0">
-              <el-button
-                size="mini"
-                type="text"
-                @click="$refs[scope.$index].doClose()"
-                >取消</el-button
-              >
-              <el-button
-                :loading="delLoading"
-                type="primary"
-                size="mini"
-                @click="delMethod(scope.row.key, scope.$index)"
-                >确定</el-button
-              >
-            </div>
-            <el-button slot="reference" size="mini" type="text">强退</el-button>
-          </el-popover>
+            <el-button 
+              v-permission="['admin']"
+              :loading="delLoading" 
+              @click="delMethod(scope.row.key, scope.$index)" 
+              size="mini" 
+              type="text">强退</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -187,8 +169,8 @@
       :current-page.sync="page.page"
       style="margin-top: 8px"
       layout="total, prev, pager, next, sizes"
-      @size-change="sizeChangeHandler($event)"
-      @current-change="pageChangeHandler"
+      @size-change="sizeChange($event)"
+      @current-change="pageChange"
     />
   </div>
 </template>
@@ -196,12 +178,13 @@
 <script lang="ts">
 import { Component } from 'vue-property-decorator'
 import { mixins } from 'vue-class-component'
+import { parseTime } from '@/utils/index'
 import { OnlineUserQueryData, OnlineUserDtoData } from '@/types/online'
 import { del } from '@/api/monitor/online'
 import CRUD from '@/components/Crud'
 
 interface OnlineSearchData {
-  filter: string
+  filter?: string
 }
 
 @Component({
@@ -211,6 +194,13 @@ export default class extends mixins<
   CRUD<OnlineSearchData, OnlineUserQueryData, OnlineUserDtoData>
 >(CRUD) {
   private delLoading = false;
+  parseTime = parseTime;
+
+  constructor() {
+    super()
+    this.form = {}
+    this.query = {}
+  }
 
   created() {
     this.title = '在线用户'
@@ -222,6 +212,10 @@ export default class extends mixins<
       del: false,
       download: true,
       reset: false
+    }
+    this.resetForm()
+    if (this.queryOnPresenterCreated) {
+      this.toQuery()
     }
   }
 
@@ -263,3 +257,14 @@ export default class extends mixins<
   }
 }
 </script>
+<style rel="stylesheet/scss" lang="scss" scoped>
+.crud-opts {
+  padding: 4px 0;
+  display: -webkit-flex;
+  display: flex;
+  align-items: center;
+}
+.crud-opts .crud-opts-right {
+  margin-left: auto;
+}
+</style>

@@ -71,7 +71,7 @@
             size="mini"
             :loading="delAllLoading"
             :disabled="selections.length === 0"
-            @click="toDelete(selections)"
+            @click="toTableDelete(selections)"
           >
             删除
           </el-button>
@@ -307,30 +307,13 @@
           >
             {{ scope.row.isPause ? "恢复" : "暂停" }}
           </el-button>
-          <el-popover
-            :ref="scope.row.id"
+          <span>
+            <el-button :loading="delLoading"
             v-permission="['admin', 'timing:del']"
-            placement="top"
-            width="200"
-          >
-            <p>确定停止并删除该任务吗？</p>
-            <div style="text-align: right; margin: 0">
-              <el-button
-                size="mini"
-                type="text"
-                @click="$refs[scope.row.id].doClose()"
-                >取消</el-button
-              >
-              <el-button
-                :loading="delLoading"
-                type="primary"
-                size="mini"
-                @click="delMethod(scope.row.id)"
-                >确定</el-button
-              >
-            </div>
-            <el-button slot="reference" type="text" size="mini">删除</el-button>
-          </el-popover>
+            type="text"
+            size="mini"
+            @click="delMethod(scope.row.id)">删除</el-button>
+          </span>
         </template>
       </el-table-column>
     </el-table>
@@ -341,8 +324,8 @@
       :current-page.sync="page.page"
       style="margin-top: 8px"
       layout="total, prev, pager, next, sizes"
-      @size-change="sizeChangeHandler($event)"
-      @current-change="pageChangeHandler"
+      @size-change="sizeChange($event)"
+      @current-change="pageChange"
     />
   </div>
 </template>
@@ -352,8 +335,9 @@ import { Component } from 'vue-property-decorator'
 import crudJob from '@/api/system/timing'
 import Log from './Log.vue'
 import CRUD from '@/components/Crud'
+import { parseTime } from '@/utils/index'
 import DateRangePicker from '@/components/DateRangePicker/Index.vue'
-import { JobQueryData, JobData } from '@/types/job'
+import { JobQueryData, QuartzJobData } from '@/types/timing'
 import { mixins } from 'vue-class-component'
 import { NOTIFICATION_TYPE } from '@/components/Crud/base'
 
@@ -364,24 +348,11 @@ import { NOTIFICATION_TYPE } from '@/components/Crud/base'
     DateRangePicker
   }
 })
-export default class extends mixins<CRUD<JobData, JobQueryData, JobData>>(
+export default class extends mixins<CRUD<QuartzJobData, JobQueryData, QuartzJobData>>(
   CRUD
 ) {
   delLoading = false;
-  defaultForm = {
-    id: NaN,
-    jobName: '',
-    subTask: '',
-    beanName: '',
-    methodName: '',
-    params: '',
-    cronExpression: '',
-    pauseAfterFailure: true,
-    isPause: false,
-    personInCharge: '',
-    email: '',
-    description: ''
-  };
+  parseTime = parseTime;
 
   permission = {
     add: ['admin', 'timing:add'],
@@ -406,10 +377,34 @@ export default class extends mixins<CRUD<JobData, JobQueryData, JobData>>(
     ]
   };
 
+  constructor() {
+    super()
+    this.query = {}
+    this.form = {}
+  }
+
   created() {
     this.title = '定时任务'
     this.url = 'api/jobs'
     this.crudMethod = { ...crudJob }
+    this.defaultForm = {
+      id: NaN,
+      jobName: '',
+      subTask: '',
+      beanName: '',
+      methodName: '',
+      params: '',
+      cronExpression: '',
+      pauseAfterFailure: true,
+      isPause: false,
+      personInCharge: '',
+      email: '',
+      description: ''
+    }
+    this.resetForm()
+    if (this.queryOnPresenterCreated) {
+      this.toQuery()
+    }
   }
 
   execute(id: number) {
@@ -464,8 +459,20 @@ export default class extends mixins<CRUD<JobData, JobQueryData, JobData>>(
     (this.$refs.log as Log).doInit()
   }
 
-  private checkboxT(row: JobData) {
+  private checkboxT(row: QuartzJobData) {
     return row.id !== 1
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.crud-opts {
+  padding: 4px 0;
+  display: -webkit-flex;
+  display: flex;
+  align-items: center;
+}
+.crud-opts .crud-opts-right {
+  margin-left: auto;
+}
+</style>

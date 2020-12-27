@@ -2,7 +2,6 @@ import faker from 'faker'
 import { Request, Response, Router } from 'express'
 import { PageableBody } from '../src/types/base'
 import { DeptDtoData, DeptData } from '../src/types/dept'
-import { Resolver } from 'dns'
 
 let router = Router()
 

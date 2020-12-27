@@ -165,6 +165,12 @@ export default class extends mixins<crud<LogData, LogQueryData, LogData>>(
     { key: 'false', displayName: '失败' }
   ];
 
+  constructor() {
+    super()
+    this.query = {}
+    this.form = {}
+  }
+
   created() {
     this.title = '任务日志'
   }
@@ -188,7 +194,7 @@ export default class extends mixins<crud<LogData, LogQueryData, LogData>>(
 }
 </script>
 
-<style scoped>
+<style rel="stylesheet/scss" scoped>
 .java.hljs {
   color: #444;
   background: #ffffff !important;

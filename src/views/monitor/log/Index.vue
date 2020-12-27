@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="head-container">
-      <div class="head-container">
+      <div v-if="props.searchToggle">
         <el-input
           v-model="query.blurry"
           clearable
@@ -17,7 +17,7 @@
           size="mini"
           type="success"
           icon="el-icon-search"
-          @click="$parent.toQuery"
+          @click="toQuery"
           >搜索</el-button
         >
       </div>
@@ -67,7 +67,7 @@
             size="mini"
             :loading="delAllLoading"
             :disabled="selections.length === 0"
-            @click="toDelete(selections)"
+            @click="toTableDelete(selections)"
           >
             删除
           </el-button>
@@ -166,8 +166,8 @@
       :current-page.sync="page.page"
       style="margin-top: 8px"
       layout="total, prev, pager, next, sizes"
-      @size-change="sizeChangeHandler($event)"
-      @current-change="pageChangeHandler"
+      @size-change="sizeChange($event)"
+      @current-change="pageChange"
     />
   </div>
 </template>
@@ -197,6 +197,11 @@ export default class extends mixins<CRUD<LogSearch, LogQueryData, LogData>>(
 ) {
   private parseTime = parseTime
 
+  constructor() {
+    super()
+    this.query = {}
+  }
+
   created() {
     this.title = '日志'
     this.url = 'api/logs'
@@ -206,6 +211,9 @@ export default class extends mixins<CRUD<LogSearch, LogQueryData, LogData>>(
       del: false,
       download: true,
       reset: false
+    }
+    if (this.queryOnPresenterCreated) {
+      this.toQuery()
     }
   }
 
@@ -248,5 +256,14 @@ export default class extends mixins<CRUD<LogSearch, LogQueryData, LogData>>(
 }
 .demo-table-expand .el-form-item__content {
   font-size: 12px;
+}
+.crud-opts {
+  padding: 4px 0;
+  display: -webkit-flex;
+  display: flex;
+  align-items: center;
+}
+.crud-opts .crud-opts-right {
+  margin-left: auto;
 }
 </style>

@@ -1,7 +1,7 @@
 import { Pageable } from './base'
 
 export interface OnlineUserQueryData extends Pageable {
-    filter: string
+    filter?: string
 }
 
 export interface OnlineUserDtoData {
