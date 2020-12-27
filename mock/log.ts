@@ -1,7 +1,7 @@
 import faker from 'faker'
 import { Request, Response, Router } from 'express'
 import { PageableBody } from '../src/types/base'
-import { LogSmallDTOData, LogData } from '../src/types/log'
+import { LogSmallDTOData, LogData, LogErrorDTOData } from '../src/types/log'
 
 let router = Router()
 
@@ -50,6 +50,40 @@ router.get('/', (req: Request, res: Response<PageableBody<LogData>>) => {
 })
 
 router.delete('/del/info', (req: Request, res: Response) => {
+    res.json({
+        ok: 'ok'
+    })
+})
+
+router.get('/error', (req: Request, res: Response<PageableBody<LogErrorDTOData>>) => {
+    let datas: LogErrorDTOData[] = []
+    for (let i = 0; i < 10; i++) {
+        datas.push({
+            id: faker.random.number(),
+            username: faker.name.findName(),
+            description: faker.random.words(),
+            method: '请求',
+            params: faker.random.words(),
+            browser: 'Chrome',
+            requestIp: faker.internet.ip(),
+            address: faker.address.city(),
+            createTime: faker.date.soon().toUTCString()
+        })
+    }
+
+    res.json({
+        totalElements: 23,
+        content: datas
+    })
+})
+
+router.get('/error/:id', (req: Request, res: Response) => {
+    res.json({
+        exception: faker.random.words()
+    })
+})
+
+router.delete('/del/error', (req: Request, res: Response) => {
     res.json({
         ok: 'ok'
     })
