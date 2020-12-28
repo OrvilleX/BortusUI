@@ -19,7 +19,7 @@ router.get('/build', (req: Request, res: Response) => {
         {"component":"monitor/log/Index.vue","meta":{"icon":"log","noCache":false,"title":"操作日志","hidden":false},"name":"Log","path":"logs"},
         {"component":"monitor/log/ErrorLog.vue","meta":{"icon":"error","noCache":true,"title":"异常日志","hidden":false},"name":"ErrorLog","path":"errorLog"}],
         "component":"Layout","meta":{"icon":"monitor","noCache":true,"title":"系统监控","hidden":false},"name":"系统监控","path":"/monitor","redirect":"noredirect"},
-        {"alwaysShow":true,"children":[{"component":"tools/email/index.vue","meta":{"icon":"email","noCache":true,"title":"邮件工具","hidden":false},"name":"Email","path":"email"}],
+        {"alwaysShow":true,"children":[{"component":"tools/email/Index.vue","meta":{"icon":"email","noCache":true,"title":"邮件工具","hidden":false},"name":"Email","path":"email"}],
         "component":"Layout","meta":{"icon":"sys-tools","noCache":true,"title":"系统工具","hidden":false},"name":"系统工具","path":"/sys-tools","redirect":"noredirect"},
         {"alwaysShow":true,"children":[{"component":"components/Echarts.vue","meta":{"icon":"chart","noCache":false,"title":"图表库","hidden":false},"name":"Echarts","path":"echarts"},
         {"component":"components/icons/Index.vue","meta":{"icon":"icon","noCache":true,"title":"图标库","hidden":false},"name":"Icons","path":"icon"},

@@ -57,7 +57,7 @@ export default class extends Vue {
     content: ''
   };
 
-  tos = [{ value: '', key: NaN }];
+  tos = [{ value: '', key: Date.now() }];
   rules = {
     subject: [{ required: true, message: '标题不能为空', trigger: 'blur' }]
   };

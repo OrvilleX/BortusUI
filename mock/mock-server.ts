@@ -14,6 +14,7 @@ import job from './job'
 import role from './role'
 import dict from './dict'
 import timing from './timing'
+import email from './email'
 
 const app = express()
 const port = 9528
@@ -48,6 +49,7 @@ app.use('/mock-api/v1/api/job', job)
 app.use('/mock-api/v1/api/roles', role)
 app.use('/mock-api/v1/api/dict', dict)
 app.use('/mock-api/v1/api/jobs', timing)
+app.use('/mock-api/v1/api/email', email)
 
 // Catch 404 error
 app.use((req, res, next) => {
