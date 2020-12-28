@@ -265,6 +265,7 @@ export default class extends mixins<
     { key: 'name', displayName: '字典名称' },
     { key: 'description', displayName: '描述' }
   ];
+
   parseTime = parseTime;
 
   private rules = {

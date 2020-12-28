@@ -154,11 +154,11 @@
       </el-table-column>
       <el-table-column label="操作" width="70px" fixed="right">
         <template slot-scope="scope">
-            <el-button 
+            <el-button
               v-permission="['admin']"
-              :loading="delLoading" 
-              @click="delMethod(scope.row.key, scope.$index)" 
-              size="mini" 
+              :loading="delLoading"
+              @click="delMethod(scope.row.key, scope.$index)"
+              size="mini"
               type="text">强退</el-button>
         </template>
       </el-table-column>

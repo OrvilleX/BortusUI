@@ -2,73 +2,62 @@
   <div :class="className" :style="{height: height,width: width}" />
 </template>
 
-<script>
-import echarts from 'echarts' // echarts theme
-import { debounce } from '@/utils'
-
+<script lang="ts">
+import { Vue, Component, Prop } from 'vue-property-decorator'
+import echarts from 'echarts'
+import { ResizeObserver } from '@juggle/resize-observer'
 require('echarts/theme/macarons')
 
-export default {
-  props: {
-    className: {
-      type: String,
-      default: 'chart'
-    },
-    width: {
-      type: String,
-      default: '100%'
-    },
-    height: {
-      type: String,
-      default: '300px'
-    }
-  },
-  data() {
-    return {
-      chart: null
-    }
-  },
+@Component({
+  name: 'Gauge'
+})
+export default class extends Vue {
+  @Prop({ default: 'chart' }) className!: string;
+  @Prop({ default: '100%' }) width!: string;
+  @Prop({ default: '300px' }) height!: string;
+
+  chart!: echarts.ECharts;
+  resizeHandler!: ResizeObserver
+
   mounted() {
     this.initChart()
-    this.__resizeHandler = debounce(() => {
+    this.resizeHandler = new ResizeObserver(() => {
       if (this.chart) {
         this.chart.resize()
       }
-    }, 100)
-    window.addEventListener('resize', this.__resizeHandler)
-  },
+    })
+    this.resizeHandler.observe(document.body)
+  }
+
   beforeDestroy() {
     if (!this.chart) {
       return
     }
-    window.removeEventListener('resize', this.__resizeHandler)
+    this.resizeHandler.disconnect()
     this.chart.dispose()
-    this.chart = null
-  },
-  methods: {
-    initChart() {
-      this.chart = echarts.init(this.$el, 'macarons')
+  }
 
-      this.chart.setOption({
-        tooltip: {
-          formatter: '{a} <br/>{b} : {c}%'
-        },
-        toolbox: {
-          feature: {
-            restore: {},
-            saveAsImage: {}
-          }
-        },
-        series: [
-          {
-            name: '业务指标',
-            type: 'gauge',
-            detail: { formatter: '{value}%' },
-            data: [{ value: 50, name: '完成率' }]
-          }
-        ]
-      })
-    }
+  initChart() {
+    this.chart = echarts.init(this.$el as HTMLDivElement, 'macarons')
+    this.chart.setOption({
+      tooltip: {
+        formatter: '{a} <br/>{b} : {c}%'
+      },
+      toolbox: {
+        feature: {
+          restore: {},
+          saveAsImage: {}
+        }
+      },
+      series: [
+        {
+          name: '业务指标',
+          type: 'gauge',
+          detail: { formatter: '{value}%' },
+          data: [{ value: 50, name: '完成率' }]
+        }
+      ]
+    })
   }
 }
 </script>

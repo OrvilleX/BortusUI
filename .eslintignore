@@ -2,3 +2,5 @@ build/*.js
 src/assets
 public
 dist
+src/shims-tsx.d.ts
+src/shims-vue.d.ts

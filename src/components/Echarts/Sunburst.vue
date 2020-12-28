@@ -2,106 +2,96 @@
   <div :class="className" :style="{height: height,width: width}" />
 </template>
 
-<script>
-import echarts from 'echarts' // echarts theme
-import { debounce } from '@/utils'
-
+<script lang="ts">
+import { Vue, Component, Prop } from 'vue-property-decorator'
+import echarts from 'echarts'
+import { ResizeObserver } from '@juggle/resize-observer'
 require('echarts/theme/macarons')
 
-export default {
-  props: {
-    className: {
-      type: String,
-      default: 'chart'
-    },
-    width: {
-      type: String,
-      default: '100%'
-    },
-    height: {
-      type: String,
-      default: '300px'
-    }
-  },
-  data() {
-    return {
-      chart: null
-    }
-  },
+@Component({
+  name: 'Sunburst'
+})
+export default class extends Vue {
+  @Prop({ default: 'chart' }) className!: string;
+  @Prop({ default: '100%' }) width!: string;
+  @Prop({ default: '300px' }) height!: string;
+
+  chart!: echarts.ECharts;
+  resizeHandler!: ResizeObserver
+
   mounted() {
     this.initChart()
-    this.__resizeHandler = debounce(() => {
+    this.resizeHandler = new ResizeObserver(() => {
       if (this.chart) {
         this.chart.resize()
       }
-    }, 100)
-    window.addEventListener('resize', this.__resizeHandler)
-  },
+    })
+    this.resizeHandler.observe(document.body)
+  }
+
   beforeDestroy() {
     if (!this.chart) {
       return
     }
-    window.removeEventListener('resize', this.__resizeHandler)
+    this.resizeHandler.disconnect()
     this.chart.dispose()
-    this.chart = null
-  },
-  methods: {
-    initChart() {
-      this.chart = echarts.init(this.$el, 'macarons')
-      const data = [{
-        name: 'Grandpa',
+  }
+
+  initChart() {
+    this.chart = echarts.init(this.$el as HTMLDivElement, 'macarons')
+    const data = [{
+      name: 'Grandpa',
+      children: [{
+        name: 'Uncle Leo',
+        value: 15,
         children: [{
-          name: 'Uncle Leo',
-          value: 15,
+          name: 'Cousin Jack',
+          value: 2
+        }, {
+          name: 'Cousin Mary',
+          value: 5,
           children: [{
-            name: 'Cousin Jack',
+            name: 'Jackson',
             value: 2
-          }, {
-            name: 'Cousin Mary',
-            value: 5,
-            children: [{
-              name: 'Jackson',
-              value: 2
-            }]
-          }, {
-            name: 'Cousin Ben',
-            value: 4
           }]
         }, {
-          name: 'Father',
-          value: 10,
-          children: [{
-            name: 'Me',
-            value: 5
-          }, {
-            name: 'Brother Peter',
-            value: 1
-          }]
+          name: 'Cousin Ben',
+          value: 4
         }]
       }, {
-        name: 'Nancy',
+        name: 'Father',
+        value: 10,
         children: [{
-          name: 'Uncle Nike',
-          children: [{
-            name: 'Cousin Betty',
-            value: 1
-          }, {
-            name: 'Cousin Jenny',
-            value: 2
-          }]
+          name: 'Me',
+          value: 5
+        }, {
+          name: 'Brother Peter',
+          value: 1
         }]
       }]
-      this.chart.setOption({
-        series: {
-          type: 'sunburst',
-          data: data,
-          radius: [0, '90%'],
-          label: {
-            rotate: 'radial'
-          }
+    }, {
+      name: 'Nancy',
+      children: [{
+        name: 'Uncle Nike',
+        children: [{
+          name: 'Cousin Betty',
+          value: 1
+        }, {
+          name: 'Cousin Jenny',
+          value: 2
+        }]
+      }]
+    }]
+    this.chart.setOption({
+      series: [{
+        type: 'sunburst',
+        data: data,
+        radius: [0, '90%'],
+        label: {
+          rotate: 'radial'
         }
-      })
-    }
+      }]
+    })
   }
 }
 </script>
