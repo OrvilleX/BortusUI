@@ -6,7 +6,7 @@ function resolve(dir) {
 }
 
 const devServerPort = 9527
-const mockServerPort = 9528
+const mockServerPort = 8000
 const name = 'Bortus数据平台'
 
 module.exports = {
@@ -23,14 +23,16 @@ module.exports = {
     },
     proxy: {
       '/api': {
-        target: `http://127.0.0.1:${mockServerPort}/mock-api/v1`,
+        // target: `http://127.0.0.1:${mockServerPort}/mock-api/v1`,
+        target: `http://127.0.0.1:${mockServerPort}`,
         changeOrigin: true,
         pathRewrite: {
           '^/api': '/api'
         }
       },
       '/auth': {
-        target: `http://127.0.0.1:${mockServerPort}/mock-api/v1`,
+        // target: `http://127.0.0.1:${mockServerPort}/mock-api/v1`,
+        target: `http://127.0.0.1:${mockServerPort}`,
         changeOrigin: true,
         pathRewrite: {
           '^/auth': '/auth'

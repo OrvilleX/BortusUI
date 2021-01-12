@@ -156,7 +156,6 @@ import {
 export default class extends mixins<
   CRUD<DictDetailData, DictDetailQueryData, DictDetailDtoData>
 >(CRUD) {
-  public dictId = NaN;
   private rules = {
     label: [{ required: true, message: '请输入字典标签', trigger: 'blur' }],
     value: [{ required: true, message: '请输入字典值', trigger: 'blur' }],
@@ -198,7 +197,7 @@ export default class extends mixins<
     }
     this.queryOnPresenterCreated = false
     this.defaultForm = {
-      id: this.dictId,
+      dict: { },
       label: '',
       value: '',
       dictSort: 999

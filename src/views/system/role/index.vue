@@ -236,7 +236,7 @@ import { parseTime } from '@/utils/index'
 import { RoleQueryData, RoleData, RoleDtoData } from '@/types/role'
 import { MenuDtoData } from '@/types/menu'
 import { DeptData, DeptDtoData } from '@/types/dept'
-import { ElTree, TreeData } from 'element-ui/types/tree'
+import { ElTree } from 'element-ui/types/tree'
 import { NOTIFICATION_TYPE } from '@/components/Crud/base'
 
 @Component({
@@ -305,9 +305,9 @@ export default class extends mixins<
     }
   }
 
-  getMenuDatas(node: TreeData, resolve: Function) {
+  getMenuDatas(node: any, resolve: Function) {
     setTimeout(() => {
-      getMenusTree(node.id ? node.id : 0).then((res) => {
+      getMenusTree(node.data.id ? node.data.id : 0).then((res) => {
         resolve(res.data)
       })
     }, 100)
@@ -413,7 +413,7 @@ export default class extends mixins<
     const res = await getDepts({ enabled: true })
     this.depts = res.data.content.map((obj) => {
       if (obj.hasChildren) {
-        obj.children = []
+        obj.children = null
       }
       return obj
     })
@@ -435,7 +435,7 @@ export default class extends mixins<
         this.buildDepts(data.children)
       }
       if (data.hasChildren && !data.children) {
-        data.children = []
+        data.children = null
       }
     })
   }
@@ -445,7 +445,7 @@ export default class extends mixins<
       getDepts({ enabled: true, pid: e.parentNode.id }).then((res) => {
         e.parentNode.children = res.data.content.map((obj) => {
           if (obj.hasChildren) {
-            obj.children = []
+            obj.children = null
           }
           return obj
         })

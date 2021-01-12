@@ -17,7 +17,7 @@ export interface MenuQueryData extends Pageable {
 export interface MenuData {
     id?: number
     title?: string
-    componentName?: string
+    componentName?: string | null
     menuSort?: number
     component?: string
     path?: string
@@ -28,7 +28,7 @@ export interface MenuData {
     hidden?: boolean
     pid?: number
     subCount?: number
-    iFrame?: boolean
+    iframe?: boolean
     roles?: RoleData[]
 }
 
@@ -45,7 +45,7 @@ export interface MenuDtoData {
     alwaysShow?: boolean
     redirect?: string
     name?: string
-    children?: MenuDtoData[]
+    children?: MenuDtoData[] | null
     meta?: any
     type?: number
     permission?: string
@@ -55,7 +55,7 @@ export interface MenuDtoData {
     component?: string
     pid?: number
     subCount?: number
-    iFrame?: boolean
+    iframe?: boolean
     cache?: boolean
     hidden?: boolean
     componentName?: string

@@ -32,7 +32,7 @@ export interface DeptDtoData {
     name?: string
     enabled?: boolean
     deptSort?: number
-    children?: DeptDtoData[]
+    children?: DeptDtoData[] | null
     pid?: number
     subCount?: number
     createTime?: string

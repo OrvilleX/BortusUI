@@ -310,8 +310,9 @@ export default class extends mixins<
   handleCurrentChange(val: DictDtoData) {
     if (val) {
       (this.$refs.dictDetail as dictDetail).query.dictName = val.name;
-      (this.$refs.dictDetail as dictDetail).dictId = val.id;
-      (this.$refs.dictDetail as dictDetail).toQuery()
+      (this.$refs.dictDetail as dictDetail).defaultForm.dict!.id = val.id;
+      (this.$refs.dictDetail as dictDetail).toQuery();
+      (this.$refs.dictDetail as dictDetail).resetForm()
     }
   }
 }

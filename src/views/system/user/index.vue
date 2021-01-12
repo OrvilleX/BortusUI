@@ -197,9 +197,9 @@
             </el-form-item>
             <el-form-item label="部门" prop="dept.id">
               <treeselect
-                v-model="form.dept.id"
                 :options="depts"
                 :load-options="loadDepts"
+                v-model="form.dept.id"
                 style="width: 178px"
                 placeholder="选择部门"
               />
@@ -590,7 +590,7 @@ export default class extends mixins<CRUD<UserData, UserQueryData, UserDtoData>>(
 
   private getDeptDatas(node: any, resolve: Function) {
     const sort = 'id,desc'
-    const params = { name: '', sort: sort, pid: 0 }
+    const params = { name: '', sort: sort, pid: undefined }
     if (typeof node !== 'object') {
       if (node) {
         params.name = node
@@ -613,7 +613,7 @@ export default class extends mixins<CRUD<UserData, UserQueryData, UserDtoData>>(
     getDepts({ enabled: true }).then((res) => {
       this.depts = res.data.content.map((obj) => {
         if (obj.hasChildren) {
-          obj.children = []
+          obj.children = null
         }
         return obj
       })
@@ -644,7 +644,7 @@ export default class extends mixins<CRUD<UserData, UserQueryData, UserDtoData>>(
       getDepts({ enabled: true, pid: e.parentNode.id }).then((res) => {
         e.parentNode.children = res.data.content.map((obj) => {
           if (obj.hasChildren) {
-            obj.children = []
+            obj.children = null
           }
           return obj
         })

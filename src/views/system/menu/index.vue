@@ -169,9 +169,9 @@
         <el-form-item
           v-show="form.type.toString() !== '2'"
           label="外链菜单"
-          prop="iFrame"
+          prop="iframe"
         >
-          <el-radio-group v-model="form.iFrame" size="mini">
+          <el-radio-group v-model="form.iframe" size="mini">
             <el-radio-button label="true">是</el-radio-button>
             <el-radio-button label="false">否</el-radio-button>
           </el-radio-group>
@@ -227,7 +227,7 @@
         >
           <el-input
             v-model="form.permission"
-            :disabled="form.iFrame === 'true' ? true : false"
+            :disabled="form.iframe === 'true' ? true : false"
             placeholder="权限标识"
             style="width: 178px"
           />
@@ -253,7 +253,7 @@
           />
         </el-form-item>
         <el-form-item
-          v-show="!form.iFrame && form.type.toString() === '1'"
+          v-show="!form.iframe && form.type.toString() === '1'"
           label="组件名称"
           prop="componentName"
         >
@@ -264,7 +264,7 @@
           />
         </el-form-item>
         <el-form-item
-          v-show="!form.iFrame && form.type.toString() === '1'"
+          v-show="!form.iframe && form.type.toString() === '1'"
           label="组件路径"
           prop="component"
         >
@@ -331,9 +331,9 @@
         prop="component"
         label="组件路径"
       />
-      <el-table-column prop="iFrame" label="外链" width="75px">
+      <el-table-column prop="iframe" label="外链" width="75px">
         <template slot-scope="scope">
-          <span v-if="scope.row.iFrame">是</span>
+          <span v-if="scope.row.iframe">是</span>
           <span v-else>否</span>
         </template>
       </el-table-column>
@@ -439,8 +439,8 @@ export default class extends mixins<
       menuSort: 999,
       path: '',
       component: '',
-      componentName: '',
-      iFrame: false,
+      componentName: null,
+      iframe: false,
       roles: [],
       pid: 0,
       icon: '',
@@ -463,7 +463,7 @@ export default class extends mixins<
       }
       this.getSupDepts(form.id)
     } else {
-      this.menus.push({ id: 0, label: '顶级类目', children: [] })
+      this.menus.push({ id: 0, label: '顶级类目', children: null })
     }
   }
 
@@ -471,6 +471,7 @@ export default class extends mixins<
     const params = { pid: tree.id }
     setTimeout(() => {
       crudMenu.getMenus(params).then((res) => {
+        this.attchTable()
         resolve(res.data.content)
       })
     }, 100)
@@ -480,7 +481,7 @@ export default class extends mixins<
     crudMenu.getMenuSuperior([id]).then((res) => {
       const children = res.data.map((obj) => {
         if (!obj.leaf && !obj.children) {
-          obj.children = []
+          obj.children = null
         }
         return obj
       })
@@ -493,7 +494,7 @@ export default class extends mixins<
       crudMenu.getMenusTree(e.parentNode.id).then((res) => {
         e.parentNode.children = res.data.map((obj) => {
           if (!obj.leaf) {
-            obj.children = []
+            obj.children = null
           }
           return obj
         })

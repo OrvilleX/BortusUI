@@ -50,12 +50,14 @@ export const editUser = (data: UserData) => {
  * 修改密码
  */
 export const updatePass = (user: UserPassData) => {
-  user.oldPass = encrypt(user.oldPass)
-  user.newPass = encrypt(user.newPass)
+  const body = {
+    oldPass: encrypt(user.oldPass),
+    newPass: encrypt(user.newPass)
+  }
   return request({
     url: '/api/users/updatePass/',
     method: 'post',
-    data: user
+    data: body
   })
 }
 

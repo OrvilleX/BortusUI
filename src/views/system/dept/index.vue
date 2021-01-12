@@ -347,6 +347,7 @@ export default class extends mixins<
     const params = { pid: tree.id }
     setTimeout(async() => {
       const res = await crudDept.getDepts(params)
+      this.attchTable()
       resolve(res.data.content)
     }, 100)
   }
@@ -378,7 +379,7 @@ export default class extends mixins<
         this.buildDepts(data.children)
       }
       if (data.hasChildren && !data.children) {
-        data.children = []
+        data.children = null
       }
     })
   }
@@ -387,7 +388,7 @@ export default class extends mixins<
     crudDept.getDepts({ enabled: true }).then((res) => {
       this.depts = res.data.content.map((data) => {
         if (data.hasChildren) {
-          data.children = []
+          data.children = null
         }
         return data
       })
@@ -405,7 +406,7 @@ export default class extends mixins<
         .then((res) => {
           element.parentNode.children = res.data.content.map((data) => {
             if (data.hasChildren) {
-              data.children = []
+              data.children = null
             }
             return data
           })

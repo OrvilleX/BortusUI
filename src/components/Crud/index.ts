@@ -285,7 +285,7 @@ export default class CRUD<T extends object, Q, D> extends Base<T> {
     }
   }
 
-  protected resetForm(data?: T) {
+  public resetForm(data?: T) {
     const form = data || (typeof this.defaultForm === 'object' ? JSON.parse(JSON.stringify(this.defaultForm)) : this.defaultForm)
     const crudFrom = this.form
     for (const key in form) {
