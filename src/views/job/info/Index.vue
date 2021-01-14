@@ -414,7 +414,7 @@ export default class extends mixins<
   }
 
   private parseGlueType(glueType: string) {
-    for (let item of (this.dict as any).glue_type) {
+    for (const item of (this.dict as any).glue_type) {
       if (item.value === glueType) {
         return item.label
       }
@@ -432,7 +432,7 @@ export default class extends mixins<
 
   private toStart(data: JobInfoData) {
     if (data.id) {
-      crudJobInfo.start(data.id).then(res => {
+      crudJobInfo.start(data.id).then(() => {
         this.notify('启动成功', NOTIFICATION_TYPE.SUCCESS)
       })
     }
@@ -440,7 +440,7 @@ export default class extends mixins<
 
   private toStop(data: JobInfoData) {
     if (data.id) {
-      crudJobInfo.pause(data.id).then(res => {
+      crudJobInfo.pause(data.id).then(() => {
         this.notify('停止成功', NOTIFICATION_TYPE.SUCCESS)
       })
     }
@@ -448,7 +448,7 @@ export default class extends mixins<
 
   private doLog(data: JobInfoData) {
     if (data && data.id) {
-      (this.$refs.log as Log).jobId = data.id;
+      (this.$refs.log as Log).jobId = data.id
     }
     (this.$refs.log as Log).dialog = true;
     (this.$refs.log as Log).doInit()

@@ -9,7 +9,7 @@ const devServerPort = 9527
 const mockServerPort = 8000
 const name = 'Bortus数据平台'
 const url = `http://127.0.0.1:${mockServerPort}/mock-api/v1`
-//const url = `http://127.0.0.1:${mockServerPort}`
+// const url = `http://127.0.0.1:${mockServerPort}`
 
 module.exports = {
   publicPath: '/',
