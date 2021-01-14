@@ -2,32 +2,23 @@
   <el-dialog :visible.sync="dialog" append-to-body title="执行日志" width="88%">
     <!-- 搜索 -->
     <div class="head-container">
-      <el-input
-        v-model="query.jobName"
-        clearable
-        size="small"
-        placeholder="输入任务名称搜索"
-        style="width: 200px"
-        class="filter-item"
-        @keyup.enter.native="toQuery"
-      />
-      <date-range-picker v-model="query.createTime" class="date-item" />
       <el-select
-        v-model="query.isSuccess"
-        placeholder="日志状态"
+        v-model="query.jobId"
         clearable
         size="small"
+        placeholder="任务"
         class="filter-item"
-        style="width: 110px"
+        style="width: 120px"
         @change="toQuery"
       >
         <el-option
-          v-for="item in enabledTypeOptions"
-          :key="item.key"
-          :label="item.displayName"
-          :value="item.key"
+          v-for="item in jobInfos"
+          :key="item.id"
+          :label="item.jobDesc"
+          :value="item.id"
         />
       </el-select>
+      <date-range-picker v-model="query.triggerTime" class="date-item" />
       <el-button
         class="filter-item"
         size="mini"
@@ -57,67 +48,38 @@
     >
       <el-table-column
         :show-overflow-tooltip="true"
-        prop="jobName"
-        label="任务名称"
+        prop="triggerTime"
+        label="调度时间"
       />
       <el-table-column
         :show-overflow-tooltip="true"
-        prop="beanName"
-        label="Bean名称"
+        prop="triggerCode"
+        label="调度结果"
       />
       <el-table-column
         :show-overflow-tooltip="true"
-        prop="methodName"
-        label="执行方法"
+        prop="triggerMsg"
+        label="调度备注"
       />
       <el-table-column
         :show-overflow-tooltip="true"
-        prop="params"
+        prop="executorAddress"
         width="120px"
-        label="参数"
+        label="执行器地址"
       />
       <el-table-column
         :show-overflow-tooltip="true"
-        prop="cronExpression"
-        label="cron表达式"
+        prop="executorParam"
+        label="任务参数"
       />
       <el-table-column prop="createTime" label="异常详情" width="110px">
         <template slot-scope="scope">
           <el-button
-            v-show="scope.row.exceptionDetail"
             size="mini"
             type="text"
-            @click="info(scope.row.exceptionDetail)"
+            @click="info(scope.row)"
             >查看详情</el-button
           >
-        </template>
-      </el-table-column>
-      <el-table-column
-        :show-overflow-tooltip="true"
-        align="center"
-        prop="time"
-        width="100px"
-        label="耗时(毫秒)"
-      />
-      <el-table-column
-        align="center"
-        prop="isSuccess"
-        width="80px"
-        label="状态"
-      >
-        <template slot-scope="scope">
-          <el-tag :type="scope.row.isSuccess ? 'success' : 'danger'">{{
-            scope.row.isSuccess ? "成功" : "失败"
-          }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column
-        :show-overflow-tooltip="true"
-        prop="createTime"
-        label="创建日期"
-      >
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -146,24 +108,25 @@
 import { Component } from 'vue-property-decorator'
 import crud from '@/mixins/crud'
 import DateRangePicker from '@/components/DateRangePicker/Index.vue'
-import { LogQueryData, LogData } from '@/types/log'
+import { JobLogQueryData, JobLogData } from '@/types/jobLog'
+import crudJobInfo from '@/api/job/info'
+import crudJobLog from '@/api/job/log'
 import { mixins } from 'vue-class-component'
+import { JobInfoData } from '@/types/jobInfo'
 
 @Component({
-  name: 'Log',
+  name: 'JobLog',
   components: {
     DateRangePicker
   }
 })
-export default class extends mixins<crud<LogData, LogQueryData, LogData>>(
+export default class extends mixins<crud<JobLogData, JobLogQueryData, JobLogData>>(
   crud
 ) {
   errorInfo = '';
   errorDialog = false;
-  enabledTypeOptions = [
-    { key: 'true', displayName: '成功' },
-    { key: 'false', displayName: '失败' }
-  ];
+  jobId = 0;
+  jobInfos: JobInfoData[] = []
 
   constructor() {
     super()
@@ -173,23 +136,33 @@ export default class extends mixins<crud<LogData, LogQueryData, LogData>>(
 
   created() {
     this.title = '任务日志'
+    this.getJobInfo()
+  }
+
+  private getJobInfo() {
+    crudJobInfo.getAll({}).then(res => {
+      this.jobInfos = res.data.content
+    })
   }
 
   doInit() {
     this.$nextTick(() => {
+      this.query.jobId = this.jobId
       this.init()
     })
   }
 
   beforeInit() {
-    this.url = 'api/jobs/logs'
+    this.url = 'scheduler/log'
     this.size = 6
     return true
   }
 
-  info(errorInfo: string) {
-    this.errorInfo = errorInfo
-    this.errorDialog = true
+  info(log: JobLogData) {
+    crudJobLog.getFromExecutor(log.executorAddress, log.triggerTime, log.id).then(res => {
+      this.errorInfo = res.data.logContent
+      this.errorDialog = true
+    })
   }
 }
 </script>

@@ -15,9 +15,12 @@ import role from './role'
 import dict from './dict'
 import timing from './timing'
 import email from './email'
+import jobGroup from './jobGroup'
+import jobInfo from './jobInfo'
+import jobLog from './jobLog'
 
 const app = express()
-const port = 9528
+const port = 8000
 
 // Compression
 app.use(compression())
@@ -50,6 +53,9 @@ app.use('/mock-api/v1/api/roles', role)
 app.use('/mock-api/v1/api/dict', dict)
 app.use('/mock-api/v1/api/jobs', timing)
 app.use('/mock-api/v1/api/email', email)
+app.use('/mock-api/v1/scheduler/group', jobGroup)
+app.use('/mock-api/v1/scheduler/info', jobInfo)
+app.use('/mock-api/v1/scheduler/log', jobLog)
 
 // Catch 404 error
 app.use((req, res, next) => {
