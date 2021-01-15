@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="dialog" append-to-body title="执行日志" width="88%">
+  <div class="app-container">
     <!-- 搜索 -->
     <div class="head-container">
       <el-select
@@ -101,7 +101,7 @@
       @size-change="sizeChange"
       @current-change="pageChange"
     />
-  </el-dialog>
+  </div>
 </template>
 
 <script lang="ts">
@@ -137,18 +137,15 @@ export default class extends mixins<crud<JobLogData, JobLogQueryData, JobLogData
   created() {
     this.title = '任务日志'
     this.getJobInfo()
+    if (this.$route.query.jobId) {
+      this.query.jobId = Number.parseInt(this.$route.query.jobId.toString())
+    }
+    this.init()
   }
 
   private getJobInfo() {
     crudJobInfo.getAll({}).then(res => {
       this.jobInfos = res.data.content
-    })
-  }
-
-  doInit() {
-    this.$nextTick(() => {
-      this.query.jobId = this.jobId
-      this.init()
     })
   }
 

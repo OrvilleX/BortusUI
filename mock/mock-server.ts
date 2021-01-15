@@ -13,7 +13,6 @@ import dictDetail from './dictDetail'
 import job from './job'
 import role from './role'
 import dict from './dict'
-import timing from './timing'
 import email from './email'
 import jobGroup from './jobGroup'
 import jobInfo from './jobInfo'
@@ -51,7 +50,6 @@ app.use('/mock-api/v1/api/dictDetail', dictDetail)
 app.use('/mock-api/v1/api/job', job)
 app.use('/mock-api/v1/api/roles', role)
 app.use('/mock-api/v1/api/dict', dict)
-app.use('/mock-api/v1/api/jobs', timing)
 app.use('/mock-api/v1/api/email', email)
 app.use('/mock-api/v1/scheduler/group', jobGroup)
 app.use('/mock-api/v1/scheduler/info', jobInfo)

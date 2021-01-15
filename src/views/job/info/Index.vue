@@ -134,7 +134,6 @@
         </el-button-group>
       </div>
     </div>
-    <Log ref="log" />
     <!--表单组件-->
     <el-dialog
       append-to-body
@@ -334,13 +333,9 @@ import { mixins } from 'vue-class-component'
 import { JobInfoQueryData, JobInfoData } from '@/types/jobInfo'
 import { JobGroupData } from '@/types/jobGroup'
 import { NOTIFICATION_TYPE } from '@/components/Crud/base'
-import Log from '../log/Index.vue'
 
 @Component({
-  name: 'JobInfo',
-  components: {
-    Log
-  }
+  name: 'JobInfo'
 })
 export default class extends mixins<
   CRUD<JobInfoData, JobInfoQueryData, JobInfoData>
@@ -448,10 +443,8 @@ export default class extends mixins<
 
   private doLog(data: JobInfoData) {
     if (data && data.id) {
-      (this.$refs.log as Log).jobId = data.id
+      this.$router.push({path: 'log', query: { 'jobId': data.id.toString() } })
     }
-    (this.$refs.log as Log).dialog = true;
-    (this.$refs.log as Log).doInit()
   }
 }
 </script>
