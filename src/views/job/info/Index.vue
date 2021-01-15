@@ -181,7 +181,10 @@
           </el-select>
         </el-form-item>
         <el-form-item label="Cron" prop="jobCron">
-            <el-input v-model="form.jobCron" style="width: 178px" controls-position="right" />
+          <el-popover v-model="cronPopover">
+            <vueCron :data="form.jobCron" @change="changeCron" @close="cronPopover=false" i18n="cn"></vueCron>
+            <el-input slot="reference" @click="cronPopover=true" style="width: 178px" v-model="form.jobCron" controls-position="right"></el-input>
+          </el-popover>
         </el-form-item>
         <el-form-item label="运行模式" prop="glueType">
           <el-select :disabled="addStatus === 0" v-model="form.glueType" size="small" style="width: 178px">
@@ -343,6 +346,7 @@ export default class extends mixins<
   parseTime = parseTime;
   dicts = ['glue_type', 'route_strategy_type', 'block_strategy_type'];
   jobGroups: JobGroupData[] = []
+  cronPopover: boolean = false
 
   private rules = {
     jobGroup: [{ required: true, message: '请选择', trigger: 'blur' }],
@@ -375,7 +379,7 @@ export default class extends mixins<
     this.defaultForm = {
       id: NaN,
       jobGroup: NaN,
-      jobCron: '',
+      jobCron: '* * * * * ? *',
       jobDesc: '',
       author: '',
       alarmEmail: '',
@@ -443,8 +447,12 @@ export default class extends mixins<
 
   private doLog(data: JobInfoData) {
     if (data && data.id) {
-      this.$router.push({path: 'log', query: { 'jobId': data.id.toString() } })
+      this.$router.push({path: 'jobLog', query: { 'jobId': data.id.toString() } })
     }
+  }
+
+  private changeCron(val: string) {
+    this.form.jobCron = val
   }
 }
 </script>

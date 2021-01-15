@@ -5,6 +5,7 @@ declare module '*.jpg';
 declare module '@riophae/vue-treeselect';
 declare module 'vue-image-crop-upload';
 declare module 'vue-highlightjs';
+declare module 'vue-cron';
 declare module '*.gif' {
     export const gif: any
 }

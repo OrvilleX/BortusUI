@@ -18,6 +18,7 @@ import router from './router/routers'
 import './assets/icons'
 import './router/index'
 import 'echarts-gl'
+import vueCron from 'vue-cron'
 
 Vue.use(VueHighlightJS)
 Vue.use(mavonEditor)
@@ -25,6 +26,7 @@ Vue.use(permission)
 Vue.use(Element, {
   size: Cookies.get('size') || 'small'
 })
+Vue.use(vueCron)
 
 Vue.config.productionTip = false
 

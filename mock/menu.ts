@@ -27,7 +27,7 @@ router.get('/build', (req: Request, res: Response) => {
         "component":"Layout","meta":{"icon":"zujian","noCache":true,"title":"组件管理","hidden":false},"name":"组件管理","path":"/components","redirect":"noredirect"},
         {"alwaysShow":true,"children":[{"component":"job/group/Index.vue", "meta": {"icon":"timing","noCache":true,"title":"执行器管理","hidden":false},"name":"Group","path":"group"},
         {"component":"job/info/Index.vue", "meta": {"icon":"timing","noCache":true,"title":"任务管理","hidden":false},"name":"Info","path":"info"},
-        {"component":"job/log/Index.vue", "meta": {"icon":"timing","noCache":true,"title":"任务日志","hidden":false},"name":"Log","path":"log"}],
+        {"component":"job/log/Index.vue", "meta": {"icon":"timing","noCache":true,"title":"任务日志","hidden":false},"name":"JobLog","path":"jobLog"}],
         "component":"Layout","meta":{"icon":"zujian","noCache":true,"title":"调度管理","hidden":false},"name":"调度管理","path":"/job","redirect":"noredirect"}]
     
     res.json(menus)
