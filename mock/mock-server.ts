@@ -17,6 +17,7 @@ import email from './email'
 import jobGroup from './jobGroup'
 import jobInfo from './jobInfo'
 import jobLog from './jobLog'
+import jobCode from './jobCode'
 
 const app = express()
 const port = 8000
@@ -54,6 +55,7 @@ app.use('/mock-api/v1/api/email', email)
 app.use('/mock-api/v1/scheduler/group', jobGroup)
 app.use('/mock-api/v1/scheduler/info', jobInfo)
 app.use('/mock-api/v1/scheduler/log', jobLog)
+app.use('/mock-api/v1/scheduler/code', jobCode)
 
 // Catch 404 error
 app.use((req, res, next) => {

@@ -1,7 +1,6 @@
 import { JobInfoData } from './jobInfo'
 
 export interface JobLogGlueDtoData {
-    glueType?: string[]
     jobInfo?: JobInfoData
     jobLogGlues?: JobLogGlueData[]
 }

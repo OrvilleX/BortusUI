@@ -1,5 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path')
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 
 function resolve(dir) {
   return path.join(__dirname, dir)
@@ -54,6 +55,12 @@ module.exports = {
   chainWebpack(config) {
     config.plugins.delete('preload')
     config.plugins.delete('prefetch')
+
+    config.plugin('monaco-editor').use(MonacoWebpackPlugin, [
+      {
+        languages: ['typescript', 'javascript', 'java', 'php', 'powershell', 'shell', 'python']
+      }
+    ])
 
     config.module
       .rule('svg')

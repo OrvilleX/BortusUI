@@ -145,3 +145,8 @@ proxy: {
 1. treeselect 组件如果需要能够触发`load-options`事件，父级组件的`children`必须为`null`才可触发;   
 2. el-table 实现树形效果，由于需要初始化datastatus，所以需要在父级加载数据的对应位置调用`CRUD`的`this.attchTable()`方法进行初始化;  
 3. 
+
+## 项目依赖  
+
+* [vue-cron](https://github.com/1615450788/vue-cron)  
+* 

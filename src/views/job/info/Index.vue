@@ -294,6 +294,8 @@
               type="text"
               size="mini"
               style="margin-left: 3px"
+              :disabled="scope.row.glueType === 'BEAN'"
+              @click="toCode(scope.row)"
             >代码</el-button>
             <el-button
               type="text"
@@ -323,6 +325,28 @@
       @size-change="sizeChange($event)"
       @current-change="pageChange"
     />
+    <el-drawer
+      :title="codeTitle"
+      size="60%"
+      :visible.sync="codeDrawerShow"
+      direction="btt"
+      :before-close="handleClose">
+        <el-row :gutter="24">
+          <el-col :span="2" :offset="22">
+            <el-button
+              style="margin-bottom:5px"
+              type="success"
+              icon="el-icon-success"
+              size="medium "
+              @click="saveCode"
+              >保存</el-button>
+          </el-col>
+        </el-row>
+        <codeEditor v-model="codeValue"
+          theme="vs-dark"
+          :language="language"
+        ></codeEditor>
+    </el-drawer>
   </div>
 </template>
 
@@ -330,15 +354,20 @@
 import { Component } from 'vue-property-decorator'
 import crudJobInfo from '@/api/job/info'
 import crudJobGroup from '@/api/job/group'
+import crudJobCode from '@/api/job/code'
 import { parseTime } from '@/utils/index'
 import CRUD from '@/components/Crud'
 import { mixins } from 'vue-class-component'
 import { JobInfoQueryData, JobInfoData } from '@/types/jobInfo'
 import { JobGroupData } from '@/types/jobGroup'
 import { NOTIFICATION_TYPE } from '@/components/Crud/base'
+import codeEditor from '@/components/CodeEditor/index'
 
 @Component({
-  name: 'JobInfo'
+  name: 'JobInfo',
+  components: {
+    codeEditor
+  }
 })
 export default class extends mixins<
   CRUD<JobInfoData, JobInfoQueryData, JobInfoData>
@@ -346,7 +375,12 @@ export default class extends mixins<
   parseTime = parseTime;
   dicts = ['glue_type', 'route_strategy_type', 'block_strategy_type'];
   jobGroups: JobGroupData[] = []
-  cronPopover: boolean = false
+  cronPopover = false
+  codeValue = ''
+  language = 'typescript'
+  codeDrawerShow = false
+  selectCodeJobInfo: JobInfoData = {}
+  codeTitle = '在线编辑IDE'
 
   private rules = {
     jobGroup: [{ required: true, message: '请选择', trigger: 'blur' }],
@@ -404,6 +438,7 @@ export default class extends mixins<
       this.toQuery()
     }
     this.getJobGroup()
+    this.codeValue = 'function x() { \tconsole.log("Hello world!"); }'
   }
 
   private getJobGroup() {
@@ -447,12 +482,51 @@ export default class extends mixins<
 
   private doLog(data: JobInfoData) {
     if (data && data.id) {
-      this.$router.push({path: 'jobLog', query: { 'jobId': data.id.toString() } })
+      this.$router.push({ path: 'jobLog', query: { jobId: data.id.toString() } })
     }
+  }
+
+  private toCode(data: JobInfoData) {
+    if (data.glueType === 'GLUE_GROOVY') {
+      this.language = 'java'
+    } else if (data.glueType === 'GLUE_SHELL') {
+      this.language = 'shell'
+    } else if (data.glueType === 'GLUE_PYTHON') {
+      this.language = 'python'
+    } else if (data.glueType === 'GLUE_PHP') {
+      this.language = 'php'
+    } else if (data.glueType === 'GLUE_NODEJS') {
+      this.language = 'javascript'
+    } else if (data.glueType === 'GLUE_POWERSHELL') {
+      this.language = 'powershell'
+    }
+    this.codeTitle = '在线编辑IDE' + '(' + this.language + ')'
+    this.selectCodeJobInfo = data
+    if (data.glueSource) {
+      this.codeValue = data.glueSource
+    }
+    this.codeDrawerShow = true
   }
 
   private changeCron(val: string) {
     this.form.jobCron = val
+  }
+
+  private handleClose(done: Function) {
+    this.$confirm('确认关闭？').then(_ => {
+      this.selectCodeJobInfo = {}
+      done()
+    }).catch(_ => {
+    })
+  }
+
+  private saveCode() {
+    crudJobCode.edit({
+      jobId: this.selectCodeJobInfo.id,
+      glueType: this.selectCodeJobInfo.glueType,
+      glueSource: this.codeValue,
+      glueRemark: this.selectCodeJobInfo.glueRemark
+    })
   }
 }
 </script>
