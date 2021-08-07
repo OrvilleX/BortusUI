@@ -180,3 +180,24 @@ aside {
 .multiselect--active {
   z-index: 1000 !important;
 }
+
+.text-danger {
+  color: #FF0033 !important;
+}
+
+.second-title {
+  position: relative;
+  font-size: 14;
+  font-weight: 800;
+  padding: 0 0 15px 10px;
+  &::after{
+    position: absolute;
+    right: 0;
+    background: rgba(24, 144, 255, 1);
+    content: "";
+    width: 2px;
+    height: 14px;
+    left: 2px;
+    top: 2px;
+  }
+}

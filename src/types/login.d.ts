@@ -4,5 +4,5 @@ export interface JwtUserDtoData {
     id: number
     user: UserDtoData
     roles: string[]
-    dataScopee: number[]
+    dataScopes: number[]
 }

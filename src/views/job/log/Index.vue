@@ -156,7 +156,7 @@ export default class extends mixins<crud<JobLogData, JobLogQueryData, JobLogData
   }
 
   info(log: JobLogData) {
-    crudJobLog.getFromExecutor(log.executorAddress, log.triggerTime, log.id).then(res => {
+    crudJobLog.getFromExecutor(log.executorAddress, log.triggerTime, log.id, 0).then(res => {
       this.errorInfo = res.data.logContent
       this.errorDialog = true
     })

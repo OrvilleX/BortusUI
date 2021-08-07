@@ -9,8 +9,8 @@ export const get = (id: number) => {
   return request.get<JobLogData>('scheduler/log/' + id)
 }
 
-export const getFromExecutor = (executorAddress?: string, triggerTime?: string, logId?: number) => {
-  return request.get<LogResultData>(`scheduler/log/executor?executorAddress=${executorAddress}&triggerTime=${triggerTime}&logId=${logId}`)
+export const getFromExecutor = (executorAddress?: string, triggerTime?: string, logId?: number, fromLineNum?: number) => {
+  return request.get<LogResultData>(`scheduler/log/executor?executorAddress=${executorAddress}&triggerTime=${triggerTime}&logId=${logId}&fromLineNum=${fromLineNum}`)
 }
 
 export default { del, get, getFromExecutor }
