@@ -140,6 +140,33 @@ proxy: {
 | afterAddError | 添加错误后 |
 | afterEditError | 编辑错误后 |
 
+### SocketIO  
+
+本项目已植入[vue-socket.io-extended](https://github.com/probil/vue-socket.io-extended)做为默认的socketio实现库。
+读者可以通过在具体开发的功能中采用如下的方式进行监听。  
+
+```typescript
+@Component({})
+export default class App extends Vue {
+
+  // 发送数据
+  send () {
+    this.$socket.client.emit("push_event", {
+      userId: "123"
+    });
+  }
+  
+  // 监听对应事件
+  onEvent () {
+    this.$socket.client.on("event", (data: any) => {
+
+    });
+  }
+}
+```  
+
+如果需要修改连接以及相关配置可以从项目根路径下的`main.ts`中继续修改，注意`socketio-client必须使用1.x版本`
+
 ## 注意事项  
 
 1. treeselect 组件如果需要能够触发`load-options`事件，父级组件的`children`必须为`null`才可触发;   
