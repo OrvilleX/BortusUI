@@ -118,7 +118,9 @@ export default class extends Vue {
       }
 
       if (router.meta && router.meta.title) {
-        data.meta.title = [...data.meta.title, router.meta.title]
+        if (data.meta) {
+          data.meta.title = [...data.meta.title, router.meta.title]
+        }
 
         if (router.redirect !== 'noRedirect') {
           res.push(data)
@@ -126,7 +128,7 @@ export default class extends Vue {
       }
 
       if (router.children) {
-        const tempRoutes = this.generateRoutes(router.children, data.path, data.meta.title)
+        const tempRoutes = this.generateRoutes(router.children, data.path, data.meta?.title)
         if (tempRoutes.length >= 1) {
           res = [...res, ...tempRoutes]
         }

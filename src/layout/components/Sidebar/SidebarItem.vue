@@ -64,7 +64,7 @@ export default class extends mixins(FixiOSBug) {
 
   hasOneShowingChild(children: RouteConfig[] = [], parent: RouteConfig) {
     const showingChildren = children.filter((item) => {
-      if (item.meta.hidden) {
+      if (item.meta?.hidden) {
         return false
       } else {
         this.onlyOneChild = item
@@ -81,8 +81,9 @@ export default class extends mixins(FixiOSBug) {
         ...parent,
         path: ''
       }
-      this.onlyOneChild.meta.noShowingChildren = true
-
+      if (this.onlyOneChild.meta) {
+        this.onlyOneChild.meta.noShowingChildren = true
+      }
       return true
     }
     return false
