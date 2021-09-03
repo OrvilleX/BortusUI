@@ -10,7 +10,7 @@ router.post('/login', (req: Request, res: Response) => {
     const user: JwtUserDtoData = {
         id: 1,
         roles: ['admin'],
-        dataScopee: [-1],
+        dataScopes: [-1],
         user: {
             username: 'admin',
             nickName: 'admin',
@@ -43,7 +43,7 @@ router.get('/info', (req: Request, res: Response) => {
             }
         },
         roles: ['admin'],
-        dataScopee: [1]
+        dataScopes: [1]
     }
     return res.json(user)
 })
