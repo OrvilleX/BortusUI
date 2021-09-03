@@ -486,6 +486,9 @@ export default class extends mixins<
 .crud-opts .crud-opts-right {
   margin-left: auto;
 }
+.crud-opts .crud-opts-right span {
+  float: left;
+}
 ::v-deep .el-input-number .el-input__inner {
   text-align: left;
 }

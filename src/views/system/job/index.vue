@@ -372,4 +372,8 @@ export default class extends mixins<CRUD<JobData, JobQueryData, JobData>>(
 .crud-opts .crud-opts-right {
   margin-left: auto;
 }
+
+.crud-opts .crud-opts-right span {
+  float: left;
+}
 </style>

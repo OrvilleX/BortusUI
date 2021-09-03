@@ -498,4 +498,8 @@ export default class extends mixins<
 .crud-opts .crud-opts-right {
   margin-left: auto;
 }
+
+.crud-opts .crud-opts-right span {
+  float: left;
+}
 </style>
